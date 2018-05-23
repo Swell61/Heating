@@ -5,6 +5,15 @@
 */
 
 // the setup function runs once when you press reset or power the board
+#include "BoilerControlComponentOut.h"
+#include <TFT.h>
+#include <EthernetUdp.h>
+#include <EthernetServer.h>
+#include <EthernetClient.h>
+#include <Ethernet.h>
+#include <Dns.h>
+#include <Dhcp.h>
+#include <SD.h>
 #include "HeatingSystem.h"
 void setup() {
 	HeatingSystem ashanti(2, 5);

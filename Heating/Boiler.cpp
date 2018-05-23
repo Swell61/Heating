@@ -3,20 +3,5 @@
 // 
 
 #include "Boiler.h"
-Boiler::Boiler(int pinNum) {
-
+Boiler::Boiler(int pinNum) : BoilerControlComponentOut(pinNum) {
 }
-Boiler::Boiler() {}
-
-void Boiler::enable() {
-	status = true;
-}
-
-void Boiler::disable() {
-	status = false;
-}
-
-boolean Boiler::getStatus() {
-	return status;
-}
-

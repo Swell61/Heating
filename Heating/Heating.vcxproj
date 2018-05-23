@@ -47,7 +47,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\Heating;J:\Program Files (x86)\Arduino\libraries;$(ProjectDir)..\..\..\..\..\Arduino\libraries;J:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries;J:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;J:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\standard;J:\Program Files (x86)\Arduino\hardware\tools\avr\avr\include\;J:\Program Files (x86)\Arduino\hardware\tools\avr\avr\include\avr\;J:\Program Files (x86)\Arduino\hardware\tools\avr\lib\gcc\avr\4.8.1\include;J:\Program Files (x86)\Arduino\hardware\tools\avr\lib\gcc\avr\4.9.2\include;J:\Program Files (x86)\Arduino\hardware\tools\avr\lib\gcc\avr\4.9.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\Heating;J:\Program Files (x86)\Arduino\libraries\Ethernet\src;J:\Program Files (x86)\Arduino\libraries\Ethernet\src\utility;J:\Program Files (x86)\Arduino\libraries\SD\src;J:\Program Files (x86)\Arduino\libraries\SD\src\utility;J:\Program Files (x86)\Arduino\libraries\TFT\src;J:\Program Files (x86)\Arduino\libraries\TFT\src\utility;J:\Program Files (x86)\Arduino\libraries;$(ProjectDir)..\..\..\..\..\Arduino\libraries;J:\Program Files (x86)\Arduino\hardware\arduino\avr\libraries;J:\Program Files (x86)\Arduino\hardware\arduino\avr\cores\arduino;J:\Program Files (x86)\Arduino\hardware\arduino\avr\variants\standard;J:\Program Files (x86)\Arduino\hardware\tools\avr\avr\include\;J:\Program Files (x86)\Arduino\hardware\tools\avr\avr\include\avr\;J:\Program Files (x86)\Arduino\hardware\tools\avr\lib\gcc\avr\4.8.1\include;J:\Program Files (x86)\Arduino\hardware\tools\avr\lib\gcc\avr\4.9.2\include;J:\Program Files (x86)\Arduino\hardware\tools\avr\lib\gcc\avr\4.9.3\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>$(ProjectDir)__vm\.Heating.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
       <PreprocessorDefinitions>__AVR_ATmega328p__;__AVR_ATmega328P__;_VMDEBUG=1;F_CPU=16000000L;ARDUINO=10805;ARDUINO_AVR_UNO;ARDUINO_ARCH_AVR;__cplusplus=201103L;_VMICRO_INTELLISENSE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -83,12 +83,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Boiler.h" />
+    <ClInclude Include="BoilerControlComponentOut.h" />
     <ClInclude Include="HeatingSystem.h" />
     <ClInclude Include="Pump.h" />
     <ClInclude Include="__vm\.Heating.vsarduino.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Boiler.cpp" />
+    <ClCompile Include="BoilerControlComponentOut.cpp" />
     <ClCompile Include="HeatingSystem.cpp" />
     <ClCompile Include="Pump.cpp" />
   </ItemGroup>

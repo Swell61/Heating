@@ -12,15 +12,8 @@
 
 #endif
 
-class Pump
+class Pump : public BoilerControlComponentOut
 {
-private:
-	int pinNum;
-	bool status;
 public:
 	Pump(int);
-	Pump();
-	void enable();
-	void disable();
-	bool getStatus();
 };

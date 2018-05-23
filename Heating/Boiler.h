@@ -12,14 +12,7 @@
 
 #endif
 
-class Boiler {
-private:
-	int pinNum;
-	bool status;
+class Boiler : public BoilerControlComponentOut {
 public:
 	Boiler(int);
-	Boiler();
-	void enable();
-	void disable();
-	bool getStatus();
 };
