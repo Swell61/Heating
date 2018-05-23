@@ -12,7 +12,7 @@
 
 #endif
 
-class Boiler : public BoilerControlComponentOut {
+class Boiler final : public BoilerControlComponentOut {
 public:
 	Boiler(int);
 };

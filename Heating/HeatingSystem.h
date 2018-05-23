@@ -19,5 +19,6 @@ private:
 	Boiler boiler;
 public:
 	HeatingSystem(int, int);
-	Pump getPump();
+	void enableHeating();
+	void enableHotWater();
 };

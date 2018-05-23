@@ -14,11 +14,12 @@
 
 class BoilerControlComponentOut {
 private:
-	int pinNum;
+	const int pinNum;
 	bool status;
 	void changeRelayState();
-public:
+protected:
 	BoilerControlComponentOut(int);
+public:
 	void enable();
 	void disable();
 	bool getStatus();

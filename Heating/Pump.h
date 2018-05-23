@@ -12,8 +12,7 @@
 
 #endif
 
-class Pump : public BoilerControlComponentOut
-{
+class Pump final : public BoilerControlComponentOut {
 public:
 	Pump(int);
 };
