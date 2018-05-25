@@ -8,17 +8,15 @@
 #else
 	#include "WProgram.h"
 #endif
-
-
-#endif
 #include "Pump.h"
 #include "Boiler.h"
 class HeatingSystem {
 private:
-	Pump pump;
-	Boiler boiler;
+	Pump& pump;
+	Boiler& boiler;
 public:
 	HeatingSystem(int, int);
-	void enableHeating();
-	void enableHotWater();
+	
 };
+
+#endif

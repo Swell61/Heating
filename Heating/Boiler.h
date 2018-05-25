@@ -8,11 +8,10 @@
 #else
 	#include "WProgram.h"
 #endif
-
-
-#endif
-
+#include "BoilerControlComponentOut.h"
 class Boiler final : public BoilerControlComponentOut {
 public:
 	Boiler(int);
 };
+
+#endif

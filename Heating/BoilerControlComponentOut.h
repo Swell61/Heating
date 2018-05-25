@@ -1,20 +1,16 @@
 // BoilerControlComponentOut.h
 
-#ifndef _BoilerControlComponentOut_h
-#define _BoilerControlComponentOut_h
+#ifndef BoilerControlComponentOut_h
+#define BoilerControlComponentOut_h
 
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include "arduino.h"
 #else
 	#include "WProgram.h"
 #endif
-
-
-#endif
-
 class BoilerControlComponentOut {
 private:
-	const int pinNum;
+	int pinNum;
 	bool status;
 	void changeRelayState();
 protected:
@@ -24,3 +20,6 @@ public:
 	void disable();
 	bool getStatus();
 };
+
+#endif
+

@@ -9,6 +9,4 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin) {
 	boiler = Boiler(boilerPin);
 }
 
-Pump HeatingSystem::getPump() {
-	return pump;
-}
+
