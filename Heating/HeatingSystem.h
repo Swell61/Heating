@@ -12,8 +12,8 @@
 #include "Boiler.h"
 class HeatingSystem {
 private:
-	Pump& pump;
-	Boiler& boiler;
+	const Pump& pump;
+	const Boiler& boiler;
 public:
 	HeatingSystem(int, int);
 	

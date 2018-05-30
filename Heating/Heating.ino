@@ -6,12 +6,16 @@
 
 // the setup function runs once when you press reset or power the board
 
-#include <MCUFRIEND_kbv.h>
+
+
+
 #include <TouchScreen.h>
-#include <UIPEthernet.h>
-#include <SPI.h>
 #include <SD.h>
+#include <SPI.h>
+#include <UIPEthernet.h>
+
 #include "HeatingSystem.h"
+
 void setup() {
 	HeatingSystem ashanti(2, 5);
 }

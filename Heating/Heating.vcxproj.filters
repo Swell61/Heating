@@ -33,6 +33,9 @@
     <ClInclude Include="BoilerControlComponentOut.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="tempSensor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Boiler.cpp">
@@ -45,6 +48,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BoilerControlComponentOut.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tempSensor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
