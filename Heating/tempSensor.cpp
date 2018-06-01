@@ -2,11 +2,11 @@
 // 
 // 
 
-#include "tempSensor.h"
-tempSensor::tempSensor(int pinNum): thermostat(OneWire(pinNum)), temperature(DallasTemperature(&thermostat)) {
+#include "TempSensor.h"
+TempSensor::TempSensor(int pinNum): thermostat(OneWire(pinNum)), temperature(DallasTemperature(&thermostat)) {
 };
 
-float tempSensor::getTemp() {
+float TempSensor::getTemp() const{
 	temperature.requestTemperaturesByAddress(deviceAddress);
 	return temperature.getTempC(deviceAddress);
 };

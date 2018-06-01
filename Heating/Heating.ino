@@ -6,18 +6,13 @@
 
 // the setup function runs once when you press reset or power the board
 
-
-
-
 #include <TouchScreen.h>
-#include <SD.h>
 #include <SPI.h>
-#include <UIPEthernet.h>
 
 #include "HeatingSystem.h"
 
 void setup() {
-	HeatingSystem ashanti(2, 5);
+	HeatingSystem ashanti(2, 5, 7);
 }
 
 // the loop function runs over and over again until power down or reset

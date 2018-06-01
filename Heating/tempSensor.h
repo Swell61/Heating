@@ -11,10 +11,10 @@
 
 #include <OneWire.h>
 #include <DallasTemperature.h>
-class tempSensor {
+class TempSensor {
 public:
-	float getTemp();
-	tempSensor(int pinNum);
+	float getTemp() const;
+	TempSensor(int pinNum);
 private:
 	const uint8_t deviceAddress[8] = { 0x28 };
 	const OneWire& thermostat;
