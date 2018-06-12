@@ -4,8 +4,9 @@
 
 #include "HeatingSystem.h"
 
-HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)) {
-}
+HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)), display(new Display()) {
+	display->mainDisplay(tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+};
 
 void HeatingSystem::monitorSystem() { // This function runs through the process required to monitor and manage the heating system
 	if (tempSensor.getTemp() < (requestedTemp - maxDrift) && !heatingMaster) { // If the temperature of the zone has gone below the required temperature...
@@ -15,6 +16,34 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 		disableHeating(); // ...turn the heating off
 	}
 	checkBoosts(); // Run through the boost timers, checking if they need altering
+
+	display->mainDisplay(tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+
+	touchOption = display->touchUpdate();
+	if (touchOption == 1) {
+		requestedTemp++;
+	}
+	else if (touchOption == 2) {
+		requestedTemp--;
+	}
+	else if (touchOption == 3 && !heatingBoostActive) {
+		heatingBoostActive = true;
+	}
+	else if (touchOption == 3 && heatingBoostActive) {
+		heatingBoostActive = false;
+	}
+	else if (touchOption == 4 && !waterBoostActive) {
+		waterBoostActive = true;
+	}
+	else if (touchOption == 4 && waterBoostActive) {
+		waterBoostActive = false;
+	}
+
+
+	
+
+
+
 
 	// Finally, evaluate the settings of the heating and water, then physically turn the heating systems on or off. Prevents unecessary changes to relay state
 	if (heatingStatus && !getHeatingStatus()){ // If the heating should be on and it isn't already...
@@ -29,7 +58,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 		}
 		
 	}
-
+	
 	if (!waterStatus && !heatingStatus) { // If both the hot water and heating are off...
 		disableWater(); // ...turn off the hot water
 		disableHeating(); // ...turn off the heating
@@ -109,3 +138,7 @@ void HeatingSystem::checkBoosts() {
 		disableWater();
 	}
 };
+
+void HeatingSystem::setTemp(int temp) {
+	requestedTemp = temp;
+}

@@ -9,16 +9,14 @@
 	#include "WProgram.h"
 #endif
 
-#include <OneWire.h>
-#include <DallasTemperature.h>
+#include <Wire.h>
+#include <LM75.h>
 class TempSensor {
 public:
 	float getTemp() const;
 	TempSensor(int pinNum);
 private:
-	const uint8_t deviceAddress[8] = { 0x28 };
-	const OneWire& thermostat;
-	const DallasTemperature& temperature;
+	LM75 sensor;
 };
 
 #endif

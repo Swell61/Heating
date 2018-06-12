@@ -3,10 +3,14 @@
 // 
 
 #include "TempSensor.h"
-TempSensor::TempSensor(int pinNum): thermostat(OneWire(pinNum)), temperature(DallasTemperature(&thermostat)) {
+TempSensor::TempSensor(int pinNum) {
+	Wire.begin();
+	sensor.shutdown(true);
 };
 
 float TempSensor::getTemp() const{
-	temperature.requestTemperaturesByAddress(deviceAddress);
-	return temperature.getTempC(deviceAddress);
+	sensor.shutdown(false);
+	float temp = sensor.temp();
+	sensor.shutdown(true);
+	return temp;
 };

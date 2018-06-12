@@ -11,6 +11,7 @@
 #include "Pump.h"
 #include "Boiler.h"
 #include "TempSensor.h"
+#include "Display.h"
 class HeatingSystem {
 private:
 	const byte boostLengthWater = 30;
@@ -19,7 +20,7 @@ private:
 	int boostTimerWater = 0;
 	const int maxDrift = 2; // Set the maximum number of degrees the temperature can drift before heating is turned on
 	
-	int requestedTemp;
+	int requestedTemp = 15;
 	bool heatingStatus;
 	bool waterStatus;
 	bool heatingMaster;
@@ -27,10 +28,12 @@ private:
 	bool waterBoostActive;
 	unsigned long startTimeHeatingBoost;
 	unsigned long startTimeWaterBoost;
+	byte touchOption;
 
 	Pump pump;
 	Boiler boiler;
 	TempSensor tempSensor;
+	Display* display;
 	void setHeatingOff();
 	void setWaterOff();
 	void setHeatingOn();
@@ -49,6 +52,8 @@ public:
 	void disableWater();
 	void enableHeating();
 	void enableWater();
+	void setTemp(int);
+
 };
 
 #endif
