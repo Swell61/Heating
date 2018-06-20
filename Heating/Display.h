@@ -22,6 +22,7 @@ public:
 	Display();
 	void mainDisplay(float, bool, bool, float, bool, bool);
 	byte touchUpdate();
+	void displayUpdate(float, bool, bool, float, bool, bool);
 };
 
 #endif

@@ -13,12 +13,14 @@ private:
 	int pinNum;
 	bool status;
 	void changeRelayState();
+	bool state;
 protected:
 	BoilerControlComponentOut(int);
 public:
 	void enable();
 	void disable();
 	bool getStatus();
+	
 };
 
 #endif

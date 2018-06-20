@@ -6,11 +6,13 @@
 
 BoilerControlComponentOut::BoilerControlComponentOut(int pinNum) : pinNum(pinNum) {
 	pinMode(pinNum, OUTPUT);
+	digitalWrite(pinNum, LOW);
 }
 
 void BoilerControlComponentOut::enable() {
 	status = true;
 	changeRelayState();
+
 }
 
 void BoilerControlComponentOut::disable() {

@@ -14,11 +14,12 @@
 HeatingSystem* ashanti;
 void setup() {
 	Serial.begin(9600);
-	ashanti = new HeatingSystem(45, 46, 47);
-}
-
+	ashanti = new HeatingSystem(45, 46, 47); // Pump pin, boiler pin, thermometer pin
+	
+};
 
 void loop() {
 	ashanti->monitorSystem();
-	
-}
+
+};
+

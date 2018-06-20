@@ -15,20 +15,22 @@
 class HeatingSystem {
 private:
 	const byte boostLengthWater = 30;
-	const byte boostLengthHeating = 30;
+	const byte boostLengthHeating = 1;
 	int boostTimerHeating = 0;
 	int boostTimerWater = 0;
-	const int maxDrift = 2; // Set the maximum number of degrees the temperature can drift before heating is turned on
+	const int maxDrift = 1; // Set the maximum number of degrees the temperature can drift before heating is turned on
+	bool updateDisplay = false;
 	
 	int requestedTemp = 15;
-	bool heatingStatus;
-	bool waterStatus;
-	bool heatingMaster;
-	bool heatingBoostActive;
-	bool waterBoostActive;
+	bool heatingStatus = false;
+	bool waterStatus = false;
+	bool heatingMaster = true;
+	bool heatingBoostActive = false;
+	bool waterBoostActive = false;
 	unsigned long startTimeHeatingBoost;
 	unsigned long startTimeWaterBoost;
 	byte touchOption;
+	float currentTemp;
 
 	Pump pump;
 	Boiler boiler;
