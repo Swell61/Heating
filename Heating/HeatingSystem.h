@@ -27,6 +27,7 @@ private:
 	bool heatingMaster = true;
 	bool heatingBoostActive = false;
 	bool waterBoostActive = false;
+	bool incorrectTemp = false;
 	unsigned long startTimeHeatingBoost;
 	unsigned long startTimeWaterBoost;
 	byte touchOption;
@@ -42,6 +43,8 @@ private:
 	void setWaterOn();
 	void setWaterWithoutHeating();
 	void checkBoosts();
+	void temperatureCheck();
+	void changeRelayStates();
 	
 public:
 	HeatingSystem(int, int, int);

@@ -45,58 +45,65 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 		updateDisplay = true; // Display needs updating
 		boostWater(false);
 	};
+	temperatureCheck();
+	
+	checkBoosts(); // Run through the boost timers, checking if they need altering
+	changeRelayStates();
+};
+void HeatingSystem::temperatureCheck() {
 	if (tempSensor.getTemp() < (requestedTemp - maxDrift) && heatingMaster && !getHeatingStatus()) { // If the temperature of the zone has gone below the required temperature...
 		enableHeating(); // ...turn the heating on
 		Serial.println("Heating on because temperature too low");
+		incorrectTemp = true;
 	}
 	else if (tempSensor.getTemp() >= requestedTemp && !heatingBoostActive && getHeatingStatus() && !heatingBoostActive && !waterBoostActive) { // If the temperature of the zone has reached the requried temperature...
 		disableHeating(); // ...turn the heating off
 		Serial.println("1");
+		incorrectTemp = false;
 	}
+}
+void HeatingSystem::changeRelayStates() {
 	if (!heatingMaster && getHeatingStatus()) {
-		disableHeating();
+		setHeatingOff();
 		Serial.print("2");
 	}
-	checkBoosts(); // Run through the boost timers, checking if they need altering
-
-	if (!waterStatus && !heatingStatus && getWaterStatus() && getHeatingStatus()) { // If both the hot water and heating are off...
+	else if (heatingStatus && !getHeatingStatus()) { // If the heating should be on and it isn't already...
+		setHeatingOn(); // ...turn it on
+		Serial.println("Set heating on");
+		updateDisplay = true;
+	}
+	else if (waterStatus && !incorrectTemp) { // Else if the hot water should be on and it isn't already...
+		if (!heatingStatus && getHeatingStatus()) { // ...and the heating shouldn't be on...
+			setWaterWithoutHeating(); // ...turn the boiler on and disable the pump
+			Serial.println("Set water on wthout heating");
+			Serial.print("4");
+			updateDisplay = true;
+		}
+		else if (!getWaterStatus()){ // Else the heating must be on
+			setWaterOn(); // ...turn on the hot water without disabling the pump
+			Serial.println("Set water");
+			updateDisplay = true;
+		}
+		
+	}
+	else if (!waterStatus && !heatingStatus && getWaterStatus() && getHeatingStatus() && !incorrectTemp) { // If both the hot water and heating are off...
 		setWaterOff(); // ...turn off the hot water
 		setHeatingOff(); // ...turn off the heating
 		updateDisplay = true;
 		Serial.println("Turn everything off");
 	}
-
-		// Finally, evaluate the settings of the heating and water, then physically turn the heating systems on or off. Prevents unecessary changes to relay state
 	
-	else if (heatingStatus && !getHeatingStatus()){ // If the heating should be on and it isn't already...
-		setHeatingOn(); // ...turn it on
-		Serial.println("Set heating on");
-		updateDisplay = true;
-	}
-	else if (waterStatus && !getWaterStatus()) { // Else if the hot water should be on and it isn't already...
-		if (!heatingStatus) { // ...and the heating shouldn't be on...
-			setWaterWithoutHeating(); // ...turn the boiler on and disable the pump
-			Serial.println("Set water on wthout heating");
-			Serial.print("4");
-		}
-		else { // Else the heating must be on
-			setWaterOn(); // ...turn on the hot water without disabling the pump
-			Serial.println("Set water");
-		}
-		updateDisplay = true;
-	}
-	
-
-	else if (!waterStatus && getWaterStatus() && !heatingStatus) { // If water should be off and it's not...
+	// Finally, evaluate the settings of the heating and water, then physically turn the heating systems on or off. Prevents unecessary changes to relay state
+	else if (!waterStatus && getWaterStatus() && !heatingStatus && !incorrectTemp) { // If water should be off and it's not...
 		setWaterOff(); // Turn the water off
 		Serial.println("Should turn water components off");
 	}
-	else if (!heatingStatus && getHeatingStatus()) {
+	else if (!heatingStatus && getHeatingStatus() && !incorrectTemp) {
 		setHeatingOff();
+		Serial.println("Heating going off");
 	}
 	
-	
-};
+}
 
 void HeatingSystem::setHeatingOn() { // Function for turning on the heating
 	boiler.enable(); // Turn the boiler on
