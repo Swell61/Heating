@@ -28,6 +28,7 @@ private:
 	int waterOffAfternoon = 1320;
 
 	void setTime(int);
+
 public:
 	void heatingMorningOn();
 	void heatingMorningOff();
@@ -42,6 +43,15 @@ public:
 	bool getHeatingTimerStatus();
 	bool getWaterTimerStatus();
 	void checkMidnight();
+
+	int getHeatingOnMorning();
+	int getHeatingOffMorning();
+	int getHeatingOnAfternoon();
+	int getHeatingOffAfternoon();
+	int getWaterOnMorning();
+	int getWaterOffMorning();
+	int getWaterOnAfternoon();
+	int getWaterOffAfternoon();
 };
 
 #endif

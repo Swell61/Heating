@@ -12,6 +12,7 @@
 #include "Boiler.h"
 #include "TempSensor.h"
 #include "Display.h"
+#include "Timer.h"
 class HeatingSystem {
 private:
 	const byte boostLengthWater = 30;
@@ -20,7 +21,8 @@ private:
 	int boostTimerWater = 0;
 	const int maxDrift = 1; // Set the maximum number of degrees the temperature can drift before heating is turned on
 	bool updateDisplay = false;
-	
+	byte screen = 0; // 0 = Regular screen. 1 = Timer screen
+
 	int requestedTemp = 15;
 	bool heatingStatus = false;
 	bool waterStatus = false;
@@ -37,6 +39,7 @@ private:
 	Boiler boiler;
 	TempSensor tempSensor;
 	Display* display;
+	Timer timer;
 	void setHeatingOff();
 	void setWaterOff();
 	void setHeatingOn();
@@ -45,6 +48,7 @@ private:
 	void checkBoosts();
 	void temperatureCheck();
 	void changeRelayStates();
+	void checkTimer();
 	
 public:
 	HeatingSystem(int, int, int);

@@ -11,6 +11,7 @@ Display::Display() : ts(TouchScreen(XP, YP, XM, YM, 300)) {
 };
 
 void Display::mainDisplay(float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost) {
+	tft.fillScreen(0x00000);
 	tft.setTextSize(2);
 	tft.setTextColor(0xFFFFF);
 	tft.fillRect(40, 70, 105, 35, heatingBoost ? 0x7CFC0 : 0xFF000);
@@ -36,6 +37,11 @@ void Display::mainDisplay(float temp, bool heatingStatus, bool waterStatus, floa
 
 	tft.fillTriangle(300, 70, 250, 90, 350, 90, 0xFFFFF);
 	tft.fillTriangle(300, 185, 250, 165, 350, 165, 0xFFFFF);
+
+	tft.fillRect(150, 205, 100, 30, 0xFFFFF);
+	tft.setTextColor(0x00000);
+	tft.setCursor(170, 213);
+	tft.println("TIMER");
 
 	tft.setTextSize(3);
 	tft.setCursor(255, 115);
@@ -65,36 +71,77 @@ void Display::displayUpdate(float temp, bool heatingStatus, bool waterStatus, fl
 	tft.println(requestedTemp);
 }
 
-byte Display::touchUpdate() {
+byte Display::touchUpdate(byte screen) {
   
 #define MIN_PRESSURE 200
 #define MAX_PRESSURE 1000
 TSPoint tp = ts.getPoint();
 pinMode(XM, OUTPUT);
 pinMode(YP, OUTPUT);
-
-
 if (tp.z > MIN_PRESSURE && tp.z < MAX_PRESSURE) {
-	Serial.println("Press");
-	Serial.println(String(tp.x) + " " + String(tp.y));
-	if (tp.x >= 560 && tp.x <= 700 && tp.y >= 220 && tp.y <= 420) { // Heating boost button
-		Serial.println("Heating boost");
-		return 3;
+if (screen == 0) {
+
+	
+		Serial.println("Press");
+		Serial.println(String(tp.x) + " " + String(tp.y));
+		if (tp.x >= 560 && tp.x <= 700 && tp.y >= 220 && tp.y <= 420) { // Heating boost button
+			Serial.println("Heating boost");
+			return 3;
+		}
+		else if (tp.x >= 330 && tp.x <= 480 && tp.y >= 220 && tp.y <= 420) { // Water boost button
+			Serial.println("Water boost");
+			return 4;
+		}
+		else if (tp.x >= 600 && tp.x <= 693 && tp.y >= 630 && tp.y <= 830) { // Up 1 degree
+			Serial.println("Up 1 degree");
+			return 1;
+		}
+		else if (tp.x >= 325 && tp.x <= 400 && tp.y >= 630 && tp.y <= 830) { // Down 1 degree
+			Serial.println("Down 1 degree");
+			return 2;
+		}
+		else if (tp.x >= 220 && tp.x <= 290 && tp.y >= 400 && tp.y <= 630) {
+			Serial.println("Switch to timer display");
+			return 5;
+		}
 	}
-	else if (tp.x >= 330 && tp.x <= 480 && tp.y >= 220 && tp.y <= 420) { // Water boost button
-		Serial.println("Water boost");
-		return 4;
-	}
-	else if (tp.x >= 600 && tp.x <= 693 && tp.y >= 630 && tp.y <= 830) { // Up 1 degree
-		Serial.println("Up 1 degree");
-		return 1;
-	}
-	else if (tp.x >= 325 && tp.x <= 400 && tp.y >= 630 && tp.y <= 830) { // Down 1 degree
-		Serial.println("Down 1 degree");
-		return 2;
+}
+else if (screen == 1) {
+	if (tp.x >= 820 && tp.x <= 890 && tp.y >= 200 && tp.y <= 320) {
+		return 6;
 	}
 }
 return 0;
+}
 
-  
+void Display::timerDisplay(int heatingOnMorning, int heatingOffMorning, int heatingOnAfternoon, int heatingOffAfternoot, int waterOnMorning, int waterOffMorning, int waterOnAfternoon, int waterOffAfternoon) {
+	tft.fillScreen(0x00000);
+	tft.setTextSize(3);
+	
+	tft.fillRect(0, 0, 80, 20, 0xFFFFF);
+	tft.setTextColor(0x00000);
+	tft.setCursor(5, 0);
+	tft.println("BACK");
+
+	tft.setTextSize(2);
+	tft.setTextColor(0xFFFFF);
+	tft.setCursor(150, 10);
+	tft.println("HEAT");
+	tft.setCursor(285, 10);
+	tft.println("WATER");
+
+	tft.setCursor(150, 50);
+	tft.println(heatingOnMorning);
+
+
+	
+	tft.setTextSize(1.5);
+	tft.setCursor(0, 50);
+	tft.println("Morning on:");
+	tft.setCursor(0, 100);
+	tft.println("Morning off:");
+	tft.setCursor(0, 150);
+	tft.println("Afternoon on:");
+	tft.setCursor(0, 200);
+	tft.println("Afternoon off:");
 }

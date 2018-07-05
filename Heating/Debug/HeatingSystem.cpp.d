@@ -24,4 +24,5 @@ C:\Users\Samuel\AppData\Local\Temp\VMBuilds\Heating\mega_atmega2560\Debug\Heatin
  C:\Users\Samuel\Documents\Arduino\libraries\TouchScreen/TouchScreen.h \
  C:\Users\Samuel\Documents\Arduino\libraries\Adafruit_GFX/Adafruit_GFX.h \
  C:\Program\ Files\ (x86)\Arduino\hardware\arduino\avr\cores\arduino/Print.h \
- C:\Users\Samuel\Documents\Arduino\libraries\MCUFRIEND_kbv/MCUFRIEND_kbv.h
+ C:\Users\Samuel\Documents\Arduino\libraries\MCUFRIEND_kbv/MCUFRIEND_kbv.h \
+ C:\Users\Samuel\AppData\Local\Temp\VMBuilds\Heating\mega_atmega2560\Debug\Timer.h

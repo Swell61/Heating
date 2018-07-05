@@ -51,4 +51,5 @@ C:\Users\Samuel\AppData\Local\Temp\VMBuilds\Heating\mega_atmega2560\Debug\Heatin
  C:\Users\Samuel\Documents\Arduino\libraries\TouchScreen/TouchScreen.h \
  C:\Users\Samuel\Documents\Arduino\libraries\Adafruit_GFX/Adafruit_GFX.h \
  C:\Users\Samuel\Documents\Arduino\libraries\MCUFRIEND_kbv/MCUFRIEND_kbv.h \
+ C:\Users\Samuel\AppData\Local\Temp\VMBuilds\Heating\mega_atmega2560\Debug\Timer.h \
  C:\Program\ Files\ (x86)\Microsoft\ Visual\ Studio\2017\Community\Common7\IDE\Extensions\xaohtdp2.q2m\Micro\ Platforms\default\debuggers\VM_DBG/VM_DBG.h

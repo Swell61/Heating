@@ -4,7 +4,7 @@
 
 #include "HeatingSystem.h"
 
-HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)), display(new Display()) {
+HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)), timer(Timer()), display(new Display()) {
 	currentTemp = tempSensor.getTemp();
 	display->mainDisplay(tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
 };
@@ -12,7 +12,14 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 void HeatingSystem::monitorSystem() { // This function runs through the process required to monitor and manage the heating system
 	
 	if (updateDisplay) {
-		display->displayUpdate(tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+		Serial.println(screen);
+		if (screen == 0) {
+			display->displayUpdate(tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+		}
+		else if (screen == 1) {
+			display->timerDisplay(timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
+			Serial.println("Timer display");
+		}
 		updateDisplay = false;
 		Serial.println("Display updated" + String(millis()));
 	}
@@ -20,7 +27,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 		currentTemp = tempSensor.getTemp();
 		updateDisplay = true;
 	};
-	touchOption = display->touchUpdate();
+	touchOption = display->touchUpdate(screen);
 	if (touchOption == 1) { // User requested temperature up one degree
 		requestedTemp++; // Increase the requested temperature up by one
 		updateDisplay = true; // The display needs updating
@@ -44,10 +51,21 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	else if (touchOption == 4 && waterBoostActive) { // User wants to turn the water boost off
 		updateDisplay = true; // Display needs updating
 		boostWater(false);
-	};
+	}
+	else if (touchOption == 5) { // Go to timer display
+		updateDisplay = true;
+		screen = 1;
+		Serial.println("Touch option 5");
+	}
+	else if (touchOption == 6) { // Go to main display
+		updateDisplay = true;
+		screen = 0;
+		display->mainDisplay(tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+	}
 	temperatureCheck();
 	
 	checkBoosts(); // Run through the boost timers, checking if they need altering
+	checkTimer();
 	changeRelayStates();
 };
 void HeatingSystem::temperatureCheck() {
@@ -191,4 +209,20 @@ void HeatingSystem::checkBoosts() {
 
 void HeatingSystem::setTemp(int temp) {
 	requestedTemp = temp;
+}
+
+void HeatingSystem::checkTimer() {
+	timer.checkMidnight();
+	if (timer.getHeatingTimerStatus() && !heatingStatus) {
+		enableHeating();
+	}
+	else if (!timer.getHeatingTimerStatus() && heatingStatus) {
+		disableHeating();
+	}
+	if (timer.getWaterTimerStatus() && !waterStatus) {
+		enableWater();
+	}
+	else if (!timer.getWaterTimerStatus() && waterStatus) {
+		disableWater();
+	}
 }

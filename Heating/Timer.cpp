@@ -49,3 +49,28 @@ void Timer::checkMidnight() {
 		midnight = millis();
 	}
 }
+
+int Timer::getHeatingOnMorning() {
+	return heatingOnMorning;
+}
+int Timer::getHeatingOffMorning() {
+	return heatingOffMorning;
+}
+int Timer::getHeatingOnAfternoon() {
+	return heatingOnAfternoon;
+}
+int Timer::getHeatingOffAfternoon() {
+	return heatingOffAfternoon;
+}
+int Timer::getWaterOnMorning() {
+	return waterOnMorning;
+}
+int Timer::getWaterOffMorning() {
+	return waterOffMorning;
+}
+int Timer::getWaterOnAfternoon() {
+	return waterOnAfternoon;
+}
+int Timer::getWaterOffAfternoon() {
+	return waterOffAfternoon;
+}
