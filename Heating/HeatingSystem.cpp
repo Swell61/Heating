@@ -181,10 +181,10 @@ bool HeatingSystem::getWaterStatus() {
 };
 
 void HeatingSystem::checkBoosts() {
-	if (heatingBoostActive && (abs(millis() - startTimeHeatingBoost) >= (boostLengthHeating * 60000))) {
+	if (heatingBoostActive && ((millis() - startTimeHeatingBoost) >= (boostLengthHeating * 60000))) {
 		boostHeating(false);
 	}
-	else if (waterBoostActive && (abs(millis() - startTimeWaterBoost) >= (boostLengthWater * 60000))) {
+	else if (waterBoostActive && ((millis() - startTimeWaterBoost) >= (boostLengthWater * 60000))) {
 		boostWater(false);
 	}
 };
