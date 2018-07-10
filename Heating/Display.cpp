@@ -176,41 +176,31 @@ if (tp.z > MIN_PRESSURE && tp.z < MAX_PRESSURE) {
 if (screen == 0) {
 
 	
-		Serial.println("Press");
-		Serial.println(String(tp.x) + " " + String(tp.y));
-		if (tp.x >= 560 && tp.x <= 700 && tp.y >= 500 && tp.y <= 700) { // Heating boost button
-			Serial.println("Heating boost");
-			return 3;
+						if (tp.x >= 560 && tp.x <= 700 && tp.y >= 500 && tp.y <= 700) { // Heating boost button
+						return 3;
 		}
 		else if (tp.x >= 330 && tp.x <= 480 && tp.y >= 500 && tp.y <= 700) { // Water boost button
-			Serial.println("Water boost");
-			return 4;
+						return 4;
 		}
 		else if (tp.x >= 600 && tp.x <= 693 && tp.y >= 700 && tp.y <= 900) { // Up 1 degree
-			Serial.println("Up 1 degree");
-			return 1;
+						return 1;
 		}
 		else if (tp.x >= 325 && tp.x <= 400 && tp.y >= 700 && tp.y <= 900) { // Down 1 degree
-			Serial.println("Down 1 degree");
-			return 2;
+						return 2;
 		}
 		else if (tp.x >= 190 && tp.x <= 290 && tp.y >= 680 && tp.y <= 920) {
-			Serial.println("Switch to timer display");
-			return 5;
+						return 5;
 		}
 		else if (tp.x >= 570 && tp.x <= 700 && tp.y >= 320 && tp.y <= 500) {
 			// Mode change
-			Serial.println("Change heating mode");
-			return 25; // Change heating mode
+						return 25; // Change heating mode
 		}
 		else if (tp.x >= 330 && tp.x <= 470 && tp.y >= 320 && tp.y <= 500) {
 			// Mode change
-			Serial.println("Change water mode");
-			return 26; // Change water mode
+						return 26; // Change water mode
 		}
 		else if (tp.x >= 190 && tp.x <= 250 && tp.y >= 200 && tp.y <= 350) {
-			Serial.println("Changing time");
-			return 27;
+						return 27;
 		}
 	}
 }
@@ -234,12 +224,10 @@ else if (screen == 1) {
 		return 11; // Decrease heating afternoon on by 5 minutes
 	}
 	else if (tp.x >= 375 && tp.x <= 470 && tp.y >= 540 && tp.y <= 620) {
-		Serial.println("Increase heating afternoon");
-		return 12; // Increase heating afternoon on by 5 minutes
+				return 12; // Increase heating afternoon on by 5 minutes
 	}
 	else if (tp.x >= 215 && tp.x <= 310 && tp.y >= 360 && tp.y <= 400) {
-		Serial.println("Decrease heating afternoon");
-		return 13; // Decrease heating afternoon off by 5 minutes
+				return 13; // Decrease heating afternoon off by 5 minutes
 	}
 	else if (tp.x >= 215 && tp.x <= 310 && tp.y >= 540 && tp.y <= 620) {
 		return 14; // Increase heating afternoon off by 5 minutes

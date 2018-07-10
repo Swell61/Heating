@@ -34,12 +34,9 @@ bool Timer::getWaterTimerStatus() {
 }
 
 bool Timer::setMidnight(int time) {
-	Serial.println(time);
-	if ((millis() / 60000) - time <= 1440) {
-		Serial.println(midnight);
-		midnight = time;
-		Serial.println(midnight);
-		return true;
+		if ((millis() / 60000) - time <= 1440) {
+				midnight = time;
+				return true;
 	}
 	
 }
