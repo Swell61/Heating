@@ -149,66 +149,77 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	else if (touchOption == 24) {
 		timer.setWaterTimerState(!timer.getWaterTimerStatus());
 	}
-	temperatureCheck();
+	
 	
 	checkBoosts(); // Run through the boost timers, checking if they need altering
 	checkTimer();
 	changeRelayStates();
 };
-void HeatingSystem::temperatureCheck() {
-	if (tempSensor.getTemp() < (requestedTemp - maxDrift) && heatingMaster && !getHeatingStatus()) { // If the temperature of the zone has gone below the required temperature...
-		enableHeating(); // ...turn the heating on
-		Serial.println("Heating on because temperature too low");
-		incorrectTemp = true;
+
+void HeatingSystem::checkBoosts() { // Boosts have priority over everything
+	if (heatingBoostActive && ((millis() - startTimeHeatingBoost) >= (boostLengthHeating * 60000))) {
+		boostHeating(false);
 	}
-	else if (tempSensor.getTemp() >= requestedTemp && !heatingBoostActive && getHeatingStatus() && !heatingBoostActive && !waterBoostActive) { // If the temperature of the zone has reached the requried temperature...
-		disableHeating(); // ...turn the heating off
-		Serial.println("1");
-		incorrectTemp = false;
+	else if (waterBoostActive && ((millis() - startTimeWaterBoost) >= (boostLengthWater * 60000))) {
+		boostWater(false);
 	}
-}
+};
+
 void HeatingSystem::changeRelayStates() {
-	if (!heatingMaster && getHeatingStatus()) {
+
+	// Heating settings
+	if (heatingBoostActive) { // If heating boost is active...
+		enableHeating(); // ...turn the heating on
+	}
+	else if (temperatureCheck() && (heatingMode == 2 || (heatingMode == 1 && timer.getHeatingTimerStatus()))) { // if ((Heating is ON OR (Heating Timer is ON and ACTIVE)) AND temperature is too low)
+		enableHeating();
+	}
+	else {
+		disableHeating();
+	}
+
+	// Water settings
+	if (waterBoostActive) { // If water boost is active...
+		enableWater(); // ...turn the water on
+	}
+	else if (waterMode == 2 || (waterMode == 1 && timer.getWaterTimerStatus())) { // if (Heating is ON OR (Water Timer is ON and ACTIVE))
+		enableWater();
+	}
+	else {
+		disableWater();
+	}
+
+	if ((lastSystemMode != 0) && heatingStatus && waterStatus) {
+		setHeatingOn();
+		setWaterOn();
+		lastSystemMode = 0;
+	}
+	else if ((lastSystemMode != 1) && heatingStatus && !waterStatus) {
+		setHeatingOn();
+		lastSystemMode = 1;
+	}
+	else if ((lastSystemMode != 2) && !heatingStatus && waterStatus) {
+		setWaterWithoutHeating();
+		lastSystemMode = 2;
+	}
+	else if ((lastSystemMode != 3) && !heatingStatus && !waterStatus) {
 		setHeatingOff();
-		Serial.print("2");
+		setWaterOff();
+		lastSystemMode = 3;
 	}
-	else if (heatingStatus && !getHeatingStatus()) { // If the heating should be on and it isn't already...
-		setHeatingOn(); // ...turn it on
-		Serial.println("Set heating on");
-		updateDisplay = true;
-	}
-	else if (waterStatus && !incorrectTemp) { // Else if the hot water should be on and it isn't already...
-		if (!heatingStatus && getHeatingStatus()) { // ...and the heating shouldn't be on...
-			setWaterWithoutHeating(); // ...turn the boiler on and disable the pump
-			Serial.println("Set water on wthout heating");
-			Serial.print("4");
-			updateDisplay = true;
-		}
-		else if (!getWaterStatus()){ // Else the heating must be on
-			setWaterOn(); // ...turn on the hot water without disabling the pump
-			Serial.println("Set water");
-			updateDisplay = true;
-		}
-		
-	}
-	else if (!waterStatus && !heatingStatus && getWaterStatus() && getHeatingStatus() && !incorrectTemp) { // If both the hot water and heating are off...
-		setWaterOff(); // ...turn off the hot water
-		setHeatingOff(); // ...turn off the heating
-		updateDisplay = true;
-		Serial.println("Turn everything off");
-	}
-	
-	// Finally, evaluate the settings of the heating and water, then physically turn the heating systems on or off. Prevents unecessary changes to relay state
-	else if (!waterStatus && getWaterStatus() && !heatingStatus && !incorrectTemp) { // If water should be off and it's not...
-		setWaterOff(); // Turn the water off
-		Serial.println("Should turn water components off");
-	}
-	else if (!heatingStatus && getHeatingStatus() && !incorrectTemp) {
-		setHeatingOff();
-		Serial.println("Heating going off");
-	}
-	
+
 }
+
+
+bool HeatingSystem::temperatureCheck() {
+	if (tempSensor.getTemp() < (requestedTemp - maxDrift)) { // If the temperature of the zone has gone below the required temperature...
+		return true;
+	}
+	else if (tempSensor.getTemp() >= requestedTemp) { // If the temperature of the zone has reached the requried temperature...
+		return false;
+	}
+}
+
 
 void HeatingSystem::setHeatingOn() { // Function for turning on the heating
 	boiler.enable(); // Turn the boiler on
@@ -236,19 +247,15 @@ void HeatingSystem::setWaterWithoutHeating() {
 }
 void HeatingSystem::enableHeating() {
 	heatingStatus = true;
-	Serial.println("Enabling the heating");
 }
 void HeatingSystem::disableHeating() {
 	heatingStatus = false;
-	Serial.println("Disable the heating");
 }
 void HeatingSystem::enableWater() {
 	waterStatus = true;
-	Serial.println("Enable the hot water");
 }
 void HeatingSystem::disableWater() {
 	waterStatus = false;
-	Serial.println("Disable the hot water");
 }
 
 
@@ -285,31 +292,8 @@ bool HeatingSystem::getWaterStatus() {
 	return boiler.getStatus(); // In our system, if the heating is on then the hot water is also on
 };
 
-void HeatingSystem::checkBoosts() {
-	if (heatingBoostActive && ((millis() - startTimeHeatingBoost) >= (boostLengthHeating * 60000))) {
-		boostHeating(false);
-	}
-	else if (waterBoostActive && ((millis() - startTimeWaterBoost) >= (boostLengthWater * 60000))) {
-		boostWater(false);
-	}
-};
+
 
 void HeatingSystem::setTemp(int temp) {
 	requestedTemp = temp;
-}
-
-void HeatingSystem::checkTimer() {
-	timer.checkMidnight();
-	if (timer.getHeatingTimerStatus() && !heatingStatus) {
-		enableHeating();
-	}
-	else if (!timer.getHeatingTimerStatus() && heatingStatus) {
-		disableHeating();
-	}
-	if (timer.getWaterTimerStatus() && !waterStatus) {
-		enableWater();
-	}
-	else if (!timer.getWaterTimerStatus() && waterStatus) {
-		disableWater();
-	}
 }

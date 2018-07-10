@@ -23,6 +23,9 @@ private:
 	const int maxDrift = 1; // Set the maximum number of degrees the temperature can drift before heating is turned on
 	bool updateDisplay = false;
 	byte screen = 0; // 0 = Regular screen. 1 = Timer screen
+	byte heatingMode = 0; // 0 = off, 1 = timer, 2 = on
+	byte waterMode = 0; // 0 = off, 1 = timer, 2 = on
+	byte lastSystemMode = 3; // 0 = Heating and Water ON, 1 = Heating ON and Water OFF, 2 = Heating OFF and Water ON, 3 = Heating and Water OFF
 
 	int requestedTemp = 15;
 	bool heatingStatus = false;
@@ -47,7 +50,7 @@ private:
 	void setWaterOn();
 	void setWaterWithoutHeating();
 	void checkBoosts();
-	void temperatureCheck();
+	bool temperatureCheck();
 	void changeRelayStates();
 	void checkTimer();
 	
