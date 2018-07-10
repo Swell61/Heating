@@ -10,7 +10,7 @@ Display::Display() : ts(TouchScreen(XP, YP, XM, YM, 300)) {
 	tft.fillScreen(0x00000);
 };
 
-void Display::mainDisplay(byte heatingMode, byte waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost) {
+void Display::mainDisplay(int time, byte heatingMode, byte waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost) {
 	tft.fillScreen(0x00000);
 	tft.setTextSize(2);
 	tft.setTextColor(0xFFFFF);
@@ -73,7 +73,7 @@ void Display::mainDisplay(byte heatingMode, byte waterMode, float temp, bool hea
 	tft.setCursor(215, 20);
 	tft.print((String)(heatingStatus ? "ON " : "OFF"));
 	tft.print(" Water - ");
-	tft.setCursor(350, 20);
+	tft.setCursor(360, 20);
 	tft.print((String)(waterStatus ? "ON " : "OFF"));
 
 	tft.fillTriangle(340, 70, 290, 90, 390, 90, 0xFFFFF);
@@ -91,10 +91,16 @@ void Display::mainDisplay(byte heatingMode, byte waterMode, float temp, bool hea
 	tft.setCursor(295, 115);
 	tft.println(requestedTemp);
 	tft.setCursor(30, 210);
-	tft.println("07:00");
+	int minutes;
+	int hours;
+
+	hours = time / 60;
+	minutes = time % 60;
+
+	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
 	
 }
-void Display::displayUpdate(byte heatingMode, byte waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost) {
+void Display::displayUpdate(int time, byte heatingMode, byte waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost) {
 	tft.setTextSize(2);
 	tft.setTextColor(0xFFFFF);
 
@@ -142,12 +148,21 @@ void Display::displayUpdate(byte heatingMode, byte waterMode, float temp, bool h
 
 	tft.setCursor(215, 20);
 	tft.print((heatingStatus ? "ON " : "OFF"));
-	tft.setCursor(350, 20);
+	tft.setCursor(360, 20);
 	tft.print((waterStatus ? "ON " : "OFF"));
 
 	tft.setTextSize(3);
 	tft.setCursor(295, 115);
 	tft.println(requestedTemp);
+	tft.setCursor(30, 210);
+
+	int minutes;
+	int hours;
+
+	hours = time / 60;
+	minutes = time % 60;
+
+	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
 }
 
 byte Display::touchUpdate(byte screen) {
@@ -179,7 +194,7 @@ if (screen == 0) {
 			Serial.println("Down 1 degree");
 			return 2;
 		}
-		else if (tp.x >= 220 && tp.x <= 290 && tp.y >= 700 && tp.y <= 930) {
+		else if (tp.x >= 190 && tp.x <= 290 && tp.y >= 680 && tp.y <= 920) {
 			Serial.println("Switch to timer display");
 			return 5;
 		}
@@ -215,16 +230,18 @@ else if (screen == 1) {
 	else if (tp.x >= 530 && tp.x <= 610 && tp.y >= 540 && tp.y <= 620) {
 		return 10; // Increase heating morning off by 5 minutes
 	}
-	else if (tp.x >= 660 && tp.x <= 775 && tp.y >= 360 && tp.y <= 400) {
+	else if (tp.x >= 375 && tp.x <= 470 && tp.y >= 360 && tp.y <= 400) {
 		return 11; // Decrease heating afternoon on by 5 minutes
 	}
-	else if (tp.x >= 660 && tp.x <= 775 && tp.y >= 540 && tp.y <= 620) {
+	else if (tp.x >= 375 && tp.x <= 470 && tp.y >= 540 && tp.y <= 620) {
+		Serial.println("Increase heating afternoon");
 		return 12; // Increase heating afternoon on by 5 minutes
 	}
-	else if (tp.x >= 530 && tp.x <= 610 && tp.y >= 360 && tp.y <= 400) {
+	else if (tp.x >= 215 && tp.x <= 310 && tp.y >= 360 && tp.y <= 400) {
+		Serial.println("Decrease heating afternoon");
 		return 13; // Decrease heating afternoon off by 5 minutes
 	}
-	else if (tp.x >= 530 && tp.x <= 610 && tp.y >= 540 && tp.y <= 620) {
+	else if (tp.x >= 215 && tp.x <= 310 && tp.y >= 540 && tp.y <= 620) {
 		return 14; // Increase heating afternoon off by 5 minutes
 	}
 
@@ -456,7 +473,6 @@ void Display::editTime(int time) {
 	int minutes;
 	int hours;
 
-
 	hours = time / 60;
 	minutes = time % 60;
 
@@ -464,9 +480,6 @@ void Display::editTime(int time) {
 	tft.setTextColor(0xFFFFF);
 	tft.setTextSize(7);
 	tft.setCursor(95, 100);
-	Serial.println(time);
-	Serial.println(hours);
-	Serial.println(minutes);
 	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
 
 	tft.setTextSize(4);
@@ -495,4 +508,19 @@ void Display::editTime(int time) {
 	tft.setTextColor(0x00000);
 	tft.setCursor(5, 0);
 	tft.println("BACK");
+}
+
+void Display::updateEditTime(int time) {
+	int minutes;
+	int hours;
+
+	hours = time / 60;
+	minutes = time % 60;
+
+	tft.setTextColor(0xFFFFF, 0x00000);
+	tft.setTextSize(7);
+	tft.setCursor(95, 100);
+	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+
+	tft.setTextSize(3);
 }

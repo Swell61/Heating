@@ -5,7 +5,7 @@
 #include "Timer.h"
 
 bool Timer::getHeatingTimerStatus() {
-	int time = (millis() / 60000) - midnight;
+	int time = getTime() + 1;
 	if ((time > heatingOnMorning) && (time < heatingOffMorning)) {
 		return true;
 	}
@@ -19,7 +19,7 @@ bool Timer::getHeatingTimerStatus() {
 }
 
 bool Timer::getWaterTimerStatus() {
-	int time = getTime();
+	int time = getTime() + 1;
 	if ((time > waterOnMorning) && (time < waterOffMorning)) {
 		return true;
 	}

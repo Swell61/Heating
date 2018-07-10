@@ -20,12 +20,13 @@ private:
 	
 public:
 	Display();
-	void mainDisplay(byte, byte, float, bool, bool, float, bool, bool);
+	void mainDisplay(int, byte, byte, float, bool, bool, float, bool, bool);
 	byte touchUpdate(byte);
-	void displayUpdate(byte, byte, float, bool, bool, float, bool, bool);
+	void displayUpdate(int, byte, byte, float, bool, bool, float, bool, bool);
 	void timerDisplay(bool, bool, int, int, int, int, int, int, int, int);
 	void timerUpdate(bool, bool, int, int, int, int, int, int, int, int);
 	void editTime(int);
+	void updateEditTime(int);
 };
 
 #endif

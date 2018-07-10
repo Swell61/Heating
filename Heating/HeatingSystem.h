@@ -16,7 +16,7 @@
 class HeatingSystem {
 private:
 	const byte boostLengthWater = 30;
-	const byte boostLengthHeating = 1;
+	const byte boostLengthHeating = 30;
 	const byte timerTimeInc = 5;
 	int boostTimerHeating = 0;
 	int boostTimerWater = 0;
@@ -26,6 +26,7 @@ private:
 	byte heatingMode = 0; // 0 = off, 1 = timer, 2 = on
 	byte waterMode = 0; // 0 = off, 1 = timer, 2 = on
 	byte lastSystemMode = 3; // 0 = Heating and Water ON, 1 = Heating ON and Water OFF, 2 = Heating OFF and Water ON, 3 = Heating and Water OFF
+	long lastTimeUpdate = 0;
 
 	int requestedTemp = 15;
 	bool heatingStatus = false;

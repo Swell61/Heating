@@ -8,7 +8,7 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 	currentTemp = tempSensor.getTemp();
 	setHeatingOff();
 	setWaterOff();
-	display->mainDisplay(heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+	display->mainDisplay(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
 	
 };
 
@@ -17,14 +17,14 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	if (updateDisplay) {
 		Serial.println(screen);
 		if (screen == 0) {
-			display->displayUpdate(heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+			display->displayUpdate(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
 		}
 		else if (screen == 1) {
 			display->timerUpdate(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
 			Serial.println("Timer display");
 		}
 		else if (screen == 2) {
-			display->editTime(timer.getTime());
+			display->updateEditTime(timer.getTime());
 			Serial.print("Time edit display");
 		}
 		updateDisplay = false;
@@ -67,7 +67,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	else if (touchOption == 6) { // Go to main display
 		updateDisplay = true;
 		screen = 0;
-		display->mainDisplay(heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+		display->mainDisplay(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
 	}
 	else if (touchOption == 7) {
 		if (timer.setHeatingOnMorning(timer.getHeatingOnMorning() - timerTimeInc)) {
@@ -176,6 +176,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	else if (touchOption == 27) {
 		screen = 2; // Change to edit time screen
 		Serial.print("Changing screen number");
+		display->editTime(timer.getTime());
 		updateDisplay = true;
 	}
 	else if (touchOption == 28) {
@@ -232,6 +233,11 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	checkBoosts(); // Run through the boost timers, checking if they need altering
 
 	changeRelayStates();
+
+	if ((millis() - lastTimeUpdate) >= 60000) {
+		updateDisplay = true;
+		lastTimeUpdate = millis();
+	}
 };
 
 void HeatingSystem::checkBoosts() { // Boosts have priority over everything
