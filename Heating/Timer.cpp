@@ -5,49 +5,49 @@
 #include "Timer.h"
 
 bool Timer::getHeatingTimerStatus() {
-	if (!heatingTimerState) {
-		return false;
-	}
-	else if ((millis() - midnight) > heatingOnMorning) {
+	int time = (millis() / 60000) - midnight;
+	if ((time > heatingOnMorning) && (time < heatingOffMorning)) {
 		return true;
 	}
-	else if ((millis() - midnight) > heatingOffMorning) {
-		return false;
-	}
-	else if ((millis() - midnight) > heatingOnAfternoon) {
+	
+	else if ((time > heatingOnAfternoon) && (time < heatingOffAfternoon)) {
 		return true;
 	}
-	else if ((millis() - midnight) > heatingOffAfternoon) {
+	else {
 		return false;
 	}
 }
 
 bool Timer::getWaterTimerStatus() {
-	if (!waterTimerState) {
-		return false;
-	}
-	else if ((millis() - midnight) > waterOnMorning) {
+	int time = getTime();
+	if ((time > waterOnMorning) && (time < waterOffMorning)) {
 		return true;
 	}
-	else if ((millis() - midnight) > waterOffMorning) {
-		return false;
-	}
-	else if ((millis() - midnight) > waterOnAfternoon) {
+	
+	else if (((time) > waterOnAfternoon) && (time < waterOffAfternoon)) {
 		return true;
+
 	}
-	else if ((millis() - midnight) > waterOffAfternoon) {
+	else {
 		return false;
 	}
 }
 
-void Timer::setTime(int time) {
-	midnight = millis() - time;
+bool Timer::setMidnight(int time) {
+	Serial.println(time);
+	if ((millis() / 60000) - time <= 1440) {
+		Serial.println(midnight);
+		midnight = time;
+		Serial.println(midnight);
+		return true;
+	}
+	
 }
 
 void Timer::checkMidnight() {
-	if ((millis() - midnight) > 1439) {
-		midnight = millis();
-	}
+	/*if (((millis() / 60000) - midnight) >= 1440) {
+		midnight = millis() / 60000;
+	}*/
 }
 
 int Timer::getHeatingOnMorning() {
@@ -137,4 +137,12 @@ void Timer::setHeatingTimerState(bool state) {
 }
 void Timer::setWaterTimerState(bool state) {
 	waterTimerState = state;
+}
+
+int Timer::getMidnight() {
+	return midnight;
+}
+
+int Timer::getTime() {
+	return (millis() / 60000) - midnight;
 }

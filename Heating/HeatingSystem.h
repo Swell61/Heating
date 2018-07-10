@@ -22,7 +22,7 @@ private:
 	int boostTimerWater = 0;
 	const int maxDrift = 1; // Set the maximum number of degrees the temperature can drift before heating is turned on
 	bool updateDisplay = false;
-	byte screen = 0; // 0 = Regular screen. 1 = Timer screen
+	byte screen = 0; // 0 = Regular screen. 1 = Timer screen. 2 = Time change screen
 	byte heatingMode = 0; // 0 = off, 1 = timer, 2 = on
 	byte waterMode = 0; // 0 = off, 1 = timer, 2 = on
 	byte lastSystemMode = 3; // 0 = Heating and Water ON, 1 = Heating ON and Water OFF, 2 = Heating OFF and Water ON, 3 = Heating and Water OFF

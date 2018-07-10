@@ -55,6 +55,8 @@ void Display::mainDisplay(byte heatingMode, byte waterMode, float temp, bool hea
 		tft.println("ON");
 	}
 
+	
+
 	tft.setCursor(0, 80);
 	tft.println("HEATING:");
 	tft.setCursor(0, 155);
@@ -77,14 +79,20 @@ void Display::mainDisplay(byte heatingMode, byte waterMode, float temp, bool hea
 	tft.fillTriangle(340, 70, 290, 90, 390, 90, 0xFFFFF);
 	tft.fillTriangle(340, 185, 290, 165, 390, 165, 0xFFFFF);
 
-	tft.fillRect(150, 205, 100, 30, 0xFFFFF);
+	tft.fillRect(290, 205, 100, 30, 0xFFFFF);
 	tft.setTextColor(0x00000);
-	tft.setCursor(170, 213);
+	tft.setCursor(310, 213);
 	tft.println("TIMER");
+
+	tft.setTextColor(0xFFFFF);
+	
 
 	tft.setTextSize(3);
 	tft.setCursor(295, 115);
 	tft.println(requestedTemp);
+	tft.setCursor(30, 210);
+	tft.println("07:00");
+	
 }
 void Display::displayUpdate(byte heatingMode, byte waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost) {
 	tft.setTextSize(2);
@@ -171,7 +179,7 @@ if (screen == 0) {
 			Serial.println("Down 1 degree");
 			return 2;
 		}
-		else if (tp.x >= 220 && tp.x <= 290 && tp.y >= 400 && tp.y <= 630) {
+		else if (tp.x >= 220 && tp.x <= 290 && tp.y >= 700 && tp.y <= 930) {
 			Serial.println("Switch to timer display");
 			return 5;
 		}
@@ -184,6 +192,10 @@ if (screen == 0) {
 			// Mode change
 			Serial.println("Change water mode");
 			return 26; // Change water mode
+		}
+		else if (tp.x >= 190 && tp.x <= 250 && tp.y >= 200 && tp.y <= 350) {
+			Serial.println("Changing time");
+			return 27;
 		}
 	}
 }
@@ -240,12 +252,35 @@ else if (screen == 1) {
 	else if (tp.x >= 215 && tp.x <= 310 && tp.y >= 850 && tp.y <= 910) {
 		return 22; // Increase water afternoon off by 5 minutes
 	}
-	else if (tp.x >= 780 && tp.x <= 890 && tp.y >= 400 && tp.y <= 550) {
-		Serial.print("Heating timer pressed");
-		return 23; // Toggle heating timer
+	
+}
+else if (screen == 2) {
+	if (tp.x >= 820 && tp.x <= 890 && tp.y >= 200 && tp.y <= 320) {
+		return 6;
 	}
-	else if (tp.x >= 780 && tp.x <= 890 && tp.y >= 700 && tp.y <= 870) {
-		return 24; // Toggle water timer
+	if (tp.x >= 715 && tp.x <= 800 && tp.y >= 320 && tp.y <= 380) {
+		return 28; // Increase 10 hours
+	}
+	if (tp.x >= 240 && tp.x <= 340 && tp.y >= 320 && tp.y <= 380) {
+		return 29; // Decrease 10 hours
+	}
+	if (tp.x >= 715 && tp.x <= 800 && tp.y >= 400 && tp.y <= 480) {
+		return 30; // Increase 1 hour
+	}
+	if (tp.x >= 240 && tp.x <= 340 && tp.y >= 400 && tp.y <= 480) {
+		return 31; // Decrease 1 hour
+	}
+	if (tp.x >= 715 && tp.x <= 800 && tp.y >= 570 && tp.y <= 645) {
+		return 32; // Increase 10 minutes
+	}
+	if (tp.x >= 240 && tp.x <= 340 && tp.y >= 570 && tp.y <= 645) {
+		return 33; // Decrease 10 minutes
+	}
+	if (tp.x >= 715 && tp.x <= 800 && tp.y >= 665 && tp.y <= 735) {
+		return 34; // Increase 1 minute
+	}
+	if (tp.x >= 240 && tp.x <= 340 && tp.y >= 665 && tp.y <= 735) {
+		return 35; // Decrease 1 minute
 	}
 }
 return 0;
@@ -415,4 +450,49 @@ void Display::timerUpdate(bool heatingTimerStatus, bool waterTimerStatus, int he
 	hours = (waterOffAfternoon / 60);
 	minutes = (waterOffAfternoon % 60);
 	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+}
+
+void Display::editTime(int time) {
+	int minutes;
+	int hours;
+
+
+	hours = time / 60;
+	minutes = time % 60;
+
+	tft.fillScreen(0x00000);
+	tft.setTextColor(0xFFFFF);
+	tft.setTextSize(7);
+	tft.setCursor(95, 100);
+	Serial.println(time);
+	Serial.println(hours);
+	Serial.println(minutes);
+	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+
+	tft.setTextSize(4);
+
+	tft.setCursor(100, 30);
+	tft.print("+");
+	tft.setCursor(145, 30);
+	tft.print("+");
+	tft.setCursor(227, 30);
+	tft.print("+"); 
+	tft.setCursor(272, 30);
+	tft.print("+");
+
+	tft.setCursor(100, 185);
+	tft.print("-");
+	tft.setCursor(145, 185);
+	tft.print("-");
+	tft.setCursor(227, 185);
+	tft.print("-");
+	tft.setCursor(272, 185);
+	tft.print("-");
+
+	tft.setTextSize(3);
+
+	tft.fillRect(0, 0, 80, 20, 0xFFFFF);
+	tft.setTextColor(0x00000);
+	tft.setCursor(5, 0);
+	tft.println("BACK");
 }

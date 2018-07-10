@@ -20,8 +20,12 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 			display->displayUpdate(heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
 		}
 		else if (screen == 1) {
-			display->timerUpdate(timer.getHeatingTimerStatus(), timer.getWaterTimerStatus(), timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
+			display->timerUpdate(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
 			Serial.println("Timer display");
+		}
+		else if (screen == 2) {
+			display->editTime(timer.getTime());
+			Serial.print("Time edit display");
 		}
 		updateDisplay = false;
 		Serial.println("Display updated" + String(millis()));
@@ -58,7 +62,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	else if (touchOption == 5) { // Go to timer display
 		updateDisplay = true;
 		screen = 1;
-		display->timerDisplay(timer.getHeatingTimerStatus(), timer.getWaterTimerStatus(), timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
+		display->timerDisplay(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
 	}
 	else if (touchOption == 6) { // Go to main display
 		updateDisplay = true;
@@ -169,6 +173,62 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 		}
 		updateDisplay = true;
 	}
+	else if (touchOption == 27) {
+		screen = 2; // Change to edit time screen
+		Serial.print("Changing screen number");
+		updateDisplay = true;
+	}
+	else if (touchOption == 28) {
+		
+		if (timer.setMidnight(timer.getMidnight() - 600)) { // Increase current time by 10 hours
+			Serial.println("Increasing by 10 hours");
+			updateDisplay = true;
+		}
+	}
+	else if (touchOption == 29) {
+		Serial.println("Decreasing by 10 hours");
+		if (timer.setMidnight(timer.getMidnight() + 600)) { // Decrease current time by 10 hours
+			updateDisplay = true;
+		}
+	}
+	else if (touchOption == 30) {
+		Serial.println("Increasing by 1 hour");
+		if (timer.setMidnight(timer.getMidnight() - 60)) { // Increase current time by 1 hour
+			updateDisplay = true;
+		}
+	}
+	else if (touchOption == 31) {
+		Serial.println("Decreasing by 1 hour");
+		if (timer.setMidnight(timer.getMidnight() + 60)) { // Decrease current time by 1 hour
+			updateDisplay = true;
+		}
+	}
+	else if (touchOption == 32) {
+		Serial.println("Increasing by 10 minutes");
+		if (timer.setMidnight(timer.getMidnight() - 10)) { // Increase current time by 10 minutes
+			updateDisplay = true;
+		}
+	}
+	else if (touchOption == 33) {
+		Serial.println("Decreasing by 10 minutes");
+		if (timer.setMidnight(timer.getMidnight() + 10)) { // Decrease current time by 10 hours
+			updateDisplay = true;
+		}
+	}
+	else if (touchOption == 34) {
+		
+		if (timer.setMidnight(timer.getMidnight() - 1)) { // Increase current time by 1 minute
+			updateDisplay = true;
+			Serial.println("Increasing by 1 minute");
+		}
+	}
+	else if (touchOption == 35) {
+		
+		if (timer.setMidnight(timer.getMidnight() + 1)) { // Decrease current time by 1 minute
+			updateDisplay = true;
+			Serial.println("Decreasing by 1 minute");
+		}
+	}
 	checkBoosts(); // Run through the boost timers, checking if they need altering
 
 	changeRelayStates();
@@ -207,23 +267,28 @@ void HeatingSystem::changeRelayStates() {
 		disableWater();
 	}
 
+
 	if ((lastSystemMode != 0) && heatingStatus && waterStatus) {
 		setHeatingOn();
 		setWaterOn();
 		lastSystemMode = 0;
+		updateDisplay = true;
 	}
 	else if ((lastSystemMode != 1) && heatingStatus && !waterStatus) {
 		setHeatingOn();
 		lastSystemMode = 1;
+		updateDisplay = true;
 	}
 	else if ((lastSystemMode != 2) && !heatingStatus && waterStatus) {
 		setWaterWithoutHeating();
 		lastSystemMode = 2;
+		updateDisplay = true;
 	}
 	else if ((lastSystemMode != 3) && !heatingStatus && !waterStatus) {
 		setHeatingOff();
 		setWaterOff();
 		lastSystemMode = 3;
+		updateDisplay = true;
 	}
 
 }

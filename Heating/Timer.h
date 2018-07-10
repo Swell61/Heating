@@ -12,7 +12,7 @@
 class Timer {
 private:
 	
-	int midnight;
+	int midnight = 0;
 
 	bool heatingTimerState = false;
 	bool waterTimerState = false;
@@ -27,7 +27,7 @@ private:
 	int waterOnAfternoon = 1200;
 	int waterOffAfternoon = 1320;
 
-	void setTime(int);
+	
 
 public:
 	void setHeatingTimerState(bool);
@@ -35,8 +35,9 @@ public:
 
 	bool getHeatingTimerStatus();
 	bool getWaterTimerStatus();
+	int getMidnight();
 	void checkMidnight();
-
+	bool setMidnight(int);
 	int getHeatingOnMorning();
 	int getHeatingOffMorning();
 	int getHeatingOnAfternoon();
@@ -54,6 +55,8 @@ public:
 	bool setWaterOffMorning(int);
 	bool setWaterOnAfternoon(int);
 	bool setWaterOffAfternoon(int);
+
+	int getTime();
 };
 
 #endif

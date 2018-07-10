@@ -25,6 +25,7 @@ public:
 	void displayUpdate(byte, byte, float, bool, bool, float, bool, bool);
 	void timerDisplay(bool, bool, int, int, int, int, int, int, int, int);
 	void timerUpdate(bool, bool, int, int, int, int, int, int, int, int);
+	void editTime(int);
 };
 
 #endif
