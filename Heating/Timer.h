@@ -30,15 +30,8 @@ private:
 	void setTime(int);
 
 public:
-	void heatingMorningOn();
-	void heatingMorningOff();
-	void heatingAfternoonOn();
-	void heatingAfternoonOff();
-
-	void waterMorningOn();
-	void waterMorningOff();
-	void waterAfternoonOn();
-	void waterAfternoonOff();
+	void setHeatingTimerState(bool);
+	void setWaterTimerState(bool);
 
 	bool getHeatingTimerStatus();
 	bool getWaterTimerStatus();
@@ -52,6 +45,15 @@ public:
 	int getWaterOffMorning();
 	int getWaterOnAfternoon();
 	int getWaterOffAfternoon();
+
+	bool setHeatingOnMorning(int);
+	bool setHeatingOffMorning(int);
+	bool setHeatingOnAfternoon(int);
+	bool setHeatingOffAfternoon(int);
+	bool setWaterOnMorning(int);
+	bool setWaterOffMorning(int);
+	bool setWaterOnAfternoon(int);
+	bool setWaterOffAfternoon(int);
 };
 
 #endif

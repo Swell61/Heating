@@ -17,6 +17,7 @@ class HeatingSystem {
 private:
 	const byte boostLengthWater = 30;
 	const byte boostLengthHeating = 1;
+	const byte timerTimeInc = 5;
 	int boostTimerHeating = 0;
 	int boostTimerWater = 0;
 	const int maxDrift = 1; // Set the maximum number of degrees the temperature can drift before heating is turned on

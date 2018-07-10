@@ -17,7 +17,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 			display->displayUpdate(tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
 		}
 		else if (screen == 1) {
-			display->timerDisplay(timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
+			display->timerUpdate(timer.getHeatingTimerStatus(), timer.getWaterTimerStatus(), timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
 			Serial.println("Timer display");
 		}
 		updateDisplay = false;
@@ -55,12 +55,99 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	else if (touchOption == 5) { // Go to timer display
 		updateDisplay = true;
 		screen = 1;
-		Serial.println("Touch option 5");
+		display->timerDisplay(timer.getHeatingTimerStatus(), timer.getWaterTimerStatus(), timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
 	}
 	else if (touchOption == 6) { // Go to main display
 		updateDisplay = true;
 		screen = 0;
 		display->mainDisplay(tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+	}
+	else if (touchOption == 7) {
+		if (timer.setHeatingOnMorning(timer.getHeatingOnMorning() - timerTimeInc)) {
+			updateDisplay = true;
+		}
+	}
+	else if (touchOption == 8) {
+		if (timer.setHeatingOnMorning(timer.getHeatingOnMorning() + timerTimeInc)) {
+			updateDisplay = true;
+		}
+	}
+	else if (touchOption == 9) {
+		if (timer.setHeatingOffMorning(timer.getHeatingOffMorning() - timerTimeInc)) {
+			updateDisplay = true;
+		}
+	}
+	else if (touchOption == 10) {
+		if (timer.setHeatingOffMorning(timer.getHeatingOffMorning() + timerTimeInc)) {
+			updateDisplay = true;
+		}
+	}
+	else if (touchOption == 11) {
+		if (timer.setHeatingOnAfternoon(timer.getHeatingOnAfternoon() - timerTimeInc)) {
+			updateDisplay = true;
+		}
+	}
+	else if (touchOption == 12) {
+		if (timer.setHeatingOnAfternoon(timer.getHeatingOnAfternoon() + timerTimeInc)) {
+			updateDisplay = true;
+		}
+	}
+	else if (touchOption == 13) {
+		if (timer.setHeatingOffAfternoon(timer.getHeatingOffAfternoon() - timerTimeInc)) {
+			updateDisplay = true;
+		}
+	}
+	else if (touchOption == 14) {
+		if (timer.setHeatingOffAfternoon(timer.getHeatingOffAfternoon() + timerTimeInc)) {
+			updateDisplay = true;
+		}
+	}
+	else if (touchOption == 15) {
+		if (timer.setWaterOnMorning(timer.getWaterOnMorning() - timerTimeInc)) {
+			updateDisplay = true;
+		}
+	}
+	else if (touchOption == 16) {
+		if (timer.setWaterOnMorning(timer.getWaterOnMorning() + timerTimeInc)) {
+			updateDisplay = true;
+		}
+	}
+	else if (touchOption == 17) {
+		if (timer.setWaterOffMorning(timer.getWaterOffMorning() - timerTimeInc)) {
+			updateDisplay = true;
+		}
+	}
+	else if (touchOption == 18) {
+		if (timer.setWaterOffMorning(timer.getWaterOffMorning() + timerTimeInc)) {
+			updateDisplay = true;
+		}
+	}
+	else if (touchOption == 19) {
+		if (timer.setWaterOnAfternoon(timer.getWaterOnAfternoon() - timerTimeInc)) {
+			updateDisplay = true;
+		}
+	}
+	else if (touchOption == 20) {
+		if (timer.setWaterOnAfternoon(timer.getWaterOnAfternoon() + timerTimeInc)) {
+			updateDisplay = true;
+		}
+	}
+	else if (touchOption == 21) {
+		if (timer.setWaterOffAfternoon(timer.getWaterOffAfternoon() - timerTimeInc)) {
+			updateDisplay = true;
+		}
+	}
+	else if (touchOption == 22) {
+		if (timer.setWaterOffAfternoon(timer.getWaterOffAfternoon() + timerTimeInc)) {
+			updateDisplay = true;
+		}
+	}
+	else if (touchOption == 23) {
+		timer.setHeatingTimerState(!timer.getHeatingTimerStatus());
+		Serial.print("Heating timer change state");
+	}
+	else if (touchOption == 24) {
+		timer.setWaterTimerState(!timer.getWaterTimerStatus());
 	}
 	temperatureCheck();
 	

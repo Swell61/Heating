@@ -110,11 +110,70 @@ else if (screen == 1) {
 	if (tp.x >= 820 && tp.x <= 890 && tp.y >= 200 && tp.y <= 320) {
 		return 6;
 	}
+	else if (tp.x >= 660 && tp.x <= 775 && tp.y >= 360 && tp.y <= 400) {
+		return 7; // Decrease heating morning on by 5 minutes
+	}
+	else if (tp.x >= 660 && tp.x <= 775 && tp.y >= 540 && tp.y <= 620) {
+		return 8; // Increase heating morning on by 5 minutes
+	}
+	else if (tp.x >= 530 && tp.x <= 610 && tp.y >= 360 && tp.y <= 400) {
+		return 9; // Decrease heating morning off by 5 minutes
+	}
+	else if (tp.x >= 530 && tp.x <= 610 && tp.y >= 540 && tp.y <= 620) {
+		return 10; // Increase heating morning off by 5 minutes
+	}
+	else if (tp.x >= 660 && tp.x <= 775 && tp.y >= 360 && tp.y <= 400) {
+		return 11; // Decrease heating afternoon on by 5 minutes
+	}
+	else if (tp.x >= 660 && tp.x <= 775 && tp.y >= 540 && tp.y <= 620) {
+		return 12; // Increase heating afternoon on by 5 minutes
+	}
+	else if (tp.x >= 530 && tp.x <= 610 && tp.y >= 360 && tp.y <= 400) {
+		return 13; // Decrease heating afternoon off by 5 minutes
+	}
+	else if (tp.x >= 530 && tp.x <= 610 && tp.y >= 540 && tp.y <= 620) {
+		return 14; // Increase heating afternoon off by 5 minutes
+	}
+
+	else if (tp.x >= 685 && tp.x <= 778 && tp.y >= 650 && tp.y <= 730) {
+		return 15; // Decrease water morning on by 5 minutes
+	}
+	else if (tp.x >= 685 && tp.x <= 778 && tp.y >= 850 && tp.y <= 910) {
+		return 16; // Increase water morning on by 5 minutes
+	}
+	else if (tp.x >= 515 && tp.x <= 620 && tp.y >= 650 && tp.y <= 730) {
+		return 17; // Decrease water morning off by 5 minutes
+	}
+	else if (tp.x >= 515 && tp.x <= 620 && tp.y >= 850 && tp.y <= 910) {
+		return 18; // Increase water morning off by 5 minutes
+	}
+	else if (tp.x >= 375 && tp.x <= 470 && tp.y >= 650 && tp.y <= 730) {
+		return 19; // Decrease water afternoon on by 5 minutes
+	}
+	else if (tp.x >= 375 && tp.x <= 470 && tp.y >= 850 && tp.y <= 910) {
+		return 20; // Increase water afternoon on by 5 minutes
+	}
+	else if (tp.x >= 215 && tp.x <= 310 && tp.y >= 650 && tp.y <= 730) {
+		return 21; // Decrease water afternoon off by 5 minutes
+	}
+	else if (tp.x >= 215 && tp.x <= 310 && tp.y >= 850 && tp.y <= 910) {
+		return 22; // Increase water afternoon off by 5 minutes
+	}
+	else if (tp.x >= 780 && tp.x <= 890 && tp.y >= 400 && tp.y <= 550) {
+		Serial.print("Heating timer pressed");
+		return 23; // Toggle heating timer
+	}
+	else if (tp.x >= 780 && tp.x <= 890 && tp.y >= 700 && tp.y <= 870) {
+		return 24; // Toggle water timer
+	}
 }
 return 0;
 }
 
-void Display::timerDisplay(int heatingOnMorning, int heatingOffMorning, int heatingOnAfternoon, int heatingOffAfternoot, int waterOnMorning, int waterOffMorning, int waterOnAfternoon, int waterOffAfternoon) {
+void Display::timerDisplay(bool heatingTimerStatus, bool waterTimerStatus, int heatingOnMorning, int heatingOffMorning, int heatingOnAfternoon, int heatingOffAfternoon, int waterOnMorning, int waterOffMorning, int waterOnAfternoon, int waterOffAfternoon) {
+	int minutes;
+	int hours;
+	
 	tft.fillScreen(0x00000);
 	tft.setTextSize(3);
 	
@@ -123,19 +182,83 @@ void Display::timerDisplay(int heatingOnMorning, int heatingOffMorning, int heat
 	tft.setCursor(5, 0);
 	tft.println("BACK");
 
+	tft.fillRect(145, 5, 56, 25, heatingTimerStatus ? 0x7CFC0 : 0xFF000);
+	tft.fillRect(295, 5, 68, 25, waterTimerStatus ? 0x7CFC0 : 0xFF000);
 	tft.setTextSize(2);
 	tft.setTextColor(0xFFFFF);
 	tft.setCursor(150, 10);
 	tft.println("HEAT");
-	tft.setCursor(285, 10);
+	tft.setCursor(300, 10);
 	tft.println("WATER");
 
-	tft.setCursor(150, 50);
-	tft.println(heatingOnMorning);
+	// Print morning on for heating
+	tft.setCursor(145, 50);
+	hours = (heatingOnMorning / 60);
+	minutes = (heatingOnMorning % 60);
+	tft.println(((hours <= 9) ? "0" : "") + (String)(hours) + ":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+
+	// Print morning off for heating
+	tft.setCursor(145, 100);
+	hours = (heatingOffMorning / 60);
+	minutes = (heatingOffMorning % 60);
+	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+ ":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+
+	// Print afternoon on for heating
+	tft.setCursor(145, 150);
+	hours = (heatingOnAfternoon / 60);
+	minutes = (heatingOnAfternoon % 60);
+	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+ ":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+
+	// Print afternoon off for heating
+	tft.setCursor(145, 200);
+	hours = (heatingOffAfternoon / 60);
+	minutes = (heatingOffAfternoon % 60);
+	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+ ":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
 
 
-	
-	tft.setTextSize(1.5);
+	// Print morning on for water
+	tft.setCursor(300, 50);
+	hours = (waterOnMorning / 60);
+	minutes = (waterOnMorning % 60);
+	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+ ":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+
+	// Print morning off for water
+	tft.setCursor(300, 100);
+	hours = (waterOffMorning / 60);
+	minutes = (waterOffMorning % 60);
+	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+ ":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+
+	// Print afternoon on for water
+	tft.setCursor(300, 150);
+	hours = (waterOnAfternoon / 60);
+	minutes = (waterOnAfternoon % 60);
+	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+ ":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+
+	// Print afternoon off for water
+	tft.setCursor(300, 200);
+	hours = (waterOffAfternoon / 60);
+	minutes = (waterOffAfternoon % 60);
+	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+ ":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+
+	int y = 50;
+	for (int count = 0; count <= 3; count++) {
+		tft.setCursor(120, y);
+		tft.print("-");
+		tft.setCursor(215, y);
+		tft.print("+");
+		y = y + 50;
+	}
+
+	y = 50;
+	for (int count = 0; count <= 3; count++) {
+		tft.setCursor(275, y);
+		tft.print("-");
+		tft.setCursor(370, y);
+		tft.print("+");
+		y = y + 50;
+	}
+
+	tft.setTextSize(1);
 	tft.setCursor(0, 50);
 	tft.println("Morning on:");
 	tft.setCursor(0, 100);
@@ -144,4 +267,71 @@ void Display::timerDisplay(int heatingOnMorning, int heatingOffMorning, int heat
 	tft.println("Afternoon on:");
 	tft.setCursor(0, 200);
 	tft.println("Afternoon off:");
+}
+
+void Display::timerUpdate(bool heatingTimerStatus, bool waterTimerStatus, int heatingOnMorning, int heatingOffMorning, int heatingOnAfternoon, int heatingOffAfternoon, int waterOnMorning, int waterOffMorning, int waterOnAfternoon, int waterOffAfternoon) {
+	int minutes;
+	int hours;
+
+	tft.setTextSize(3);
+
+	tft.fillRect(145, 5, 56, 25, heatingTimerStatus ? 0x7CFC0 : 0xFF000);
+	tft.fillRect(295, 5, 68, 25, waterTimerStatus ? 0x7CFC0 : 0xFF000);
+	tft.setTextSize(2);
+	tft.setTextColor(0xFFFFF);
+	tft.setCursor(150, 10);
+	tft.println("HEAT");
+	tft.setCursor(300, 10);
+	tft.println("WATER");
+
+	tft.setTextSize(2);
+	tft.setTextColor(0xFFFFF, 0x00000);
+	// Print morning on for heating
+	tft.setCursor(145, 50);
+	hours = (heatingOnMorning / 60);
+	minutes = (heatingOnMorning % 60);
+	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+
+	// Print morning off for heating
+	tft.setCursor(145, 100);
+	hours = (heatingOffMorning / 60);
+	minutes = (heatingOffMorning % 60);
+	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+
+	// Print afternoon on for heating
+	tft.setCursor(145, 150);
+	hours = (heatingOnAfternoon / 60);
+	minutes = (heatingOnAfternoon % 60);
+	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+
+	// Print afternoon off for heating
+	tft.setCursor(145, 200);
+	hours = (heatingOffAfternoon / 60);
+	minutes = (heatingOffAfternoon % 60);
+	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+
+
+	// Print morning on for water
+	tft.setCursor(300, 50);
+	hours = (waterOnMorning / 60);
+	minutes = (waterOnMorning % 60);
+	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+
+	// Print morning off for water
+	tft.setCursor(300, 100);
+	hours = (waterOffMorning / 60);
+	minutes = (waterOffMorning % 60);
+	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+
+	// Print afternoon on for water
+	tft.setCursor(300, 150);
+	hours = (waterOnAfternoon / 60);
+	minutes = (waterOnAfternoon % 60);
+	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+
+	// Print afternoon off for water
+	tft.setCursor(300, 200);
+	hours = (waterOffAfternoon / 60);
+	minutes = (waterOffAfternoon % 60);
+	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
 }

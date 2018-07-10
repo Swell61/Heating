@@ -23,7 +23,8 @@ public:
 	void mainDisplay(float, bool, bool, float, bool, bool);
 	byte touchUpdate(byte);
 	void displayUpdate(float, bool, bool, float, bool, bool);
-	void timerDisplay(int, int, int, int, int, int, int, int);
+	void timerDisplay(bool, bool, int, int, int, int, int, int, int, int);
+	void timerUpdate(bool, bool, int, int, int, int, int, int, int, int);
 };
 
 #endif

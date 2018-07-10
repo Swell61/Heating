@@ -74,3 +74,67 @@ int Timer::getWaterOnAfternoon() {
 int Timer::getWaterOffAfternoon() {
 	return waterOffAfternoon;
 }
+
+bool Timer::setHeatingOnMorning(int time) {
+	if (time < heatingOffMorning && time > 0) {
+		heatingOnMorning = time;
+		return true;
+	}
+	return false;
+}
+bool Timer::setHeatingOffMorning(int time) {
+	if (time < 720 && time > heatingOnMorning) {
+		heatingOffMorning = time;
+		return true;
+	}
+	return false;
+}
+bool Timer::setHeatingOnAfternoon(int time) {
+	if (time < heatingOffAfternoon && time > 720) {
+		heatingOnAfternoon = time;
+		return true;
+	}
+	return false;
+}
+bool Timer::setHeatingOffAfternoon(int time) {
+	if (time < 1440 && time > heatingOnAfternoon) {
+		heatingOffAfternoon = time;
+		return true;
+	}
+	return false;
+}
+bool Timer::setWaterOnMorning(int time) {
+	if (time < waterOffMorning && time > 0) {
+		waterOnMorning = time;
+		return true;
+	}
+	return false;
+}
+bool Timer::setWaterOffMorning(int time) {
+	if (time < 720 && time > waterOnMorning) {
+		waterOffMorning = time;
+		return true;
+	}
+	return false;
+}
+bool Timer::setWaterOnAfternoon(int time) {
+	if (time < waterOffAfternoon && time > 720) {
+		waterOnAfternoon = time;
+		return true;
+	}
+	return false;
+}
+bool Timer::setWaterOffAfternoon(int time) {
+	if (time < 1440 && time > waterOnAfternoon) {
+		waterOffAfternoon = time;
+		return true;
+	}
+	return false;
+}
+
+void Timer::setHeatingTimerState(bool state) {
+	heatingTimerState = state;
+}
+void Timer::setWaterTimerState(bool state) {
+	waterTimerState = state;
+}
