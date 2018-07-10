@@ -52,7 +52,6 @@ private:
 	void checkBoosts();
 	bool temperatureCheck();
 	void changeRelayStates();
-	void checkTimer();
 	
 public:
 	HeatingSystem(int, int, int);

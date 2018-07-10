@@ -20,9 +20,9 @@ private:
 	
 public:
 	Display();
-	void mainDisplay(float, bool, bool, float, bool, bool);
+	void mainDisplay(byte, byte, float, bool, bool, float, bool, bool);
 	byte touchUpdate(byte);
-	void displayUpdate(float, bool, bool, float, bool, bool);
+	void displayUpdate(byte, byte, float, bool, bool, float, bool, bool);
 	void timerDisplay(bool, bool, int, int, int, int, int, int, int, int);
 	void timerUpdate(bool, bool, int, int, int, int, int, int, int, int);
 };
