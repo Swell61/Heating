@@ -34,9 +34,14 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	};
 	remoteOption = remote.processRemoteInput();
 	touchOption = display->touchUpdate(screen);
-	if (touchOption == 0) {
+	if (remoteOption == -1) {
+		remote.processRemoteOutput(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+		remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
+	}
+	else if (touchOption == 0) {
 		touchOption = remoteOption;
 	}
+	
 	if (touchOption == 1) { // User requested temperature up one degree
 		requestedTemp++; // Increase the requested temperature up by one
 		updateDisplay = true; // The display needs updating

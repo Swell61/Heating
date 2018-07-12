@@ -92,7 +92,7 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 			}
 		}
 	}
-	return 0;
+	return -1;
 }
 
 void WebInterface::webServerStack_ProcessMsgOut(String output) {
