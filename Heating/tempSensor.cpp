@@ -13,4 +13,5 @@ float TempSensor::getTemp() const{
 	float temp = sensor.temp();
 	sensor.shutdown(true);
 	return temp;
+
 };
