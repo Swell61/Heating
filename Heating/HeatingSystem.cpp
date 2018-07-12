@@ -43,12 +43,16 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	}
 	
 	if (touchOption == 1) { // User requested temperature up one degree
-		requestedTemp++; // Increase the requested temperature up by one
-		updateDisplay = true; // The display needs updating
+		if (requestedTemp < 25) {
+			requestedTemp++; // Increase the requested temperature up by one
+			updateDisplay = true; // The display needs updating
+		}
 	}
 	else if (touchOption == 2) { // User requested temperature down one degree
-		requestedTemp--; // Decrease the requested temperature down by one
-		updateDisplay = true; // The display needs updating
+		if (requestedTemp > 10) {
+			requestedTemp--; // Decrease the requested temperature down by one
+			updateDisplay = true; // The display needs updating
+		}
 	}
 	else if (touchOption == 3 && !heatingBoostActive) { // User wants to turn the heating boost on
 		updateDisplay = true; // Display needs updating
