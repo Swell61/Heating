@@ -19,13 +19,15 @@ WebInterface::WebInterface() {
 	server.begin();
 }
 
-void WebInterface::processRemoteOutput(bool refreshOutput) {
-	
-	if (refreshOutput) {
-		webServerStack_ProcessMsgOut();
-	}
-	
+void WebInterface::processRemoteOutput(int time, byte heatingMode, byte waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost) {
+	String output = "0:" + (String)time + ":" + (String)heatingMode + ":" + (String)waterMode + ":" + (String)temp + ":" + (String)heatingStatus + ":" + (String)waterStatus + ":" + (String)requestedTemp + ":" + (String)heatingBoost + ":" + (String)waterBoost;
+	webServerStack_ProcessMsgOut(output);
 }
+void WebInterface::processRemoteOutput(bool heatingTimerStatus, bool waterTimerStatus, int heatingOnMorning, int heatingOffMorning, int heatingOnAfternoon, int heatingOffAfternoon, int waterOnMorning, int waterOffMorning, int waterOnAfternoon, int waterOffAfternoon) {
+	String output = "1:" + (String)heatingTimerStatus + ":" + (String)waterTimerStatus + ":" + (String)heatingOnMorning + ":" + (String)heatingOffMorning + ":" + (String)heatingOnAfternoon + ":" + (String)heatingOffAfternoon + ":" + (String)waterOnMorning + ":" + (String)waterOffMorning + ":" + (String)waterOnAfternoon + ":" + (String)waterOffAfternoon;
+	webServerStack_ProcessMsgOut(output);
+}
+
 int WebInterface::processRemoteInput() {
 	if (server.available()) {
 		return webServerStack_ProcessMsgIn();
@@ -93,14 +95,12 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 	return 0;
 }
 
-void WebInterface::webServerStack_ProcessMsgOut() {
+void WebInterface::webServerStack_ProcessMsgOut(String output) {
 	for (int i = 0; i < MAX_CLIENT_NUM; i++) { // Loop through each client connected
 		if (webSocketStack[i].client) {
 			if (webSocketStack[i].client.connected()) {
 				
-					sendClientData(i, (String)1);
-					
-					
+					sendClientData(i, output);
 			}
 			else { // client may be closed
 				Serial.print("closed!\n\r");
