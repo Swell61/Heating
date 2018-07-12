@@ -34,7 +34,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	};
 	remoteOption = remote.processRemoteInput();
 	touchOption = display->touchUpdate(screen);
-	if (remoteOption == -1) {
+	if (remoteOption == 255) {
 		remote.processRemoteOutput(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
 		remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
 	}
