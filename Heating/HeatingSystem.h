@@ -8,6 +8,7 @@
 #else
 	#include "WProgram.h"
 #endif
+#include "WebInterface.h"
 #include "Pump.h"
 #include "Boiler.h"
 #include "TempSensor.h"
@@ -38,6 +39,7 @@ private:
 	unsigned long startTimeHeatingBoost;
 	unsigned long startTimeWaterBoost;
 	byte touchOption;
+	byte remoteOption;
 	float currentTemp;
 
 	Pump pump;
@@ -45,6 +47,7 @@ private:
 	TempSensor tempSensor;
 	Display* display;
 	Timer timer;
+	WebInterface remote;
 	void setHeatingOff();
 	void setWaterOff();
 	void setHeatingOn();

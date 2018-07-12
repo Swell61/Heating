@@ -41,6 +41,8 @@ C:\Users\Samuel\AppData\Local\Temp\VMBuilds\Heating\mega_atmega2560\Debug\Heatin
  C:\Users\Samuel\Documents\Arduino\libraries\UIPEthernet/utility/uip_clock.h \
  C:\Users\Samuel\Documents\Arduino\libraries\UIPEthernet/utility/clock-arch.h \
  C:\Users\Samuel\AppData\Local\Temp\VMBuilds\Heating\mega_atmega2560\Debug\HeatingSystem.h \
+ C:\Users\Samuel\AppData\Local\Temp\VMBuilds\Heating\mega_atmega2560\Debug\WebInterface.h \
+ C:\Users\Samuel\Documents\Arduino\libraries\Arduino-Websocket/WebSocketServer.h \
  C:\Users\Samuel\AppData\Local\Temp\VMBuilds\Heating\mega_atmega2560\Debug\Pump.h \
  C:\Users\Samuel\AppData\Local\Temp\VMBuilds\Heating\mega_atmega2560\Debug\BoilerControlComponentOut.h \
  C:\Users\Samuel\AppData\Local\Temp\VMBuilds\Heating\mega_atmega2560\Debug\Boiler.h \

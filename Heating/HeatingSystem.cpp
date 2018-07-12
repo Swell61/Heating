@@ -4,7 +4,7 @@
 
 #include "HeatingSystem.h"
 
-HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)), timer(Timer()), display(new Display()) {
+HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)), timer(Timer()), display(new Display()), remote(WebInterface()) {
 	currentTemp = tempSensor.getTemp();
 	setHeatingOff();
 	setWaterOff();
@@ -15,11 +15,13 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 void HeatingSystem::monitorSystem() { // This function runs through the process required to monitor and manage the heating system
 	
 	if (updateDisplay) {
-				if (screen == 0) {
+		if (screen == 0) {
 			display->displayUpdate(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+			remote.processRemoteOutput(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
 		}
 		else if (screen == 1) {
 			display->timerUpdate(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
+			remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
 					}
 		else if (screen == 2) {
 			display->updateEditTime(timer.getTime());
@@ -30,7 +32,16 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 		currentTemp = tempSensor.getTemp();
 		updateDisplay = true;
 	};
+	remoteOption = remote.processRemoteInput();
 	touchOption = display->touchUpdate(screen);
+	if (remoteOption == 255) {
+		remote.processRemoteOutput(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+		remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
+	}
+	else if (touchOption == 0) {
+		touchOption = remoteOption;
+	}
+	
 	if (touchOption == 1) { // User requested temperature up one degree
 		requestedTemp++; // Increase the requested temperature up by one
 		updateDisplay = true; // The display needs updating

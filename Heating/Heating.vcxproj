@@ -89,6 +89,7 @@
     <ClInclude Include="Pump.h" />
     <ClInclude Include="TempSensor.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="WebInterface.h" />
     <ClInclude Include="__vm\.Heating.vsarduino.h" />
   </ItemGroup>
   <ItemGroup>
@@ -99,6 +100,7 @@
     <ClCompile Include="Pump.cpp" />
     <ClCompile Include="TempSensor.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="WebInterface.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
