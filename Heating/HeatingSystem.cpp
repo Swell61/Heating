@@ -4,7 +4,7 @@
 
 #include "HeatingSystem.h"
 
-HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)), timer(Timer()), display(new Display()) {
+HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)), timer(Timer()), display(new Display()), remote(WebInterface()) {
 	currentTemp = tempSensor.getTemp();
 	setHeatingOff();
 	setWaterOff();
@@ -30,7 +30,11 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 		currentTemp = tempSensor.getTemp();
 		updateDisplay = true;
 	};
+	remoteOption = remote.processRemoteInput();
 	touchOption = display->touchUpdate(screen);
+	if (touchOption == 0) {
+		touchOption = remoteOption;
+	}
 	if (touchOption == 1) { // User requested temperature up one degree
 		requestedTemp++; // Increase the requested temperature up by one
 		updateDisplay = true; // The display needs updating
