@@ -70,7 +70,7 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 	if (inMsgPassed) return 0;
 
 	// Data here is still available and not yet processed ==> pass to new client!
-
+	Serial.println("Got request");
 	// Scan for new client
 	int j = MAX_CLIENT_NUM;
 	for (int i = 0; i < MAX_CLIENT_NUM; i++) {
