@@ -11,9 +11,11 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 	EthernetUDP udp;
 	int NTPTryCount = 0;
 	unsigned long time = 0;
-	while (NTPTryCount < 10) {
+	while (NTPTryCount < 5) {
 		Serial.println("Trying to get time");
+		display->loadingScreen(NTPTryCount + 1);
 		time = ntpUnixTime(udp);
+		
 		if (time != 0) {
 			Serial.println("Got time");
 			Serial.println(time);
@@ -23,8 +25,7 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 			NTPTryCount = 10;
 		}
 		else {
-			time++;
-			delay(1000);
+			NTPTryCount++;
 		}
 	}
 

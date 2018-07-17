@@ -512,3 +512,14 @@ void Display::updateEditTime(int time) {
 
 	tft.setTextSize(3);
 }
+
+void Display::loadingScreen(int tryNum) {
+	tft.setTextColor(0xFFFFF, 0x00000);
+	tft.setCursor(0, 0);
+	tft.setTextSize(2);
+	tft.println("Loading...");
+	tft.println("Getting time from NTP server...  (" + (String)tryNum + "/5)");
+	if (tryNum > 1) {
+		tft.println("Check Ethernet cable and internet conectivity");
+	}
+}

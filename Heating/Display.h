@@ -27,6 +27,7 @@ public:
 	void timerUpdate(bool, bool, int, int, int, int, int, int, int, int);
 	void editTime(int);
 	void updateEditTime(int);
+	void loadingScreen(int);
 };
 
 #endif
