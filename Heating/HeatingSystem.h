@@ -56,6 +56,7 @@ private:
 	void checkBoosts();
 	bool temperatureCheck();
 	void changeRelayStates();
+	unsigned long inline ntpUnixTime(UIPUDP &udp);
 	
 public:
 	HeatingSystem(int, int, int);
