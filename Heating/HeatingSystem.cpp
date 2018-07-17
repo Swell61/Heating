@@ -17,7 +17,7 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 		if (time != 0) {
 			Serial.println("Got time");
 			Serial.println(time);
-			int currentTime = (time / 60) % 1440;
+			int currentTime = ((time + dstOffset(time)) / 60) % 1440;
 			Serial.println(currentTime);
 			timer.setMidnight((millis() / 60000) - currentTime);
 			NTPTryCount = 10;
@@ -462,4 +462,21 @@ unsigned long inline HeatingSystem::ntpUnixTime(UIPUDP &udp)
 
 
 	return time;
+}
+
+int HeatingSystem::dstOffset(unsigned long unixTime)
+{
+	time_t t = unixTime;
+	int beginDSTDay = (14 - (1 + year(t) * 5 / 4) % 7);
+	int beginDSTMonth = 3;
+	int endDSTDay = (7 - (1 + year(t) * 5 / 4) % 7);
+	int endDSTMonth = 11;
+	if (((month(t) > beginDSTMonth) && (month(t) < endDSTMonth))
+		|| ((month(t) == beginDSTMonth) && (day(t) > beginDSTDay))
+		|| ((month(t) == beginDSTMonth) && (day(t) == beginDSTDay) && (hour(t) >= 2))
+		|| ((month(t) == endDSTMonth) && (day(t) < endDSTDay))
+		|| ((month(t) == endDSTMonth) && (day(t) == endDSTDay) && (hour(t) < 1)))
+		return (3600);  //Add back in one hours worth of seconds - DST in effect
+	else
+		return (0);  //NonDST
 }

@@ -22,7 +22,7 @@ typedef struct {
 
 private:
 	EthernetServer server = EthernetServer(80);
-	IPAddress ip = IPAddress(192, 168, 1, 200);
+	IPAddress ip = IPAddress(192, 168, 1, 201);
 	byte mac[6] = { 0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02 };
 	WebSocketStack_T webSocketStack[MAX_CLIENT_NUM]; // Stack to store each connection
 	int webServerStack_ProcessMsgIn();
