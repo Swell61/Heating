@@ -11,6 +11,7 @@
 #include <WebSocketServer.h>
 #include <SPI.h>
 #include "UIPEthernet.h"
+#include <SD.h>
 class WebInterface {
 #define MAX_CLIENT_NUM  4
 #define PORT_NUM 80
@@ -29,8 +30,11 @@ private:
 	void webServerStack_ProcessMsgOut(String);
 	void sendClientData(int, String);
 	bool handleClientData(String & dataString);
+	unsigned long lastClientConnect = 0;
+	bool webFilesAvailable = false;
+	String modifyRequest(String);
 public:
-	WebInterface();
+	WebInterface(bool);
 
 	void processRemoteOutput(int, byte, byte, float, bool, bool, float, bool, bool);
 	void processRemoteOutput(bool, bool, int, int, int, int, int, int, int, int);

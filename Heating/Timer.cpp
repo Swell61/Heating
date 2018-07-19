@@ -42,9 +42,9 @@ bool Timer::setMidnight(int time) {
 }
 
 void Timer::checkMidnight() {
-	/*if (((millis() / 60000) - midnight) >= 1440) {
+	if (((millis() / 60000) - midnight) >= 1440) {
 		midnight = millis() / 60000;
-	}*/
+	}
 }
 
 int Timer::getHeatingOnMorning() {

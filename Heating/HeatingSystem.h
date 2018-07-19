@@ -16,6 +16,7 @@
 #include "Timer.h"
 #include <TimeLib.h>
 #include <Time.h>
+#include <SD.h>
 
 class HeatingSystem {
 private:
@@ -44,6 +45,8 @@ private:
 	byte touchOption;
 	byte remoteOption;
 	float currentTemp;
+
+	bool SDAvailable = false;
 
 	Pump pump;
 	Boiler boiler;

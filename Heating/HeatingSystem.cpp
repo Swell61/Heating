@@ -4,13 +4,15 @@
 
 #include "HeatingSystem.h"
 
-HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)), timer(Timer()), display(new Display()), remote(WebInterface()) {
+HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)), timer(Timer()), display(new Display()), remote(WebInterface(SD.begin(49))) {
 	currentTemp = tempSensor.getTemp();
 	setHeatingOff();
 	setWaterOff();
 	EthernetUDP udp;
 	int NTPTryCount = 0;
 	unsigned long time = 0;
+	SDAvailable = SD.begin(49);
+	Serial.println(SDAvailable ? "SD UP" : "SD DOWN");
 	while (NTPTryCount < 5) {
 		Serial.println("Trying to get time");
 		display->loadingScreen(NTPTryCount + 1);
@@ -39,11 +41,15 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 		if (screen == 0) {
 			display->displayUpdate(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
 			remote.processRemoteOutput(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+			remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
+
 		}
 		else if (screen == 1) {
 			display->timerUpdate(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
 			remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
-					}
+			remote.processRemoteOutput(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+
+		}
 		else if (screen == 2) {
 			display->updateEditTime(timer.getTime());
 					}
@@ -257,6 +263,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 
 	if ((millis() - lastTimeUpdate) >= 60000) {
 		updateDisplay = true;
+		timer.checkMidnight();
 		lastTimeUpdate = millis();
 	}
 };
