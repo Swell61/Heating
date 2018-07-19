@@ -9,20 +9,20 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 	setHeatingOff();
 	setWaterOff();
 	SDAvailable = SD.begin(49);
-	Serial.println(SDAvailable ? "SD UP" : "SD DOWN");
+	
 	int NTPTryCount = 0;
 
 	unsigned long time = 0;
 	
 	while (NTPTryCount < 5) {
-		Serial.println("Trying to get time");
+		
 		display->loadingScreen(NTPTryCount + 1);
 		time = timer.getNTPTime(udp);
 		if (time != 0) {
-			Serial.println("Got time");
-			Serial.println(time);
+			
+			
 			int currentTime = (time / 60) % 1440;
-			Serial.println(currentTime);
+			
 			timer.setMidnight((millis() / 60000) - currentTime);
 			NTPTryCount = 10;
 		}

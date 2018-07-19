@@ -6,17 +6,13 @@
 
 // the setup function runs once when you press reset or power the board
 
-
-
-
-
 #include <SPI.h>
 #include <UIPEthernet.h>
 #include "HeatingSystem.h"
 
 HeatingSystem* ashanti;
 void setup() {
-	Serial.begin(9600);
+	
 	ashanti = new HeatingSystem(45, 46, 47); // Pump pin, boiler pin, thermometer pin
 	
 }

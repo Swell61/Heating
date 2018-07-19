@@ -219,7 +219,7 @@ int Timer::dstOffset(unsigned long unixTime)
 }
 
 unsigned long Timer::getNTPTime(UIPUDP &udp) {
-	Serial.println("Getting NTP time");
+	
 	unsigned long time = ntpUnixTime(udp);
 	return time + dstOffset(time);
 }
@@ -230,10 +230,10 @@ bool Timer::setMidnightNTP(UIPUDP &udp) {
 
 	time = getNTPTime(udp);
 	if (time != 0) {
-		Serial.println("Got time");
-		Serial.println(time);
+		
+		
 		int currentTime = (time / 60) % 1440;
-		Serial.println(currentTime);
+		
 		setMidnight((millis() / 60000) - currentTime);
 		return true;
 	}

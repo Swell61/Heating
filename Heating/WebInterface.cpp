@@ -6,14 +6,14 @@
 
 WebInterface::WebInterface(bool SDAvailable) : webFilesAvailable(SDAvailable) {
 	Ethernet.begin(mac, ip);
-	Serial.print("IP is: ");
+	
 	ip = Ethernet.localIP();
 	for (byte thisByte = 0; thisByte < 4; thisByte++) {
 		// print the value of each byte of the IP address:
-		Serial.print(ip[thisByte], DEC);
-		Serial.print(".");
+		
+		
 	}
-	Serial.println();
+	
 
 	// start listening for clients
 	server.begin();
@@ -47,8 +47,8 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 					if (webSocketStack[i].client.available()) {
 						String data = webSocketStack[i].webSocketServer.getData();
 						if (data.length() == (1 || 2) && isDigit(data.charAt(0))) {
-							Serial.println("Valid data");
-							Serial.println(data);
+							
+							
 							return data.toInt();
 						}
 						inMsgPassed = true;
@@ -56,7 +56,7 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 					}
 				}
 				else { // client may be closed
-					Serial.print("closed!\n\r");
+					
 					webSocketStack[i].client.stop();
 				}
 			}
@@ -67,7 +67,7 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 		if (inMsgPassed) return 0;
 
 		// Data here is still available and not yet processed ==> pass to new client!
-		Serial.println("Got request");
+		
 		// Scan for new client
 		int j = MAX_CLIENT_NUM;
 		for (int i = 0; i < MAX_CLIENT_NUM; i++) {
@@ -81,51 +81,51 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 		if (j < MAX_CLIENT_NUM) {
 			webSocketStack[j].client = server.available();
 			if (webSocketStack[j].client.connected()) {
-				Serial.print("Client connected\r\n");
+				
 				String request = webSocketStack[j].webSocketServer.handshake(webSocketStack[j].client);
-				Serial.println(request);
-				Serial.println(webFilesAvailable ? "Web files available" : "Not available");
+				
+				
 				if (request == "1") {
-					Serial.print("Client handshaked\r\n");
+					
 				}
 				else if (request != "0" && webFilesAvailable) {
 					if (request == "") {
 						request = "index.htm";
 					}
 					// Return the requested file to the current client
-					Serial.println("Need to send data");
-					Serial.println(SD.exists(request) ? "AVAILABLE" : "NOT AVAILABLE");
+					
+					
 					webSocketStack[j].client.println("HTTP/1.1 200 OK");
 					if (request.indexOf(".jpg") > 0) {
 						webSocketStack[j].client.println();
-						Serial.println("Sending image");
+						
 					}
 					else if (request.indexOf(".css") > 0) {
 						webSocketStack[j].client.println("Content-Type: text/css");
 						webSocketStack[j].client.println("Connection: keep-alive");
 						webSocketStack[j].client.println();
-						Serial.println("Sending other");
+						
 					}
 					else {
 						webSocketStack[j].client.println("Content-Type: text/html");
 						webSocketStack[j].client.println("Connection: keep-alive");
 						webSocketStack[j].client.println();
-						Serial.println("Sending other");
+						
 					}
 					File webFile = SD.open(request);
 					if (webFile) {
 						while (webFile.available()) {
 							webSocketStack[j].client.write(webFile.read()); // send web page to client
 						}
-						Serial.println("Sent file");
+						
 						webFile.close();
 					}
 					webSocketStack[j].client.stop();
-					Serial.println("Disconnected client");
+					
 					return 0;
 				}
 				else {
-					Serial.println("Not doing anything");
+					
 					webSocketStack[j].client.stop();
 					return 0;
 				}
@@ -147,7 +147,7 @@ void WebInterface::webServerStack_ProcessMsgOut(String output) {
 					sendClientData(i, output);
 			}
 			else { // client may be closed
-				Serial.print("closed!\n\r");
+				
 				webSocketStack[i].client.stop();
 			}
 		}

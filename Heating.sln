@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Heating", "Heating\Heating.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SD", "..\..\..\..\Arduino\libraries\SD\SD.vcxitems", "{6B741293-CD95-4EEE-A1AA-75ED00F5A271}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IniFile", "..\..\..\..\Arduino\libraries\IniFile\IniFile.vcxitems", "{0ED0AB26-4EB0-4523-8B27-7BDD3D3F1A0A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
