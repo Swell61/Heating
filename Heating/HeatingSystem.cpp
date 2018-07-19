@@ -8,10 +8,28 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 	currentTemp = tempSensor.getTemp();
 	setHeatingOff();
 	setWaterOff();
-
 	SDAvailable = SD.begin(49);
 	Serial.println(SDAvailable ? "SD UP" : "SD DOWN");
-	setMidnightNTP(true);
+	int NTPTryCount = 0;
+
+	unsigned long time = 0;
+	
+	while (NTPTryCount < 5) {
+		Serial.println("Trying to get time");
+		display->loadingScreen(NTPTryCount + 1);
+		time = timer.getNTPTime(udp);
+		if (time != 0) {
+			Serial.println("Got time");
+			Serial.println(time);
+			int currentTime = (time / 60) % 1440;
+			Serial.println(currentTime);
+			timer.setMidnight((millis() / 60000) - currentTime);
+			NTPTryCount = 10;
+		}
+		else {
+			NTPTryCount++;
+		}
+	}
 
 	display->mainDisplay(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
 	
@@ -245,7 +263,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 
 	if ((millis() - lastTimeUpdate) >= 60000) {
 		updateDisplay = true;
-		timer.checkMidnight();
+		timer.checkMidnight(udp);
 		lastTimeUpdate = millis();
 	}
 };
@@ -386,25 +404,6 @@ bool HeatingSystem::getWaterStatus() {
 	return boiler.getStatus(); // In our system, if the heating is on then the hot water is also on
 };
 
-
-
 void HeatingSystem::setTemp(int temp) {
 	requestedTemp = temp;
-}
-
-void HeatingSystem::setMidnightNTP(bool booting) {
-	int NTPTryCount = 0;
-	while (NTPTryCount < 4) {
-		Serial.println("Trying to get time");
-		if (booting)
-			display->loadingScreen(NTPTryCount + 1);
-		if (timer.setMidnightNTP(booting)) {
-			Serial.println("Got time");
-			
-			NTPTryCount = 4;
-		}
-		else {
-			NTPTryCount++;
-		}
-	}
 }

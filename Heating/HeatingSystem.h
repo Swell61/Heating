@@ -14,7 +14,8 @@
 #include "TempSensor.h"
 #include "Display.h"
 #include "Timer.h"
-
+#include <TimeLib.h>
+#include <Time.h>
 #include <SD.h>
 
 class HeatingSystem {
@@ -47,6 +48,7 @@ private:
 
 	bool SDAvailable = false;
 
+	EthernetUDP udp;
 	Pump pump;
 	Boiler boiler;
 	TempSensor tempSensor;
@@ -61,7 +63,6 @@ private:
 	void checkBoosts();
 	bool temperatureCheck();
 	void changeRelayStates();
-	void setMidnightNTP(bool);
 	
 public:
 	HeatingSystem(int, int, int);
