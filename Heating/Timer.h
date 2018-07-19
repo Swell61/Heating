@@ -8,7 +8,9 @@
 #else
 	#include "WProgram.h"
 #endif
-
+#include <TimeLib.h>
+#include <Time.h>
+#include <UIPEthernet.h>
 class Timer {
 private:
 	
@@ -27,6 +29,7 @@ private:
 	int waterOnAfternoon = 1200;
 	int waterOffAfternoon = 1320;
 
+	int dstOffset(unsigned long);
 	
 
 public:
@@ -57,6 +60,10 @@ public:
 	bool setWaterOffAfternoon(int);
 
 	int getTime();
+
+	unsigned long inline getNTPtime(UIPUDP &udp);
+
+	bool setMidnightNTP(bool);
 };
 
 #endif

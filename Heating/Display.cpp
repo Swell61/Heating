@@ -518,7 +518,7 @@ void Display::loadingScreen(int tryNum) {
 	tft.setCursor(0, 0);
 	tft.setTextSize(2);
 	tft.println("Loading...");
-	tft.println("Getting time from NTP server...  (" + (String)tryNum + "/5)");
+	tft.println("Getting time from NTP server...  (" + (String)tryNum + "/4)");
 	if (tryNum > 1) {
 		tft.println("Check Ethernet cable and internet conectivity");
 	}

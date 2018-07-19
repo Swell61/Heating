@@ -14,8 +14,7 @@
 #include "TempSensor.h"
 #include "Display.h"
 #include "Timer.h"
-#include <TimeLib.h>
-#include <Time.h>
+
 #include <SD.h>
 
 class HeatingSystem {
@@ -62,8 +61,7 @@ private:
 	void checkBoosts();
 	bool temperatureCheck();
 	void changeRelayStates();
-	unsigned long inline ntpUnixTime(UIPUDP &udp);
-	int dstOffset(unsigned long);
+	void setMidnightNTP(bool);
 	
 public:
 	HeatingSystem(int, int, int);
