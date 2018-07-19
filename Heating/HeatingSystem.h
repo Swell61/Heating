@@ -48,6 +48,7 @@ private:
 
 	bool SDAvailable = false;
 
+	EthernetUDP udp;
 	Pump pump;
 	Boiler boiler;
 	TempSensor tempSensor;
@@ -62,8 +63,6 @@ private:
 	void checkBoosts();
 	bool temperatureCheck();
 	void changeRelayStates();
-	unsigned long inline ntpUnixTime(UIPUDP &udp);
-	int dstOffset(unsigned long);
 	
 public:
 	HeatingSystem(int, int, int);
