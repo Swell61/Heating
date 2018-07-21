@@ -83,13 +83,14 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 			if (webSocketStack[j].client.connected()) {
 				
 				byte request = webSocketStack[j].webSocketServer.handshake(webSocketStack[j].client);
-				
+				Serial.print("Request: ");
+				Serial.println(request);
 				
 				if (request == 1) {
 					
 				}
 				else if (request == 2 && webFilesAvailable) {
-					String requestPath = webSocketStack[j].webSocketServer.getData();
+					String requestPath = webSocketStack[j].webSocketServer.getRequestPath();
 					if (requestPath == "") {
 						requestPath = "index.htm";
 					}
