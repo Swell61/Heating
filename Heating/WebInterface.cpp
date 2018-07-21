@@ -46,7 +46,7 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 					// Incoming msg
 					if (webSocketStack[i].client.available()) {
 						String data = webSocketStack[i].webSocketServer.getData();
-						if (data.length() == (1 || 2) && isDigit(data.charAt(0))) {
+						if (isDigit(data.charAt(0)) && (data.length() == 1 || (data.length() == 2 && isDigit(data.charAt(1))))) {
 							
 							
 							return data.toInt();
