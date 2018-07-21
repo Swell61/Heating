@@ -20,25 +20,26 @@ WebInterface::WebInterface(bool SDAvailable) : webFilesAvailable(SDAvailable) {
 }
 
 void WebInterface::processRemoteOutput(int time, byte heatingMode, byte waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost) {
+	// Send a string containing the status of the main display
 	String output = "0:" + (String)time + ":" + (String)heatingMode + ":" + (String)waterMode + ":" + (String)temp + ":" + (String)heatingStatus + ":" + (String)waterStatus + ":" + (String)requestedTemp + ":" + (String)heatingBoost + ":" + (String)waterBoost;
 	webServerStack_ProcessMsgOut(output);
 }
 void WebInterface::processRemoteOutput(bool heatingTimerStatus, bool waterTimerStatus, int heatingOnMorning, int heatingOffMorning, int heatingOnAfternoon, int heatingOffAfternoon, int waterOnMorning, int waterOffMorning, int waterOnAfternoon, int waterOffAfternoon) {
+	// Send a string containing the status of the timer
 	String output = "1:" + (String)heatingTimerStatus + ":" + (String)waterTimerStatus + ":" + (String)heatingOnMorning + ":" + (String)heatingOffMorning + ":" + (String)heatingOnAfternoon + ":" + (String)heatingOffAfternoon + ":" + (String)waterOnMorning + ":" + (String)waterOffMorning + ":" + (String)waterOnAfternoon + ":" + (String)waterOffAfternoon;
 	webServerStack_ProcessMsgOut(output);
 }
 
-int WebInterface::processRemoteInput() {
-	if (server.available()) {
-		return webServerStack_ProcessMsgIn();
+int WebInterface::processRemoteInput() { // Process a client
+	if (server.available()) { // If a client has a message to send...
+		return webServerStack_ProcessMsgIn(); // Process it
 	}
-	else {
+	else { // Otherwise no client message processing needed
 		return 0;
 	}
 }
 int WebInterface::webServerStack_ProcessMsgIn() {
 	bool inMsgPassed = false;
-		lastClientConnect = millis();
 		// Process for connected client
 		for (int i = 0; i < MAX_CLIENT_NUM; i++) {
 			if (webSocketStack[i].client) {
@@ -46,10 +47,10 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 					// Incoming msg
 					if (webSocketStack[i].client.available()) {
 						String data = webSocketStack[i].webSocketServer.getData();
-						if (isDigit(data.charAt(0)) && (data.length() == 1 || (data.length() == 2 && isDigit(data.charAt(1))))) {
+						if (isDigit(data.charAt(0)) && (data.length() == 1 || (data.length() == 2 && isDigit(data.charAt(1))))) { // If they have sent a valid message
 							
 							
-							return data.toInt();
+							return data.toInt(); // Return it
 						}
 						inMsgPassed = true;
 						return 0;
@@ -61,6 +62,8 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 				}
 			}
 		}
+
+		// If at this point, the client either wants the web page sending or to handshake for websocket connection
 
 		// incomming data has been passed thru client ==> no data for new client! ==> Bug found, kakaka...
 		// Return now :)
@@ -78,75 +81,69 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 		}
 
 
-		if (j < MAX_CLIENT_NUM) {
+		if (j < MAX_CLIENT_NUM) { // If there is room on the stack for another client
 			webSocketStack[j].client = server.available();
 			if (webSocketStack[j].client.connected()) {
 				
-				byte request = webSocketStack[j].webSocketServer.handshake(webSocketStack[j].client);
-				Serial.print("Request: ");
-				Serial.println(request);
+				byte request = webSocketStack[j].webSocketServer.handshake(webSocketStack[j].client); // try to handshake. Will return 2 if web files need to be sent
 				
-				if (request == 1) {
+				if (request == 1) { // If handshake succeeded
 					return 255;
 				}
-				else if (request == 2 && webFilesAvailable) {
+				else if (request == 2 && webFilesAvailable) { // If need to send web files and web files are available
 					
-					String requestPath = webSocketStack[j].webSocketServer.getRequestPath();
-					if (requestPath == "") {
+					String requestPath = webSocketStack[j].webSocketServer.getRequestPath(); // Get the requested file path
+					if (requestPath == "") { // If client requests an empty path, send them the main page HTML file
 						requestPath = "index.htm";
 					}
 
-					if (SD.exists(requestPath)) {
+					if (SD.exists(requestPath)) { // if the file is available
 						// Return the requested file to the current client
 
 
-						webSocketStack[j].client.println(F("HTTP/1.1 200 OK"));
-						if (requestPath.indexOf(".jpg") > 0) {
-							webSocketStack[j].client.println();
+						webSocketStack[j].client.println(F("HTTP/1.1 200 OK")); // Acknowledge request
+						if (requestPath.indexOf(".jpg") > 0) { // If sending an image
+							webSocketStack[j].client.println(); // Send an empty line
 
 						}
-						else if (requestPath.indexOf(".css") > 0) {
-							webSocketStack[j].client.println(F("Content-Type: text/css"));
+						else if (requestPath.indexOf(".css") > 0) { // If requesting a stylesheet
+							webSocketStack[j].client.println(F("Content-Type: text/css")); // Acknowledge CSS request
 							webSocketStack[j].client.println(F("Connection: keep-alive"));
 							webSocketStack[j].client.println();
 
 						}
-						else {
-							webSocketStack[j].client.println(F("Content-Type: text/html"));
+						else { // Else if requesting a HTML document
+							webSocketStack[j].client.println(F("Content-Type: text/html")); // Acknowledge HTML request
 							webSocketStack[j].client.println(F("Connection: keep-alive"));
 							webSocketStack[j].client.println();
 
 						}
-						File webFile = SD.open(requestPath);
-						if (webFile) {
+						File webFile = SD.open(requestPath); // Get the file
+						if (webFile) { // Send the file
 							while (webFile.available()) {
 								webSocketStack[j].client.write(webFile.read()); // send web page to client
 							}
 
 							webFile.close();
 						}
-						webSocketStack[j].client.stop();
+						webSocketStack[j].client.stop(); // Close the connection
 
 						return 0;
 					}
-					else {
-						webSocketStack[j].client.stop();
+					else { // Otherwise...
+						webSocketStack[j].client.stop(); // Close the connection as it cannot be serverd
 						return 0;
 					}
 				}
-				else {
+				else { // Otherwise...
 					
-					webSocketStack[j].client.stop();
+					webSocketStack[j].client.stop(); // Close the connection as it cannot be served
 					return 0;
 				}
 			}
 		
 	}
 	return 255;
-}
-
-String WebInterface::modifyRequest(String request) {
-
 }
 
 void WebInterface::webServerStack_ProcessMsgOut(String output) {

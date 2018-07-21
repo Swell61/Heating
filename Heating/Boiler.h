@@ -9,9 +9,12 @@
 	#include "WProgram.h"
 #endif
 #include "BoilerControlComponentOut.h"
-class Boiler final : public BoilerControlComponentOut {
-public:
-	Boiler(int);
+
+// This class is a relay that controls the boiler
+
+class Boiler final : public BoilerControlComponentOut { // Do not allow inheritance of Boiler and inherit BoilerControlComponentOut
+public: // Public methods and members
+	Boiler(int); // Constructor takes an int for the pin number
 };
 
 #endif

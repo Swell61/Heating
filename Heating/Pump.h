@@ -9,9 +9,12 @@
 	#include "WProgram.h"
 #endif
 #include "BoilerControlComponentOut.h"
-class Pump final : public BoilerControlComponentOut {
+
+// This class is a pump
+
+class Pump final : public BoilerControlComponentOut { // Do not allow inheritance of Pump and inherit BoilerControlComponentOut
 public:
-	Pump(int);
+	Pump(int); // Constructor that takes the pin number for the pump relay
 };
 
 #endif

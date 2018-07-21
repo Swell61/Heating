@@ -12,34 +12,35 @@
 #include <SPI.h>
 #include "UIPEthernet.h"
 #include <SD.h>
+
+// Class for web and remote interface interraction
+
 class WebInterface {
-#define MAX_CLIENT_NUM  4
-#define PORT_NUM 80
-typedef struct {
+#define MAX_CLIENT_NUM  4 // Max number of simultaneous clients 
+#define PORT_NUM 80 // Port number for server
+typedef struct { // Structure for web socket stack
 		EthernetClient client;
 		WebSocketServer webSocketServer;
 		unsigned long previousMillis;
 } WebSocketStack_T;
 
 private:
-	EthernetServer server = EthernetServer(80);
-	IPAddress ip = IPAddress(192, 168, 1, 201);
-	byte mac[6] = { 0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02 };
+	EthernetServer server = EthernetServer(80); // Ethernet server
+	IPAddress ip = IPAddress(192, 168, 1, 201); // IP address of Arduino
+	byte mac[6] = { 0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02 }; // MAC address of network interface
 	WebSocketStack_T webSocketStack[MAX_CLIENT_NUM]; // Stack to store each connection
-	int webServerStack_ProcessMsgIn();
-	void webServerStack_ProcessMsgOut(String);
-	void sendClientData(int, String);
-	bool handleClientData(String & dataString);
-	unsigned long lastClientConnect = 0;
-	bool webFilesAvailable = false;
-	String modifyRequest(String);
+	int webServerStack_ProcessMsgIn(); // Function for processing a message from a client
+	void webServerStack_ProcessMsgOut(String); // Function for sending status to clients
+	void sendClientData(int, String); // Function to send data to a client
+	bool handleClientData(String & dataString); // Function for handling client data
+	bool webFilesAvailable = false; // Variable to store whether web server files are available or not
 public:
-	WebInterface(bool);
+	WebInterface(bool); // Constructor which takes parameter for whether web server files are available or not
 
-	void processRemoteOutput(int, byte, byte, float, bool, bool, float, bool, bool);
-	void processRemoteOutput(bool, bool, int, int, int, int, int, int, int, int);
+	void processRemoteOutput(int, byte, byte, float, bool, bool, float, bool, bool); // Function for sending main display status to clients
+	void processRemoteOutput(bool, bool, int, int, int, int, int, int, int, int); // Function for sending timer status to clients
 
-		int processRemoteInput();
+		int processRemoteInput(); // Function for processing client messages
 };
 
 #endif

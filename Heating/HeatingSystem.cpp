@@ -4,68 +4,67 @@
 
 #include "HeatingSystem.h"
 
-HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)), timer(Timer()), display(new Display()), remote(WebInterface(SD.begin(49))) {
-	currentTemp = tempSensor.getTemp();
-	setHeatingOff();
-	setWaterOff();
-	SDAvailable = SD.begin(49);
+HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)), timer(Timer()), display(new Display()), remote(WebInterface(SD.begin(49))) { // Constructor. Initialises the componenets of the heating system
+	currentTemp = tempSensor.getTemp(); // Gets the current temperature to display
+	setHeatingOff(); // Disables the heating
+	setWaterOff(); // Disables the ho twater
+	SDAvailable = SD.begin(49); // Checks whether the SD card is available or not
 	
-	int NTPTryCount = 0;
-
-	unsigned long time = 0;
-	
-	while (NTPTryCount < 5) {
+	int NTPTryCount = 0; // Variable to store the number of tries to get the time from the NTP server
+	unsigned long time = 0; // Variable to store the time from the NTP server
+	while (NTPTryCount < 5) { // Tries 5 times to get the time
 		
-		display->loadingScreen(NTPTryCount + 1);
-		time = timer.getNTPTime(udp);
-		if (time != 0) {
+		display->loadingScreen(NTPTryCount + 1); // Shows the loading screen
+		time = timer.getNTPTime(udp); // Tries to get the time
+		if (time != 0) { // If the time is not zero (very unlikely it will be zero and if it is, it will run another check if it has 1+ remaining)
+			int currentTime = (time / 60) % 1440; // Gets the current time in minutes
 			
-			
-			int currentTime = (time / 60) % 1440;
-			
-			timer.setMidnight((millis() / 60000) - currentTime);
-			NTPTryCount = 10;
+			timer.setMidnight((millis() / 60000) - currentTime); // Sets midnight
+			NTPTryCount = 5; // Exceeds the max tries so the loop will break
 		}
-		else {
-			NTPTryCount++;
+		else { // If failed to get time...
+			NTPTryCount++; // ...increase the try count and loop round again if 1+ tries left
 		}
 	}
 
-	display->mainDisplay(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+	display->mainDisplay(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive); // Show the main display
 	
 };
 
 void HeatingSystem::monitorSystem() { // This function runs through the process required to monitor and manage the heating system
 	
-	if (updateDisplay) {
-		if (screen == 0) {
-			display->displayUpdate(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+	if (updateDisplay) { // If the screen needs updating
+		if (screen == 0) { // If on main display
+			display->displayUpdate(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive); // Show the main display
+			// Update any connected clients with the current status
 			remote.processRemoteOutput(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
 			remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
 
 		}
-		else if (screen == 1) {
-			display->timerUpdate(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
+		else if (screen == 1) { // If on the timer display
+			display->timerUpdate(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon()); // Show the timer display
+			// Update any connected clients with the current status
 			remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
 			remote.processRemoteOutput(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
 
 		}
-		else if (screen == 2) {
-			display->updateEditTime(timer.getTime());
+		else if (screen == 2) { // If on the time edit display
+			display->updateEditTime(timer.getTime()); // Show the time edit display
 					}
-		updateDisplay = false;
+		updateDisplay = false; // Updating screen has completed
 			}
-	if (currentTemp != tempSensor.getTemp()) {
-		currentTemp = tempSensor.getTemp();
-		updateDisplay = true;
+	if (currentTemp != tempSensor.getTemp()) { // Run temperature check for currently displayed temperature
+		currentTemp = tempSensor.getTemp(); // If not correct, get corret temperature and...
+		updateDisplay = true; // ...update the display
 	};
-	remoteOption = remote.processRemoteInput();
-	touchOption = display->touchUpdate(screen);
-	if (remoteOption == 255) {
+	remoteOption = remote.processRemoteInput(); // Process any clients
+	touchOption = display->touchUpdate(screen); // Get the current requested touchscreen option
+	if (remoteOption == 255) { // If a new client has just joined
+		// Send current system status
 		remote.processRemoteOutput(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
 		remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
 	}
-	else if (touchOption == 0) {
+	else if (touchOption == 0) { // Touschreen takes priority. If no touch option, check remote requests
 		touchOption = remoteOption;
 	}
 	
@@ -107,102 +106,102 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 		screen = 0;
 		display->mainDisplay(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
 	}
-	else if (touchOption == 7) {
+	else if (touchOption == 7) { // Change heating on morning time 
 		if (timer.setHeatingOnMorning(timer.getHeatingOnMorning() - timerTimeInc)) {
 			updateDisplay = true;
 		}
 	}
-	else if (touchOption == 8) {
+	else if (touchOption == 8) { // Change heating on morning time 
 		if (timer.setHeatingOnMorning(timer.getHeatingOnMorning() + timerTimeInc)) {
 			updateDisplay = true;
 		}
 	}
-	else if (touchOption == 9) {
+	else if (touchOption == 9) { // Change heating off morning time 
 		if (timer.setHeatingOffMorning(timer.getHeatingOffMorning() - timerTimeInc)) {
 			updateDisplay = true;
 		}
 	}
-	else if (touchOption == 10) {
+	else if (touchOption == 10) { // Change heating off morning time
 		if (timer.setHeatingOffMorning(timer.getHeatingOffMorning() + timerTimeInc)) {
 			updateDisplay = true;
 		}
 	}
-	else if (touchOption == 11) {
+	else if (touchOption == 11) { // Change heating on afternoon time
 		if (timer.setHeatingOnAfternoon(timer.getHeatingOnAfternoon() - timerTimeInc)) {
 			updateDisplay = true;
 		}
 	}
-	else if (touchOption == 12) {
+	else if (touchOption == 12) { // Change heating on afternoon time
 		if (timer.setHeatingOnAfternoon(timer.getHeatingOnAfternoon() + timerTimeInc)) {
 			updateDisplay = true;
 		}
 	}
-	else if (touchOption == 13) {
+	else if (touchOption == 13) { // Change heating off afternoon time
 		if (timer.setHeatingOffAfternoon(timer.getHeatingOffAfternoon() - timerTimeInc)) {
 			updateDisplay = true;
 		}
 	}
-	else if (touchOption == 14) {
+	else if (touchOption == 14) { // Change heating off afternoon time
 		if (timer.setHeatingOffAfternoon(timer.getHeatingOffAfternoon() + timerTimeInc)) {
 			updateDisplay = true;
 		}
 	}
-	else if (touchOption == 15) {
+	else if (touchOption == 15) { // Change hot water on morning time
 		if (timer.setWaterOnMorning(timer.getWaterOnMorning() - timerTimeInc)) {
 			updateDisplay = true;
 		}
 	}
-	else if (touchOption == 16) {
+	else if (touchOption == 16) { // Change hot water on morning time
 		if (timer.setWaterOnMorning(timer.getWaterOnMorning() + timerTimeInc)) {
 			updateDisplay = true;
 		}
 	}
-	else if (touchOption == 17) {
+	else if (touchOption == 17) { // Change hot water off morning time
 		if (timer.setWaterOffMorning(timer.getWaterOffMorning() - timerTimeInc)) {
 			updateDisplay = true;
 		}
 	}
-	else if (touchOption == 18) {
+	else if (touchOption == 18) { // Change hot water off morning time
 		if (timer.setWaterOffMorning(timer.getWaterOffMorning() + timerTimeInc)) {
 			updateDisplay = true;
 		}
 	}
-	else if (touchOption == 19) {
+	else if (touchOption == 19) { // Change hot water on afternoon time
 		if (timer.setWaterOnAfternoon(timer.getWaterOnAfternoon() - timerTimeInc)) {
 			updateDisplay = true;
 		}
 	}
-	else if (touchOption == 20) {
+	else if (touchOption == 20) { // Change hot water on afternoon time
 		if (timer.setWaterOnAfternoon(timer.getWaterOnAfternoon() + timerTimeInc)) {
 			updateDisplay = true;
 		}
 	}
-	else if (touchOption == 21) {
+	else if (touchOption == 21) { // Change hot water off afternoon time
 		if (timer.setWaterOffAfternoon(timer.getWaterOffAfternoon() - timerTimeInc)) {
 			updateDisplay = true;
 		}
 	}
-	else if (touchOption == 22) {
+	else if (touchOption == 22) { // Change hot water off afternoon time
 		if (timer.setWaterOffAfternoon(timer.getWaterOffAfternoon() + timerTimeInc)) {
 			updateDisplay = true;
 		}
 	}
-	else if (touchOption == 23) {
+	else if (touchOption == 23) { // Change heating timer state
 		timer.setHeatingTimerState(!timer.getHeatingTimerStatus());
 				updateDisplay = true;
 	}
-	else if (touchOption == 24) {
+	else if (touchOption == 24) { // Change hot water timer state
 		timer.setWaterTimerState(!timer.getWaterTimerStatus());
 		updateDisplay = true;
 	}
-	else if (touchOption == 25) {
+	else if (touchOption == 25) { // Change heating mode
 		heatingMode++;
 		if (heatingMode > 2) {
 			heatingMode = 0;
 		}
 				updateDisplay = true;
 	}
-	else if (touchOption == 26) {
+	else if (touchOption == 26) { // Change hot water mode
 		waterMode++;
 		if (waterMode > 2) {
 			waterMode = 0;
@@ -259,25 +258,25 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	}
 	checkBoosts(); // Run through the boost timers, checking if they need altering
 
-	changeRelayStates();
+	changeRelayStates(); // make any required changed to the relays
 
-	if ((millis() - lastTimeUpdate) >= 60000) {
-		updateDisplay = true;
-		timer.checkMidnight(udp);
-		lastTimeUpdate = millis();
+	if ((millis() - lastTimeUpdate) >= 60000) { // Update the display once every minute to update the time
+		updateDisplay = true; // Update the display
+		timer.checkMidnight(udp); // Check if its midnight (update midnight and check that the time is correct
+		lastTimeUpdate = millis(); // Update the lsat time the time was updated
 	}
 };
 
 void HeatingSystem::checkBoosts() { // Boosts have priority over everything
-	if (heatingBoostActive && ((millis() - startTimeHeatingBoost) >= (boostLengthHeating * 60000))) {
+	if (heatingBoostActive && ((millis() - startTimeHeatingBoost) >= (boostLengthHeating * 60000))) { // If heating boost is active and boost timer is over, turn off the boost
 		boostHeating(false);
 	}
-	else if (waterBoostActive && ((millis() - startTimeWaterBoost) >= (boostLengthWater * 60000))) {
+	else if (waterBoostActive && ((millis() - startTimeWaterBoost) >= (boostLengthWater * 60000))) { // Same as heating but for hot water. If heating boost is on, hot water doesn't need adjusting because it will be on anyway
 		boostWater(false);
 	}
 };
 
-void HeatingSystem::changeRelayStates() {
+void HeatingSystem::changeRelayStates() { // Function checks current system status and decides whether the heating and hot water need to be on or not
 
 	// Heating settings
 	if (heatingBoostActive) { // If heating boost is active...
@@ -301,34 +300,35 @@ void HeatingSystem::changeRelayStates() {
 		disableWater();
 	}
 
-
-	if ((lastSystemMode != 0) && heatingStatus && waterStatus) {
+	// lastSystemMode will stop the system trying to enter a state it is already in
+	if ((lastSystemMode != 0) && heatingStatus && waterStatus) { // If the heating and hot water should be on
+		// Turn them on
 		setHeatingOn();
 		setWaterOn();
 		lastSystemMode = 0;
-		updateDisplay = true;
+		updateDisplay = true; // Update the display
 	}
-	else if ((lastSystemMode != 1) && heatingStatus && !waterStatus) {
-		setHeatingOn();
+	else if ((lastSystemMode != 1) && heatingStatus && !waterStatus) { // If the heating should be on but not the hot water
+		setHeatingOn(); // Turn the heating on
 		lastSystemMode = 1;
-		updateDisplay = true;
+		updateDisplay = true; // Update the display
 	}
-	else if ((lastSystemMode != 2) && !heatingStatus && waterStatus) {
-		setWaterWithoutHeating();
+	else if ((lastSystemMode != 2) && !heatingStatus && waterStatus) { // If the hot water should be on but bot the heating
+		setWaterWithoutHeating(); // Turn the hot water components on and disable the unneeded heating components
 		lastSystemMode = 2;
-		updateDisplay = true;
+		updateDisplay = true; // Update the display
 	}
-	else if ((lastSystemMode != 3) && !heatingStatus && !waterStatus) {
-		setHeatingOff();
-		setWaterOff();
+	else if ((lastSystemMode != 3) && !heatingStatus && !waterStatus) { // If heating and hot water should be off
+		setHeatingOff(); // Turn the heating off
+		setWaterOff(); // Turn the hot water off
 		lastSystemMode = 3;
-		updateDisplay = true;
+		updateDisplay = true; // Update the display
 	}
 
 }
 
 
-bool HeatingSystem::temperatureCheck() {
+bool HeatingSystem::temperatureCheck() { // Functiom for checking the temperature
 	if (tempSensor.getTemp() < (requestedTemp - maxDrift)) { // If the temperature of the zone has gone below the required temperature...
 		return true;
 	}
@@ -353,7 +353,7 @@ void HeatingSystem::setWaterOn() { // Function for turning the hot water on
 void HeatingSystem::setWaterOff() { // Function for turning the hot water off
 	boiler.disable(); // Turn the boiler off
 	};
-void HeatingSystem::setWaterWithoutHeating() {
+void HeatingSystem::setWaterWithoutHeating() { // Function for turning hot water on without the unneeded heating components
 	boiler.enable();
 	pump.disable();
 	}
@@ -384,26 +384,26 @@ void HeatingSystem::boostHeating(bool state) { // Function for the heating boost
 	}
 };
 
-void HeatingSystem::boostWater(bool state) {
-	if (state == true) {
-		enableWater();
-		waterBoostActive = true;
-		startTimeWaterBoost = millis();
+void HeatingSystem::boostWater(bool state) { // Function sets the state of the system when the hot water boost is changed
+	if (state == true) { // If boost has been turned on...
+		enableWater(); // turn hot water on
+		waterBoostActive = true; // Set waterBoostActive to on
+		startTimeWaterBoost = millis(); // Store the time at which the boost was turned on for the timer
 	}
-	else if (state == false) {
-		disableWater();
-		waterBoostActive = false;
-		updateDisplay = true;
+	else if (state == false) { // If the boos thas been turned off...
+		disableWater(); // Disable the water
+		waterBoostActive = false; // Set waterBoostActive to off
+		updateDisplay = true; // Update the display
 	}
 };
 
-bool HeatingSystem::getHeatingStatus() {
-	return (pump.getStatus() && boiler.getStatus());
+bool HeatingSystem::getHeatingStatus() { // Get the status of the heating
+	return (pump.getStatus() && boiler.getStatus()); // If pump and boiler are on, heating is on
 };
-bool HeatingSystem::getWaterStatus() {
+bool HeatingSystem::getWaterStatus() { // Function for getting the status of the hot water
 	return boiler.getStatus(); // In our system, if the heating is on then the hot water is also on
 };
 
-void HeatingSystem::setTemp(int temp) {
-	requestedTemp = temp;
+void HeatingSystem::setTemp(int temp) { // Function for setting the requested temperature
+	requestedTemp = temp; // Set requested temperature to the value passed
 }

@@ -11,12 +11,15 @@
 
 #include <Wire.h>
 #include <LM75.h>
+
+// This class is a temperature sensor
+
 class TempSensor {
 public:
-	float getTemp() const;
-	TempSensor(int pinNum);
+	float getTemp() const; // Function for getting the current temperature from the sensor
+	TempSensor(int pinNum); // Constructor that takes the pin number of the temperature sensor
 private:
-	LM75 sensor;
+	LM75 sensor; // Temperature sensor
 
 };
 

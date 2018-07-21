@@ -4,36 +4,38 @@
 
 #include "Timer.h"
 
-bool Timer::getHeatingTimerStatus() {
+bool Timer::getHeatingTimerStatus() { // Function for getting the status of the heating
+	// If the heating should be on based on the timer, return true. Otherwise return false
 	int time = getTime() + 1;
-	if ((time > heatingOnMorning) && (time < heatingOffMorning)) {
+	if ((time > heatingOnMorning) && (time < heatingOffMorning)) { // If within morning on period...
 		return true;
 	}
 	
-	else if ((time > heatingOnAfternoon) && (time < heatingOffAfternoon)) {
+	else if ((time > heatingOnAfternoon) && (time < heatingOffAfternoon)) { // If within afternoon on period...
 		return true;
 	}
-	else {
+	else { // If not in either...
 		return false;
 	}
 }
 
-bool Timer::getWaterTimerStatus() {
+bool Timer::getWaterTimerStatus() { // Function for getting the status of the hot water
+// If the hot water should be on based on the timer, return true. Otherwise return false
 	int time = getTime() + 1;
-	if ((time > waterOnMorning) && (time < waterOffMorning)) {
+	if ((time > waterOnMorning) && (time < waterOffMorning)) { // If within morning on period...
 		return true;
 	}
 	
-	else if (((time) > waterOnAfternoon) && (time < waterOffAfternoon)) {
+	else if (((time) > waterOnAfternoon) && (time < waterOffAfternoon)) { // If within afternoon on period...
 		return true;
 
 	}
-	else {
+	else { // If not in either...
 		return false;
 	}
 }
 
-bool Timer::setMidnight(int time) {
+bool Timer::setMidnight(int time) { // Function for setting midnight
 		if ((millis() / 60000) - time <= 1440) {
 				midnight = time;
 				return true;
@@ -41,13 +43,13 @@ bool Timer::setMidnight(int time) {
 	
 }
 
-void Timer::checkMidnight(UIPUDP &udp) {
+void Timer::checkMidnight(UIPUDP &udp) { // Function for updating midnight and checking the time using NTP server
 	if (((millis() / 60000) - midnight) >= 1440) {
 		midnight = millis() / 60000;
 		
-		/*if (!setMidnightNTP(udp)) {
+		if (!setMidnightNTP(udp)) {
 			(setMidnightNTP(udp));
-		}*/
+		}
 	}
 }
 
@@ -157,7 +159,6 @@ unsigned long inline Timer::ntpUnixTime(UIPUDP &udp)
 											   // appropriately, the rest can be whatever.
 	const long ntpFirstFourBytes = 0xEC0600E3; // NTP request header
 
-											   // Fail if WiFiUdp.begin() could not init a socket
 	if (!udpInited)
 		return 0;
 
@@ -224,7 +225,7 @@ unsigned long Timer::getNTPTime(UIPUDP &udp) {
 	return time + dstOffset(time);
 }
 
-bool Timer::setMidnightNTP(UIPUDP &udp) {
+bool Timer::setMidnightNTP(UIPUDP &udp) { // Funciton for setting midnight using NTP server
 ;
 	unsigned long time = 0;
 

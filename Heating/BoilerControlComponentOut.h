@@ -8,6 +8,9 @@
 #else
 	#include "WProgram.h"
 #endif
+
+// This is an abstract class for heating components since many components such as the pump and boiler share functions
+
 class BoilerControlComponentOut {
 private:
 	int pinNum;
