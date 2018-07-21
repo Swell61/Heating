@@ -33,14 +33,14 @@ private:
 	int waterOnAfternoon = 1200;
 	int waterOffAfternoon = 1320;
 
-	int dstOffset(unsigned long); // Function for calculating the correct daylight savings offset for the time. Takes the current time as a parameter
+	int dstOffset(unsigned long time); // Function for calculating the correct daylight savings offset for the time. Takes the current time as a parameter
 	unsigned long inline ntpUnixTime(UIPUDP &udp); // Function for getting the time from and NTP server
 	bool setMidnightNTP(UIPUDP &udp); // Function for setting midnight using NTP time
 
 public:
 	// Methods for changing timer states
-	void setHeatingTimerState(bool);
-	void setWaterTimerState(bool);
+	void setHeatingTimerState(bool state);
+	void setWaterTimerState(bool state);
 
 	// Method for getting timer status
 	bool getHeatingTimerStatus();
@@ -48,7 +48,7 @@ public:
 
 	int getMidnight(); // Function for getting midnight
 	void checkMidnight(UIPUDP &udp); // Function for checking midnight using NTP time
-	bool setMidnight(int); // Function for setting midnight based on parameter
+	bool setMidnight(int time); // Function for setting midnight based on parameter
 
 	// Function for getting timer times
 	int getHeatingOnMorning();
@@ -61,14 +61,14 @@ public:
 	int getWaterOffAfternoon();
 
 	// Function for setting timer times
-	bool setHeatingOnMorning(int);
-	bool setHeatingOffMorning(int);
-	bool setHeatingOnAfternoon(int);
-	bool setHeatingOffAfternoon(int);
-	bool setWaterOnMorning(int);
-	bool setWaterOffMorning(int);
-	bool setWaterOnAfternoon(int);
-	bool setWaterOffAfternoon(int);
+	bool setHeatingOnMorning(int state);
+	bool setHeatingOffMorning(int state);
+	bool setHeatingOnAfternoon(int state);
+	bool setHeatingOffAfternoon(int state);
+	bool setWaterOnMorning(int state);
+	bool setWaterOffMorning(int state);
+	bool setWaterOnAfternoon(int state);
+	bool setWaterOffAfternoon(int state);
 
 	int getTime(); // Function to get current time
 	unsigned long getNTPTime(UIPUDP &udp); // Function for getting current time using NTP server

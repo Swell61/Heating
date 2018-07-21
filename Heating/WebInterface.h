@@ -30,15 +30,15 @@ private:
 	byte mac[6] = { 0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02 }; // MAC address of network interface
 	WebSocketStack_T webSocketStack[MAX_CLIENT_NUM]; // Stack to store each connection
 	int webServerStack_ProcessMsgIn(); // Function for processing a message from a client
-	void webServerStack_ProcessMsgOut(String); // Function for sending status to clients
-	void sendClientData(int, String); // Function to send data to a client
+	void webServerStack_ProcessMsgOut(String output); // Function for sending status to clients
+	void sendClientData(int client, String output); // Function to send data to a client
 	bool handleClientData(String & dataString); // Function for handling client data
 	bool webFilesAvailable = false; // Variable to store whether web server files are available or not
 public:
-	WebInterface(bool); // Constructor which takes parameter for whether web server files are available or not
+	WebInterface(bool webFilesAvailabe); // Constructor which takes parameter for whether web server files are available or not
 
-	void processRemoteOutput(int, byte, byte, float, bool, bool, float, bool, bool); // Function for sending main display status to clients
-	void processRemoteOutput(bool, bool, int, int, int, int, int, int, int, int); // Function for sending timer status to clients
+	void processRemoteOutput(int time, byte heatingMode, byte waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost); // Function for sending main display status to clients
+	void processRemoteOutput(bool heatingTimerStatus, bool waterTimerStatus, int heatingOnMorning, int heatingOffMorning, int heatingOnAfternoon, int heatingOffAfternoon, int waterOnMorning, int waterOffMorning, int waterOnAfternoon, int waterOffAfternoon); // Function for sending timer status to clients
 
 		int processRemoteInput(); // Function for processing client messages
 };

@@ -14,7 +14,7 @@
 
 class Pump final : public HeatingControlComponentOut { // Do not allow inheritance of Pump and inherit HeatingControlComponentOut
 public:
-	Pump(int); // Constructor that takes the pin number for the pump relay
+	Pump(int pinNum); // Constructor that takes the pin number for the pump relay
 };
 
 #endif

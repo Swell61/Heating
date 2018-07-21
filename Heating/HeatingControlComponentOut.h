@@ -18,7 +18,7 @@ private:
 	void changeRelayState();
 	bool state;
 protected:
-	HeatingControlComponentOut(int);
+	HeatingControlComponentOut(int pinNum);
 public:
 	void enable();
 	void disable();

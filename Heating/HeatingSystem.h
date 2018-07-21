@@ -66,17 +66,17 @@ private:
 	void changeRelayStates(); // Function for setting final relay states
 	
 public:
-	HeatingSystem(int, int, int); // Contructor. Takes boiler pin number, pump pin number and temperature sensor pin number as parameters
+	HeatingSystem(int boilerPinNum, int pumpPinNum, int tempSensorPinNum); // Contructor. Takes boiler pin number, pump pin number and temperature sensor pin number as parameters
 	void monitorSystem(); // Function for monitoring all system states
-	void boostHeating(bool); // Function for enabling or disabling heating boost
-	void boostWater(bool); // Function for enabling or disabling hot water boost
+	void boostHeating(bool state); // Function for enabling or disabling heating boost
+	void boostWater(bool state); // Function for enabling or disabling hot water boost
 	bool getHeatingStatus(); // Function for getting heating status
 	bool getWaterStatus(); // Function for getting hot water status
 	void disableHeating(); // Function to disable the heating
 	void disableWater(); // Function to disable the hot water
 	void enableHeating(); // Function to enable the heating
 	void enableWater(); // Function to enable the hot water
-	void setTemp(int); // Function to set requested temperature
+	void setTemp(int temp); // Function to set requested temperature
 
 };
 

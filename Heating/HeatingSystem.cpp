@@ -400,7 +400,7 @@ void HeatingSystem::boostWater(bool state) { // Function sets the state of the s
 bool HeatingSystem::getHeatingStatus() { // Get the status of the heating
 	return (pump.getStatus() && boiler.getStatus()); // If pump and boiler are on, heating is on
 };
-bool HeatingSystem::getWaterStatus() { // Function for getting the status of the hot water
+bool HeatingSystem::getWaterStatus() { // Function for getting the status of the hot waterg
 	return boiler.getStatus(); // In our system, if the heating is on then the hot water is also on
 };
 
