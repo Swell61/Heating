@@ -87,44 +87,52 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 				Serial.println(request);
 				
 				if (request == 1) {
-					
+					return 255;
 				}
 				else if (request == 2 && webFilesAvailable) {
+					
 					String requestPath = webSocketStack[j].webSocketServer.getRequestPath();
 					if (requestPath == "") {
 						requestPath = "index.htm";
 					}
-					// Return the requested file to the current client
-					
-					
-					webSocketStack[j].client.println(F("HTTP/1.1 200 OK"));
-					if (requestPath.indexOf(".jpg") > 0) {
-						webSocketStack[j].client.println();
-						
-					}
-					else if (requestPath.indexOf(".css") > 0) {
-						webSocketStack[j].client.println(F("Content-Type: text/css"));
-						webSocketStack[j].client.println(F("Connection: keep-alive"));
-						webSocketStack[j].client.println();
-						
+
+					if (SD.exists(requestPath)) {
+						// Return the requested file to the current client
+
+
+						webSocketStack[j].client.println(F("HTTP/1.1 200 OK"));
+						if (requestPath.indexOf(".jpg") > 0) {
+							webSocketStack[j].client.println();
+
+						}
+						else if (requestPath.indexOf(".css") > 0) {
+							webSocketStack[j].client.println(F("Content-Type: text/css"));
+							webSocketStack[j].client.println(F("Connection: keep-alive"));
+							webSocketStack[j].client.println();
+
+						}
+						else {
+							webSocketStack[j].client.println(F("Content-Type: text/html"));
+							webSocketStack[j].client.println(F("Connection: keep-alive"));
+							webSocketStack[j].client.println();
+
+						}
+						File webFile = SD.open(requestPath);
+						if (webFile) {
+							while (webFile.available()) {
+								webSocketStack[j].client.write(webFile.read()); // send web page to client
+							}
+
+							webFile.close();
+						}
+						webSocketStack[j].client.stop();
+
+						return 0;
 					}
 					else {
-						webSocketStack[j].client.println(F("Content-Type: text/html"));
-						webSocketStack[j].client.println(F("Connection: keep-alive"));
-						webSocketStack[j].client.println();
-						
+						webSocketStack[j].client.stop();
+						return 0;
 					}
-					File webFile = SD.open(requestPath);
-					if (webFile) {
-						while (webFile.available()) {
-							webSocketStack[j].client.write(webFile.read()); // send web page to client
-						}
-						
-						webFile.close();
-					}
-					webSocketStack[j].client.stop();
-					
-					return 0;
 				}
 				else {
 					
