@@ -1,7 +1,7 @@
-// BoilerControlComponentOut.h
+// HeatingControlComponentOut.h
 
-#ifndef BoilerControlComponentOut_h
-#define BoilerControlComponentOut_h
+#ifndef HeatingControlComponentOut_h
+#define HeatingControlComponentOut_h
 
 #if defined(ARDUINO) && ARDUINO >= 100
 	#include "arduino.h"
@@ -11,14 +11,14 @@
 
 // This is an abstract class for heating components since many components such as the pump and boiler share functions
 
-class BoilerControlComponentOut {
+class HeatingControlComponentOut {
 private:
 	int pinNum;
 	bool status;
 	void changeRelayState();
 	bool state;
 protected:
-	BoilerControlComponentOut(int);
+	HeatingControlComponentOut(int);
 public:
 	void enable();
 	void disable();

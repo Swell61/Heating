@@ -3,5 +3,5 @@
 // 
 
 #include "Boiler.h"
-Boiler::Boiler(int pinNum) : BoilerControlComponentOut(pinNum) { // Constructor that takes the pinNum parameter
+Boiler::Boiler(int pinNum) : HeatingControlComponentOut(pinNum) { // Constructor that takes the pinNum parameter
 }

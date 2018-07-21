@@ -83,7 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Boiler.h" />
-    <ClInclude Include="BoilerControlComponentOut.h" />
+    <ClInclude Include="HeatingControlComponentOut.h" />
     <ClInclude Include="Display.h" />
     <ClInclude Include="HeatingSystem.h" />
     <ClInclude Include="Config.h" />
@@ -95,7 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Boiler.cpp" />
-    <ClCompile Include="BoilerControlComponentOut.cpp" />
+    <ClCompile Include="HeatingControlComponentOut.cpp" />
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="HeatingSystem.cpp" />
     <ClCompile Include="Config.cpp" />

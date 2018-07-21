@@ -30,9 +30,6 @@
     <ClInclude Include="Pump.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BoilerControlComponentOut.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TempSensor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -48,6 +45,9 @@
     <ClInclude Include="Config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="HeatingControlComponentOut.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Boiler.cpp">
@@ -57,9 +57,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Pump.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BoilerControlComponentOut.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TempSensor.cpp">
@@ -75,6 +72,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HeatingControlComponentOut.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
