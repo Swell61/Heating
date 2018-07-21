@@ -82,37 +82,38 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 			webSocketStack[j].client = server.available();
 			if (webSocketStack[j].client.connected()) {
 				
-				String request = webSocketStack[j].webSocketServer.handshake(webSocketStack[j].client);
+				byte request = webSocketStack[j].webSocketServer.handshake(webSocketStack[j].client);
 				
 				
-				if (request == "1") {
+				if (request == 1) {
 					
 				}
-				else if (request != "0" && webFilesAvailable) {
-					if (request == "") {
-						request = "index.htm";
+				else if (request == 2 && webFilesAvailable) {
+					String requestPath = webSocketStack[j].webSocketServer.getData();
+					if (requestPath == "") {
+						requestPath = "index.htm";
 					}
 					// Return the requested file to the current client
 					
 					
-					webSocketStack[j].client.println("HTTP/1.1 200 OK");
-					if (request.indexOf(".jpg") > 0) {
+					webSocketStack[j].client.println(F("HTTP/1.1 200 OK"));
+					if (requestPath.indexOf(".jpg") > 0) {
 						webSocketStack[j].client.println();
 						
 					}
-					else if (request.indexOf(".css") > 0) {
-						webSocketStack[j].client.println("Content-Type: text/css");
-						webSocketStack[j].client.println("Connection: keep-alive");
+					else if (requestPath.indexOf(".css") > 0) {
+						webSocketStack[j].client.println(F("Content-Type: text/css"));
+						webSocketStack[j].client.println(F("Connection: keep-alive"));
 						webSocketStack[j].client.println();
 						
 					}
 					else {
-						webSocketStack[j].client.println("Content-Type: text/html");
-						webSocketStack[j].client.println("Connection: keep-alive");
+						webSocketStack[j].client.println(F("Content-Type: text/html"));
+						webSocketStack[j].client.println(F("Connection: keep-alive"));
 						webSocketStack[j].client.println();
 						
 					}
-					File webFile = SD.open(request);
+					File webFile = SD.open(requestPath);
 					if (webFile) {
 						while (webFile.available()) {
 							webSocketStack[j].client.write(webFile.read()); // send web page to client

@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SD", "..\..\..\..\Arduino\l
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IniFile", "..\..\..\..\Arduino\libraries\IniFile\IniFile.vcxitems", "{0ED0AB26-4EB0-4523-8B27-7BDD3D3F1A0A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MemoryFree-master", "..\..\..\..\Arduino\libraries\MemoryFree-master\MemoryFree-master.vcxitems", "{7997EC65-403B-4507-84D0-343C9D560F2D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86

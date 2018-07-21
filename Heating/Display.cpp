@@ -19,57 +19,57 @@ void Display::mainDisplay(int time, byte heatingMode, byte waterMode, float temp
 	tft.fillRect(200, 70, 75, 35, heatingBoost ? 0x7CFC0 : 0xFF000);
 	tft.fillRect(200, 145, 75, 35, waterBoost ? 0x7CFC0 : 0xFF000);
 	tft.setCursor(209, 80);
-	tft.println("BOOST");
+	tft.println(F("BOOST"));
 	tft.setCursor(209, 155);
-	tft.println("BOOST");
+	tft.println(F("BOOST"));
 
 	if (heatingMode == 0) {
 		tft.fillRect(100, 70, 80, 35, 0xFF000);
 		tft.setCursor(120, 80);
-		tft.println("OFF");
+		tft.println(F("OFF"));
 	}
 	else if (heatingMode == 1) {
 		tft.fillRect(100, 70, 80, 35, 0xff951c);
 		tft.setCursor(110, 80);
-		tft.println("TIMER");
+		tft.println(F("TIMER"));
 	}
 	else if (heatingMode == 2) {
 		tft.fillRect(100, 70, 80, 35, 0x7CFC0);
 		tft.setCursor(125, 80);
-		tft.println("ON");
+		tft.println(F("ON"));
 	}
 	
 	if (waterMode == 0) {
 		tft.fillRect(100, 145, 80, 35, 0xFF000);
 		tft.setCursor(120, 155);
-		tft.println("OFF");
+		tft.println(F("OFF"));
 	}
 	else if (waterMode == 1) {
 		tft.fillRect(100, 145, 80, 35, 0xff951c);
 		tft.setCursor(110, 155);
-		tft.println("TIMER");
+		tft.println(F("TIMER"));
 	}
 	else if (waterMode == 2) {
 		tft.fillRect(100, 145, 80, 35, 0x7CFC0);
 		tft.setCursor(125, 155);
-		tft.println("ON");
+		tft.println(F("ON"));
 	}
 
 	
 
 	tft.setCursor(0, 80);
-	tft.println("HEATING:");
+	tft.println(F("HEATING:"));
 	tft.setCursor(0, 155);
-	tft.println("WATER:");
+	tft.println(F("WATER:"));
 
 	tft.setCursor(0, 3);
 	tft.setTextColor(0xFFFFF, 0x00000);
-	tft.print("Current temp: ");
+	tft.print(F("Current temp: "));
 	tft.setCursor(160, 3);
 	tft.print((String)temp);
 
 	tft.setCursor(0, 20);
-	tft.println("Status: Heating - ");
+	tft.println(F("Status: Heating - "));
 	tft.setCursor(215, 20);
 	tft.print((String)(heatingStatus ? "ON " : "OFF"));
 	tft.print(" Water - ");
@@ -82,7 +82,7 @@ void Display::mainDisplay(int time, byte heatingMode, byte waterMode, float temp
 	tft.fillRect(290, 205, 100, 30, 0xFFFFF);
 	tft.setTextColor(0x00000);
 	tft.setCursor(310, 213);
-	tft.println("TIMER");
+	tft.println(F("TIMER"));
 
 	tft.setTextColor(0xFFFFF);
 	
@@ -107,39 +107,39 @@ void Display::displayUpdate(int time, byte heatingMode, byte waterMode, float te
 	tft.fillRect(200, 70, 75, 35, heatingBoost ? 0x7CFC0 : 0xFF000);
 	tft.fillRect(200, 145, 75, 35, waterBoost ? 0x7CFC0 : 0xFF000);
 	tft.setCursor(209, 80);
-	tft.println("BOOST");
+	tft.println(F("BOOST"));
 	tft.setCursor(209, 155);
-	tft.println("BOOST");
+	tft.println(F("BOOST"));
 
 	if (heatingMode == 0) {
 		tft.fillRect(100, 70, 80, 35, 0xFF000);
 		tft.setCursor(120, 80);
-		tft.println("OFF");
+		tft.println(F("OFF"));
 	}
 	else if (heatingMode == 1) {
 		tft.fillRect(100, 70, 80, 35, 0xff951c);
 		tft.setCursor(110, 80);
-		tft.println("TIMER");
+		tft.println(F("TIMER"));
 	}
 	else if (heatingMode == 2) {
 		tft.fillRect(100, 70, 80, 35, 0x7CFC0);
 		tft.setCursor(125, 80);
-		tft.println("ON");
+		tft.println(F("ON"));
 	}
 	if (waterMode == 0) {
 		tft.fillRect(100, 145, 80, 35, 0xFF000);
 		tft.setCursor(120, 155);
-		tft.println("OFF");
+		tft.println(F("OFF"));
 	}
 	else if (waterMode == 1) {
 		tft.fillRect(100, 145, 80, 35, 0xff951c);
 		tft.setCursor(110, 155);
-		tft.println("TIMER");
+		tft.println(F("TIMER"));
 	}
 	else if (waterMode == 2) {
 		tft.fillRect(100, 145, 80, 35, 0x7CFC0);
 		tft.setCursor(125, 155);
-		tft.println("ON");
+		tft.println(F("ON"));
 	}
 
 	tft.setTextColor(0xFFFFF, 0x00000);
@@ -301,16 +301,16 @@ void Display::timerDisplay(bool heatingTimerStatus, bool waterTimerStatus, int h
 	tft.fillRect(0, 0, 80, 20, 0xFFFFF);
 	tft.setTextColor(0x00000);
 	tft.setCursor(5, 0);
-	tft.println("BACK");
+	tft.println(F("BACK"));
 
 	tft.fillRect(145, 5, 56, 25, heatingTimerStatus ? 0x7CFC0 : 0xFF000);
 	tft.fillRect(295, 5, 68, 25, waterTimerStatus ? 0x7CFC0 : 0xFF000);
 	tft.setTextSize(2);
 	tft.setTextColor(0xFFFFF);
 	tft.setCursor(150, 10);
-	tft.println("HEAT");
+	tft.println(F("HEAT"));
 	tft.setCursor(300, 10);
-	tft.println("WATER");
+	tft.println(F("WATER"));
 
 	// Print morning on for heating
 	tft.setCursor(145, 50);
@@ -364,9 +364,9 @@ void Display::timerDisplay(bool heatingTimerStatus, bool waterTimerStatus, int h
 	int y = 50;
 	for (int count = 0; count <= 3; count++) {
 		tft.setCursor(120, y);
-		tft.print("-");
+		tft.print(F("-"));
 		tft.setCursor(215, y);
-		tft.print("+");
+		tft.print(F("+"));
 		y = y + 50;
 	}
 
@@ -375,19 +375,19 @@ void Display::timerDisplay(bool heatingTimerStatus, bool waterTimerStatus, int h
 		tft.setCursor(275, y);
 		tft.print("-");
 		tft.setCursor(370, y);
-		tft.print("+");
+		tft.print(F("+"));
 		y = y + 50;
 	}
 
 	tft.setTextSize(1);
 	tft.setCursor(0, 50);
-	tft.println("Morning on:");
+	tft.println(F("Morning on:"));
 	tft.setCursor(0, 100);
-	tft.println("Morning off:");
+	tft.println(F("Morning off:"));
 	tft.setCursor(0, 150);
-	tft.println("Afternoon on:");
+	tft.println(F("Afternoon on:"));
 	tft.setCursor(0, 200);
-	tft.println("Afternoon off:");
+	tft.println(F("Afternoon off:"));
 }
 
 void Display::timerUpdate(bool heatingTimerStatus, bool waterTimerStatus, int heatingOnMorning, int heatingOffMorning, int heatingOnAfternoon, int heatingOffAfternoon, int waterOnMorning, int waterOffMorning, int waterOnAfternoon, int waterOffAfternoon) {
@@ -401,9 +401,9 @@ void Display::timerUpdate(bool heatingTimerStatus, bool waterTimerStatus, int he
 	tft.setTextSize(2);
 	tft.setTextColor(0xFFFFF);
 	tft.setCursor(150, 10);
-	tft.println("HEAT");
+	tft.println(F("HEAT"));
 	tft.setCursor(300, 10);
-	tft.println("WATER");
+	tft.println(F("WATER"));
 
 	tft.setTextSize(2);
 	tft.setTextColor(0xFFFFF, 0x00000);
@@ -473,29 +473,29 @@ void Display::editTime(int time) {
 	tft.setTextSize(4);
 
 	tft.setCursor(100, 30);
-	tft.print("+");
+	tft.print(F("+"));
 	tft.setCursor(145, 30);
-	tft.print("+");
+	tft.print(F("+"));
 	tft.setCursor(227, 30);
-	tft.print("+"); 
+	tft.print(F("+")); 
 	tft.setCursor(272, 30);
-	tft.print("+");
+	tft.print(F("+"));
 
 	tft.setCursor(100, 185);
-	tft.print("-");
+	tft.print(F("-"));
 	tft.setCursor(145, 185);
-	tft.print("-");
+	tft.print(F("-"));
 	tft.setCursor(227, 185);
-	tft.print("-");
+	tft.print(F("-"));
 	tft.setCursor(272, 185);
-	tft.print("-");
+	tft.print(F("-"));
 
 	tft.setTextSize(3);
 
 	tft.fillRect(0, 0, 80, 20, 0xFFFFF);
 	tft.setTextColor(0x00000);
 	tft.setCursor(5, 0);
-	tft.println("BACK");
+	tft.println(F("BACK"));
 }
 
 void Display::updateEditTime(int time) {
@@ -517,9 +517,9 @@ void Display::loadingScreen(int tryNum) {
 	tft.setTextColor(0xFFFFF, 0x00000);
 	tft.setCursor(0, 0);
 	tft.setTextSize(2);
-	tft.println("Loading...");
-	tft.println("Getting time from NTP server...  (" + (String)tryNum + "/4)");
+	tft.println(F("Loading..."));
+	tft.println("Getting time from NTP server...  (" + (String)tryNum + "/5)");
 	if (tryNum > 1) {
-		tft.println("Check Ethernet cable and internet conectivity");
+		tft.println(F("Check Ethernet cable and internet conectivity"));
 	}
 }
