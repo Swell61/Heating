@@ -188,7 +188,7 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 					Serial.print("Request path: ");
 					Serial.println(requestPath);
 					Serial.println(strlen(requestPath));
-					if (strcmp(requestPath, " ") == 0) { // If client requests an empty path, send them the main page HTML file
+					if (strlen(requestPath) == 0) { // If client requests an empty path, send them the main page HTML file
 						Serial.println("Empty request");
 						strcpy(requestPath, "index.htm");
 					}
