@@ -8,7 +8,7 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 	currentTemp = tempSensor.getTemp(); // Gets the current temperature to display
 	setHeatingOff(); // Disables the heating
 	setWaterOff(); // Disables the ho twater
-	SDAvailable = SD.begin(49); // Checks whether the SD card is available or not
+	Serial.println((SDAvailable = SD.begin(49)) ? "SD UP" : "SD DOWN"); // Checks whether the SD card is available or not
 	
 	int NTPTryCount = 0; // Variable to store the number of tries to get the time from the NTP server
 	unsigned long time = 0; // Variable to store the time from the NTP server
