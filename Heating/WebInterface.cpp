@@ -21,12 +21,68 @@ WebInterface::WebInterface(bool SDAvailable) : webFilesAvailable(SDAvailable) {
 
 void WebInterface::processRemoteOutput(int time, byte heatingMode, byte waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost) {
 	// Send a string containing the status of the main display
-	String output = "0:" + (String)time + ":" + (String)heatingMode + ":" + (String)waterMode + ":" + (String)temp + ":" + (String)heatingStatus + ":" + (String)waterStatus + ":" + (String)requestedTemp + ":" + (String)heatingBoost + ":" + (String)waterBoost;
+	char buffer[6];
+	itoa(time, buffer, 10);
+	char output[] = "0:";
+	strcat(output, buffer);
+
+	itoa(heatingMode, buffer, 10);
+	strcat(output, buffer);
+
+	itoa(waterMode, buffer, 10);
+	strcat(output, buffer);
+
+	dtostrf(temp, 5, 2, buffer);
+	strcat(output, buffer);
+
+	strcat(output, heatingStatus ? "1" : "0");
+
+	strcat(output, waterStatus ? "1" : "0");
+
+	dtostrf(temp, 5, 2, buffer);
+	strcat(output, buffer);
+
+	strcat(output, heatingBoost ? "1" : "0");
+
+	strcat(output, waterBoost ? "1" : "0");
+
 	webServerStack_ProcessMsgOut(output);
+
 }
 void WebInterface::processRemoteOutput(bool heatingTimerStatus, bool waterTimerStatus, int heatingOnMorning, int heatingOffMorning, int heatingOnAfternoon, int heatingOffAfternoon, int waterOnMorning, int waterOffMorning, int waterOnAfternoon, int waterOffAfternoon) {
 	// Send a string containing the status of the timer
-	String output = "1:" + (String)heatingTimerStatus + ":" + (String)waterTimerStatus + ":" + (String)heatingOnMorning + ":" + (String)heatingOffMorning + ":" + (String)heatingOnAfternoon + ":" + (String)heatingOffAfternoon + ":" + (String)waterOnMorning + ":" + (String)waterOffMorning + ":" + (String)waterOnAfternoon + ":" + (String)waterOffAfternoon;
+	//String output = "1:" + (String)heatingTimerStatus + ":" + (String)waterTimerStatus + ":" + (String)heatingOnMorning + ":" + (String)heatingOffMorning + ":" + (String)heatingOnAfternoon + ":" + (String)heatingOffAfternoon + ":" + (String)waterOnMorning + ":" + (String)waterOffMorning + ":" + (String)waterOnAfternoon + ":" + (String)waterOffAfternoon;
+	char buffer[6];
+	char output[] = "1:";
+
+	strcat(output, heatingTimerStatus ? "1" : "0");
+
+	strcat(output, waterTimerStatus ? "1" : "0");
+
+	itoa(heatingOnMorning, buffer, 10);
+	strcat(output, buffer);
+
+	itoa(heatingOffMorning, buffer, 10);
+	strcat(output, buffer);
+
+	itoa(heatingOnAfternoon, buffer, 10);
+	strcat(output, buffer);
+
+	itoa(heatingOffAfternoon, buffer, 10);
+	strcat(output, buffer);
+
+	itoa(waterOnMorning, buffer, 10);
+	strcat(output, buffer);
+
+	itoa(waterOffMorning, buffer, 10);
+	strcat(output, buffer);
+
+	itoa(waterOnAfternoon, buffer, 10);
+	strcat(output, buffer);
+
+	itoa(waterOffAfternoon, buffer, 10);
+	strcat(output, buffer);
+	
 	webServerStack_ProcessMsgOut(output);
 }
 
@@ -146,7 +202,7 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 	return 255;
 }
 
-void WebInterface::webServerStack_ProcessMsgOut(String output) {
+void WebInterface::webServerStack_ProcessMsgOut(const char *output) {
 	for (int i = 0; i < MAX_CLIENT_NUM; i++) { // Loop through each client connected
 		if (webSocketStack[i].client) {
 			if (webSocketStack[i].client.connected()) {
@@ -161,10 +217,6 @@ void WebInterface::webServerStack_ProcessMsgOut(String output) {
 	}
 }
 
-void WebInterface::sendClientData(int id, String s) {
+void WebInterface::sendClientData(int id, const char *s) {
 	webSocketStack[id].webSocketServer.sendData(s);
-}
-
-bool WebInterface::handleClientData(String &dataString) {
-
 }
