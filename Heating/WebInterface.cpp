@@ -47,7 +47,7 @@ void WebInterface::processRemoteOutput(int time, byte heatingMode, byte waterMod
 	strcat(output, waterStatus ? "1" : "0");
 	strcat(output, ":");
 
-	dtostrf(temp, 5, 2, buffer);
+	dtostrf(requestedTemp, 5, 2, buffer);
 	strcat(output, buffer);
 	strcat(output, ":");
 
@@ -185,16 +185,10 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 				else if (request == 2 && webFilesAvailable) { // If need to send web files and web files are available
 					Serial.println("Web files. Getting request path");
 					char* requestPath = webSocketStack[j].webSocketServer.getRequestPath(); // Get the requested file path
-					Serial.print("Request path: ");
-					Serial.println(requestPath);
-					Serial.println(strlen(requestPath));
 					if (strlen(requestPath) == 0) { // If client requests an empty path, send them the main page HTML file
 						Serial.println("Empty request");
 						strcpy(requestPath, "index.htm");
 					}
-					Serial.println(SD.exists("index.htm") ? "FOUND" : "UNAVAILABLE");
-
-					Serial.println(SD.exists(requestPath) ? "FOUND" : "UNAVAILABLE");
 					if (SD.exists(requestPath)) { // if the file is available
 						// Return the requested file to the current client
 
