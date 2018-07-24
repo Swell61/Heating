@@ -67,7 +67,8 @@ private:
 	void checkBoosts(); // Function for checking whether heating and hot water need to be on or off depending on active boosts
 	bool temperatureCheck(); // Function for checking the temperature against requested temperature
 	void changeRelayStates(); // Function for setting final relay states
-	void loadConfig(); // Function for loading configuration from SD card
+	void loadTimer(); // Function for loading configuration from SD card
+	
 	
 public:
 	HeatingSystem(int boilerPinNum, int pumpPinNum, int tempSensorPinNum); // Contructor. Takes boiler pin number, pump pin number and temperature sensor pin number as parameters

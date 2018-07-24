@@ -9,7 +9,9 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 	setHeatingOff(); // Disables the heating
 	setWaterOff(); // Disables the ho twater
 	Serial.println((SDAvailable = SD.begin(49)) ? "SD UP" : "SD DOWN"); // Checks whether the SD card is available or not
-	
+	if (SDAvailable) {
+		loadTimer();
+	}
 	int NTPTryCount = 0; // Variable to store the number of tries to get the time from the NTP server
 	unsigned long time = 0; // Variable to store the time from the NTP server
 	while (NTPTryCount < 5) { // Tries 5 times to get the time
@@ -30,6 +32,36 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 	display->mainDisplay(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive); // Show the main display
 	
 };
+
+void HeatingSystem::loadTimer() {
+	// Load timer
+	int time;
+	if ((time = atoi(config.readProperty("heatMon"))) != 0) {
+		timer.setHeatingOnMorning(time);
+	}
+	if ((time = atoi(config.readProperty("heatMoff"))) != 0) {
+		timer.setHeatingOffMorning(time);
+	}
+	if ((time = atoi(config.readProperty("heatAon"))) != 0) {
+		timer.setHeatingOnAfternoon(time);
+	}
+	if ((time = atoi(config.readProperty("heatAoff"))) != 0) {
+		timer.setHeatingOffAfternoon(time);
+	}
+	
+	if ((time = atoi(config.readProperty("waterMon"))) != 0) {
+		timer.setWaterOnMorning(time);
+	}
+	if ((time = atoi(config.readProperty("waterMoff"))) != 0) {
+		timer.setWaterOffMorning(time);
+	}
+	if ((time = atoi(config.readProperty("waterAon"))) != 0) {
+		timer.setWaterOnAfternoon(time);
+	}
+	if ((time = atoi(config.readProperty("waterAoff"))) != 0) {
+		timer.setWaterOffAfternoon(time);
+	}
+}
 
 void HeatingSystem::monitorSystem() { // This function runs through the process required to monitor and manage the heating system
 	
