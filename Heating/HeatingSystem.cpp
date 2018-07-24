@@ -63,6 +63,27 @@ void HeatingSystem::loadTimer() {
 	}
 }
 
+bool HeatingSystem::saveTimer() {
+	char buffer[5];
+	itoa(timer.getHeatingOnMorning(), buffer, 10);
+	config.writeProperty("heatMon", buffer);
+	itoa(timer.getHeatingOffMorning(), buffer, 10);
+	config.writeProperty("heatMoff", buffer);
+	itoa(timer.getHeatingOnAfternoon(), buffer, 10);
+	config.writeProperty("heatAon", buffer);
+	itoa(timer.getHeatingOffAfternoon(), buffer, 10);
+	config.writeProperty("heatAoff", buffer);
+
+	itoa(timer.getWaterOnMorning(), buffer, 10);
+	config.writeProperty("waterMon", buffer);
+	itoa(timer.getWaterOffMorning(), buffer, 10);
+	config.writeProperty("waterMoff", buffer);
+	itoa(timer.getWaterOnAfternoon(), buffer, 10);
+	config.writeProperty("waterAon", buffer);
+	itoa(timer.getWaterOffAfternoon(), buffer, 10);
+	config.writeProperty("waterAoff", buffer);
+}
+
 void HeatingSystem::monitorSystem() { // This function runs through the process required to monitor and manage the heating system
 	
 	if (updateDisplay) { // If the screen needs updating
@@ -78,7 +99,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 			// Update any connected clients with the current status
 			remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
 			remote.processRemoteOutput(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
-
+			saveTimer();
 		}
 		else if (screen == 2) { // If on the time edit display
 			display->updateEditTime(timer.getTime()); // Show the time edit display
