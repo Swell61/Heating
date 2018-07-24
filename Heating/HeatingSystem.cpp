@@ -12,22 +12,22 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 	if (SDAvailable) {
 		loadTimer();
 	}
-	//int NTPTryCount = 0; // Variable to store the number of tries to get the time from the NTP server
-	//unsigned long time = 0; // Variable to store the time from the NTP server
-	//while (NTPTryCount < 5) { // Tries 5 times to get the time
-	//	
-	//	display->loadingScreen(NTPTryCount + 1); // Shows the loading screen
-	//	time = timer.getNTPTime(udp); // Tries to get the time
-	//	if (time != 0) { // If the time is not zero (very unlikely it will be zero and if it is, it will run another check if it has 1+ remaining)
-	//		int currentTime = (time / 60) % 1440; // Gets the current time in minutes
-	//		
-	//		timer.setMidnight((millis() / 60000) - currentTime); // Sets midnight
-	//		NTPTryCount = 5; // Exceeds the max tries so the loop will break
-	//	}
-	//	else { // If failed to get time...
-	//		NTPTryCount++; // ...increase the try count and loop round again if 1+ tries left
-	//	}
-	//}
+	int NTPTryCount = 0; // Variable to store the number of tries to get the time from the NTP server
+	unsigned long time = 0; // Variable to store the time from the NTP server
+	while (NTPTryCount < 5) { // Tries 5 times to get the time
+		
+		display->loadingScreen(NTPTryCount + 1); // Shows the loading screen
+		time = timer.getNTPTime(udp); // Tries to get the time
+		if (time != 0) { // If the time is not zero (very unlikely it will be zero and if it is, it will run another check if it has 1+ remaining)
+			int currentTime = (time / 60) % 1440; // Gets the current time in minutes
+			
+			timer.setMidnight((millis() / 60000) - currentTime); // Sets midnight
+			NTPTryCount = 5; // Exceeds the max tries so the loop will break
+		}
+		else { // If failed to get time...
+			NTPTryCount++; // ...increase the try count and loop round again if 1+ tries left
+		}
+	}
 
 	display->mainDisplay(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive); // Show the main display
 	
