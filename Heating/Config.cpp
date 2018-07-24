@@ -15,12 +15,10 @@ Config::Config(const char* fn, char separator) : separator(separator) {
 
 bool Config::writeProperty(const char* property, const char* value) {
 	byte valueLength = strlen(value);
-	Serial.println(SD.exists(fileName) ? "FILE FOUND" : "FILE NOT FOUND");
 
 	if ((strlen(property) > MAX_PROPERTY_LENGTH) || (valueLength > MAX_VALUE_LENGTH))
 		return 0; // Failed to write value
 	File file = SD.open(fileName, O_READ | O_WRITE | O_CREAT);
-	Serial.println(SD.exists(fileName) ? "FILE FOUND" : "FILE NOT FOUND");
 
 	file.seek(0); // Go to start of file (FILE_WRITE defaults to end of file)
 	char currentChar;
@@ -49,11 +47,8 @@ bool Config::writeProperty(const char* property, const char* value) {
 	// If program gets to here, property does not currently exist and pointer is at bottom of file
 	file.close();
 	file = SD.open(fileName, FILE_WRITE);
-	Serial.println("Not found property. Writing new");
-	Serial.println(property);
-	Serial.println(file.print(property)); // Write the property
-	Serial.println(property);
-	Serial.println(file.print(separator)); // Write the separator
+	file.print(property); // Write the property
+	file.print(separator); // Write the separator
 	writeValue(file, value); // Write the value
 	file.close();
 	return 1; // Property write succeeded
@@ -99,8 +94,6 @@ char* Config::readProperty(const char* property) {
 						break;
 					}
 				}
-				Serial.print("Length: ");
-				Serial.println(strlen(currentValue));
 				return currentValue; // Return value
 			}
 			else {

@@ -68,7 +68,7 @@ private:
 	bool temperatureCheck(); // Function for checking the temperature against requested temperature
 	void changeRelayStates(); // Function for setting final relay states
 	void loadTimer(); // Function for loading configuration from SD card
-	bool saveTimer(); // Function for saving timer configuration
+	bool saveTimer(const char* timerCase, int time); // Function for saving timer configuration
 	
 public:
 	HeatingSystem(int boilerPinNum, int pumpPinNum, int tempSensorPinNum); // Contructor. Takes boiler pin number, pump pin number and temperature sensor pin number as parameters

@@ -12,22 +12,22 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 	if (SDAvailable) {
 		loadTimer();
 	}
-	int NTPTryCount = 0; // Variable to store the number of tries to get the time from the NTP server
-	unsigned long time = 0; // Variable to store the time from the NTP server
-	while (NTPTryCount < 5) { // Tries 5 times to get the time
-		
-		display->loadingScreen(NTPTryCount + 1); // Shows the loading screen
-		time = timer.getNTPTime(udp); // Tries to get the time
-		if (time != 0) { // If the time is not zero (very unlikely it will be zero and if it is, it will run another check if it has 1+ remaining)
-			int currentTime = (time / 60) % 1440; // Gets the current time in minutes
-			
-			timer.setMidnight((millis() / 60000) - currentTime); // Sets midnight
-			NTPTryCount = 5; // Exceeds the max tries so the loop will break
-		}
-		else { // If failed to get time...
-			NTPTryCount++; // ...increase the try count and loop round again if 1+ tries left
-		}
-	}
+	//int NTPTryCount = 0; // Variable to store the number of tries to get the time from the NTP server
+	//unsigned long time = 0; // Variable to store the time from the NTP server
+	//while (NTPTryCount < 5) { // Tries 5 times to get the time
+	//	
+	//	display->loadingScreen(NTPTryCount + 1); // Shows the loading screen
+	//	time = timer.getNTPTime(udp); // Tries to get the time
+	//	if (time != 0) { // If the time is not zero (very unlikely it will be zero and if it is, it will run another check if it has 1+ remaining)
+	//		int currentTime = (time / 60) % 1440; // Gets the current time in minutes
+	//		
+	//		timer.setMidnight((millis() / 60000) - currentTime); // Sets midnight
+	//		NTPTryCount = 5; // Exceeds the max tries so the loop will break
+	//	}
+	//	else { // If failed to get time...
+	//		NTPTryCount++; // ...increase the try count and loop round again if 1+ tries left
+	//	}
+	//}
 
 	display->mainDisplay(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive); // Show the main display
 	
@@ -63,25 +63,14 @@ void HeatingSystem::loadTimer() {
 	}
 }
 
-bool HeatingSystem::saveTimer() {
-	char buffer[5];
-	itoa(timer.getHeatingOnMorning(), buffer, 10);
-	config.writeProperty("heatMon", buffer);
-	itoa(timer.getHeatingOffMorning(), buffer, 10);
-	config.writeProperty("heatMoff", buffer);
-	itoa(timer.getHeatingOnAfternoon(), buffer, 10);
-	config.writeProperty("heatAon", buffer);
-	itoa(timer.getHeatingOffAfternoon(), buffer, 10);
-	config.writeProperty("heatAoff", buffer);
-
-	itoa(timer.getWaterOnMorning(), buffer, 10);
-	config.writeProperty("waterMon", buffer);
-	itoa(timer.getWaterOffMorning(), buffer, 10);
-	config.writeProperty("waterMoff", buffer);
-	itoa(timer.getWaterOnAfternoon(), buffer, 10);
-	config.writeProperty("waterAon", buffer);
-	itoa(timer.getWaterOffAfternoon(), buffer, 10);
-	config.writeProperty("waterAoff", buffer);
+bool HeatingSystem::saveTimer(const char* timerCase, int time) {
+	if (SDAvailable && time < 1440 && strlen(timerCase) >= 7 && strlen(timerCase) <= 9) { // If SD card available and time is in correct range and timercase is valid range
+		char buffer[5]; // Buffer for int to char array conversion
+		itoa(time, buffer, 10); // Convert time to char array
+		config.writeProperty(timerCase, buffer); // Write the proeprty to the file
+		return true; // Success
+	}
+	return false; // Failed
 }
 
 void HeatingSystem::monitorSystem() { // This function runs through the process required to monitor and manage the heating system
@@ -99,7 +88,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 			// Update any connected clients with the current status
 			remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
 			remote.processRemoteOutput(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
-			saveTimer();
+			
 		}
 		else if (screen == 2) { // If on the time edit display
 			display->updateEditTime(timer.getTime()); // Show the time edit display
@@ -162,81 +151,97 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	else if (touchOption == 7) { // Change heating on morning time 
 		if (timer.setHeatingOnMorning(timer.getHeatingOnMorning() - timerTimeInc)) {
 			updateDisplay = true;
+			saveTimer("heatMon", timer.getHeatingOnMorning());
 		}
 	}
 	else if (touchOption == 8) { // Change heating on morning time 
 		if (timer.setHeatingOnMorning(timer.getHeatingOnMorning() + timerTimeInc)) {
 			updateDisplay = true;
+			saveTimer("heatMon", timer.getHeatingOnMorning());
 		}
 	}
 	else if (touchOption == 9) { // Change heating off morning time 
 		if (timer.setHeatingOffMorning(timer.getHeatingOffMorning() - timerTimeInc)) {
 			updateDisplay = true;
+			saveTimer("heatMoff", timer.getHeatingOffMorning());
 		}
 	}
 	else if (touchOption == 10) { // Change heating off morning time
 		if (timer.setHeatingOffMorning(timer.getHeatingOffMorning() + timerTimeInc)) {
 			updateDisplay = true;
+			saveTimer("heatMoff", timer.getHeatingOffMorning());
 		}
 	}
 	else if (touchOption == 11) { // Change heating on afternoon time
 		if (timer.setHeatingOnAfternoon(timer.getHeatingOnAfternoon() - timerTimeInc)) {
 			updateDisplay = true;
+			saveTimer("heatAon", timer.getHeatingOnAfternoon());
 		}
 	}
 	else if (touchOption == 12) { // Change heating on afternoon time
 		if (timer.setHeatingOnAfternoon(timer.getHeatingOnAfternoon() + timerTimeInc)) {
 			updateDisplay = true;
+			saveTimer("heatAon", timer.getHeatingOnAfternoon());
 		}
 	}
 	else if (touchOption == 13) { // Change heating off afternoon time
 		if (timer.setHeatingOffAfternoon(timer.getHeatingOffAfternoon() - timerTimeInc)) {
 			updateDisplay = true;
+			saveTimer("heatAoff", timer.getHeatingOffAfternoon());
 		}
 	}
 	else if (touchOption == 14) { // Change heating off afternoon time
 		if (timer.setHeatingOffAfternoon(timer.getHeatingOffAfternoon() + timerTimeInc)) {
 			updateDisplay = true;
+			saveTimer("heatAoff", timer.getHeatingOffAfternoon());
 		}
 	}
 	else if (touchOption == 15) { // Change hot water on morning time
 		if (timer.setWaterOnMorning(timer.getWaterOnMorning() - timerTimeInc)) {
 			updateDisplay = true;
+			saveTimer("waterMon", timer.getWaterOnMorning());
 		}
 	}
 	else if (touchOption == 16) { // Change hot water on morning time
 		if (timer.setWaterOnMorning(timer.getWaterOnMorning() + timerTimeInc)) {
 			updateDisplay = true;
+			saveTimer("waterMon", timer.getWaterOnMorning());
 		}
 	}
 	else if (touchOption == 17) { // Change hot water off morning time
 		if (timer.setWaterOffMorning(timer.getWaterOffMorning() - timerTimeInc)) {
 			updateDisplay = true;
+			saveTimer("waterMoff", timer.getWaterOffMorning());
 		}
 	}
 	else if (touchOption == 18) { // Change hot water off morning time
 		if (timer.setWaterOffMorning(timer.getWaterOffMorning() + timerTimeInc)) {
 			updateDisplay = true;
+			saveTimer("waterMoff", timer.getWaterOffMorning());
 		}
 	}
 	else if (touchOption == 19) { // Change hot water on afternoon time
 		if (timer.setWaterOnAfternoon(timer.getWaterOnAfternoon() - timerTimeInc)) {
 			updateDisplay = true;
+			saveTimer("waterAon", timer.getWaterOnAfternoon());
 		}
 	}
 	else if (touchOption == 20) { // Change hot water on afternoon time
 		if (timer.setWaterOnAfternoon(timer.getWaterOnAfternoon() + timerTimeInc)) {
 			updateDisplay = true;
+			saveTimer("waterAon", timer.getWaterOnAfternoon());
 		}
 	}
 	else if (touchOption == 21) { // Change hot water off afternoon time
 		if (timer.setWaterOffAfternoon(timer.getWaterOffAfternoon() - timerTimeInc)) {
 			updateDisplay = true;
+			saveTimer("waterAoff", timer.getWaterOffAfternoon());
 		}
 	}
 	else if (touchOption == 22) { // Change hot water off afternoon time
 		if (timer.setWaterOffAfternoon(timer.getWaterOffAfternoon() + timerTimeInc)) {
 			updateDisplay = true;
+			saveTimer("waterAoff", timer.getWaterOffAfternoon());
 		}
 	}
 	else if (touchOption == 23) { // Change heating timer state
