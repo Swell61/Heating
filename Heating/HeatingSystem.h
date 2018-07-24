@@ -23,6 +23,7 @@
 
 class HeatingSystem {
 private:
+
 	const byte boostLengthWater = 30; // Length of time in minutes for hot water boost
 	const byte boostLengthHeating = 30; // Length of time in minutes for heating boost
 	const byte timerTimeInc = 5; // Length of time in minutes for the adjustment value for timer
@@ -57,7 +58,7 @@ private:
 	Display* display; // Display component
 	Timer timer; // Timer component
 	WebInterface remote; // Web interface component
-	Config config;
+	Config config; // Configuration
 	void setHeatingOff(); // Function for setting the state of heating components to off
 	void setWaterOff(); // Function for setting state of hot water components to off
 	void setHeatingOn(); // Function for setting the state of heating components to on
@@ -66,6 +67,7 @@ private:
 	void checkBoosts(); // Function for checking whether heating and hot water need to be on or off depending on active boosts
 	bool temperatureCheck(); // Function for checking the temperature against requested temperature
 	void changeRelayStates(); // Function for setting final relay states
+	void loadConfig(); // Function for loading configuration from SD card
 	
 public:
 	HeatingSystem(int boilerPinNum, int pumpPinNum, int tempSensorPinNum); // Contructor. Takes boiler pin number, pump pin number and temperature sensor pin number as parameters

@@ -15,9 +15,13 @@ Config::Config(const char* fn, char separator) : separator(separator) {
 
 bool Config::writeProperty(const char* property, const char* value) {
 	byte valueLength = strlen(value);
+	Serial.println(SD.exists(fileName) ? "FILE FOUND" : "FILE NOT FOUND");
+
 	if ((strlen(property) > MAX_PROPERTY_LENGTH) || (valueLength > MAX_VALUE_LENGTH))
 		return 0; // Failed to write value
-	File file = SD.open(fileName, O_READ | O_WRITE);
+	File file = SD.open(fileName, O_READ | O_WRITE | O_CREAT);
+	Serial.println(SD.exists(fileName) ? "FILE FOUND" : "FILE NOT FOUND");
+
 	file.seek(0); // Go to start of file (FILE_WRITE defaults to end of file)
 	char currentChar;
 	char currentProperty[MAX_PROPERTY_LENGTH + 1];
@@ -66,12 +70,15 @@ void Config::writeValue(File &file, const char* value) {
 	file.print("\n"); // Add newline to end of line
 }
 char* Config::readProperty(const char* property) {
-	
+	currentValue[0] = '\0'; // Reset the current value, ready for new search
+	if (!SD.exists(fileName)) {
+		return currentValue;
+	}
 	File file = SD.open(fileName);
 	char currentChar;
 	char currentProperty[MAX_PROPERTY_LENGTH + 1];
 	currentProperty[0] = '\0';
-	currentValue[0] = '\0'; // Reset the current value, ready for new search
+	
 	if (strlen(property) > MAX_PROPERTY_LENGTH) {
 		return currentValue;
 	}

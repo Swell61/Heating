@@ -9,26 +9,7 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 	setHeatingOff(); // Disables the heating
 	setWaterOff(); // Disables the ho twater
 	Serial.println((SDAvailable = SD.begin(49)) ? "SD UP" : "SD DOWN"); // Checks whether the SD card is available or not
-
-	config.writeProperty("test", "change");
-	config.writeProperty("pump", "ch");
-	Serial.print("Value for test: ");
-	Serial.println(config.readProperty("test"));
-	Serial.print("Value for pump: ");
-	Serial.println(config.readProperty("pump"));
-	config.writeProperty("pump", "change");
-	Serial.print("Value for pump: ");
-	Serial.println(config.readProperty("pump"));
-	config.writeProperty("pump", "sml");
-	config.writeProperty("test", "igl2");
-	Serial.print("Value for pump: ");
-	Serial.println(config.readProperty("pump"));
-	Serial.print("Value for test: ");
-	Serial.println(config.readProperty("test"));
-
-
-
-
+	
 	int NTPTryCount = 0; // Variable to store the number of tries to get the time from the NTP server
 	unsigned long time = 0; // Variable to store the time from the NTP server
 	while (NTPTryCount < 5) { // Tries 5 times to get the time
