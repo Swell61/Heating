@@ -17,6 +17,7 @@
 #include <TimeLib.h>
 #include <Time.h>
 #include <SD.h>
+#include "Config.h"
 
 // This class contains all components of the heating system
 
@@ -56,6 +57,7 @@ private:
 	Display* display; // Display component
 	Timer timer; // Timer component
 	WebInterface remote; // Web interface component
+	Config config;
 	void setHeatingOff(); // Function for setting the state of heating components to off
 	void setWaterOff(); // Function for setting state of hot water components to off
 	void setHeatingOn(); // Function for setting the state of heating components to on

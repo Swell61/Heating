@@ -4,12 +4,18 @@
 
 #include "HeatingSystem.h"
 
-HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)), timer(Timer()), display(new Display()), remote(WebInterface(SD.begin(49))) { // Constructor. Initialises the componenets of the heating system
+HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)), timer(Timer()), display(new Display()), remote(WebInterface(SD.begin(49))), config(Config("config.txt")) { // Constructor. Initialises the componenets of the heating system
 	currentTemp = tempSensor.getTemp(); // Gets the current temperature to display
 	setHeatingOff(); // Disables the heating
 	setWaterOff(); // Disables the ho twater
 	Serial.println((SDAvailable = SD.begin(49)) ? "SD UP" : "SD DOWN"); // Checks whether the SD card is available or not
 	
+	//config.writeProperty("pump", "ing");
+	Serial.print("Value for test: ");
+	Serial.println(config.readProperty("test"));
+	Serial.print("Value for pump: ");
+	Serial.println(config.readProperty("pump"));
+
 	int NTPTryCount = 0; // Variable to store the number of tries to get the time from the NTP server
 	unsigned long time = 0; // Variable to store the time from the NTP server
 	while (NTPTryCount < 5) { // Tries 5 times to get the time
