@@ -85,6 +85,15 @@ char* Config::readProperty(const char* property) {
 					currentValue[len + 1] = '\0';
 				}
 				file.close(); // Close file after finding value
+				
+				for (byte i = 0; i <= MAX_VALUE_LENGTH; i++) { // Chop off proceeding spaces
+					if (currentValue[i] == ' ') {
+						currentValue[i] = '\0';
+						break;
+					}
+				}
+				Serial.print("Length: ");
+				Serial.println(strlen(currentValue));
 				return currentValue; // Return value
 			}
 			else {
