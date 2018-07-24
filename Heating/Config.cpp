@@ -5,12 +5,9 @@
 #include "Config.h"
 
 Config::Config(const char* fn) : fileName(fn) {
-	//strncpy(fileName, fn, 8);
-	// Separator defaults to '='
 }
 
-Config::Config(const char* fn, char separator) : separator(separator) {
-	//strncpy(fileName, fn, 8);
+Config::Config(const char* fn, char separator) : fileName(fn), separator(separator) {
 }
 
 bool Config::writeProperty(const char* property, const char* value) {
