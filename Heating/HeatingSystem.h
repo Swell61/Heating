@@ -33,7 +33,8 @@ private:
 	byte heatingMode = 0; // 0 = off, 1 = timer, 2 = on
 	byte waterMode = 0; // 0 = off, 1 = timer, 2 = on
 	byte lastSystemMode = 3; // 0 = Heating and Water ON, 1 = Heating ON and Water OFF, 2 = Heating OFF and Water ON, 3 = Heating and Water OFF
-	long lastTimeUpdate = 0; // Variable to store the last state the system was in. Stops the system trying to enter a state it is already in
+	unsigned long lastTimeUpdate = 0; // Variable to store the last state the system was in. Stops the system trying to enter a state it is already in
+	unsigned long lastHourlyUpdate = 0; // Variable to store when the last hourly update was done
 
 	int requestedTemp = 15; // Variable to store requested temperature. Default is 15 degrees
 

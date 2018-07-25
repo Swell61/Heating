@@ -35,7 +35,6 @@ private:
 
 	int dstOffset(unsigned long time); // Function for calculating the correct daylight savings offset for the time. Takes the current time as a parameter
 	unsigned long inline ntpUnixTime(UIPUDP &udp); // Function for getting the time from and NTP server
-	bool setMidnightNTP(UIPUDP &udp); // Function for setting midnight using NTP time
 
 public:
 	// Methods for changing timer states
@@ -49,6 +48,7 @@ public:
 	int getMidnight(); // Function for getting midnight
 	void checkMidnight(UIPUDP &udp); // Function for checking midnight using NTP time
 	bool setMidnight(int time); // Function for setting midnight based on parameter
+	bool setMidnightNTP(UIPUDP &udp); // Function for setting midnight using NTP time
 
 	// Function for getting timer times
 	int getHeatingOnMorning();

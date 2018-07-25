@@ -246,7 +246,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	}
 	else if (touchOption == 23) { // Change heating timer state
 		timer.setHeatingTimerState(!timer.getHeatingTimerStatus());
-				updateDisplay = true;
+		updateDisplay = true;
 	}
 	else if (touchOption == 24) { // Change hot water timer state
 		timer.setWaterTimerState(!timer.getWaterTimerStatus());
@@ -257,7 +257,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 		if (heatingMode > 2) {
 			heatingMode = 0;
 		}
-				updateDisplay = true;
+		updateDisplay = true;
 	}
 	else if (touchOption == 26) { // Change hot water mode
 		waterMode++;
@@ -268,51 +268,51 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	}
 	else if (touchOption == 27) {
 		screen = 2; // Change to edit time screen
-				display->editTime(timer.getTime());
+		display->editTime(timer.getTime());
 		updateDisplay = true;
 	}
 	else if (touchOption == 28) {
-		
+
 		if (timer.setMidnight(timer.getMidnight() - 600)) { // Increase current time by 10 hours
-						updateDisplay = true;
+			updateDisplay = true;
 		}
 	}
 	else if (touchOption == 29) {
-				if (timer.setMidnight(timer.getMidnight() + 600)) { // Decrease current time by 10 hours
+		if (timer.setMidnight(timer.getMidnight() + 600)) { // Decrease current time by 10 hours
 			updateDisplay = true;
 		}
 	}
 	else if (touchOption == 30) {
-				if (timer.setMidnight(timer.getMidnight() - 60)) { // Increase current time by 1 hour
+		if (timer.setMidnight(timer.getMidnight() - 60)) { // Increase current time by 1 hour
 			updateDisplay = true;
 		}
 	}
 	else if (touchOption == 31) {
-				if (timer.setMidnight(timer.getMidnight() + 60)) { // Decrease current time by 1 hour
+		if (timer.setMidnight(timer.getMidnight() + 60)) { // Decrease current time by 1 hour
 			updateDisplay = true;
 		}
 	}
 	else if (touchOption == 32) {
-				if (timer.setMidnight(timer.getMidnight() - 10)) { // Increase current time by 10 minutes
+		if (timer.setMidnight(timer.getMidnight() - 10)) { // Increase current time by 10 minutes
 			updateDisplay = true;
 		}
 	}
 	else if (touchOption == 33) {
-				if (timer.setMidnight(timer.getMidnight() + 10)) { // Decrease current time by 10 hours
+		if (timer.setMidnight(timer.getMidnight() + 10)) { // Decrease current time by 10 hours
 			updateDisplay = true;
 		}
 	}
 	else if (touchOption == 34) {
-		
+
 		if (timer.setMidnight(timer.getMidnight() - 1)) { // Increase current time by 1 minute
 			updateDisplay = true;
-					}
+		}
 	}
 	else if (touchOption == 35) {
-		
+
 		if (timer.setMidnight(timer.getMidnight() + 1)) { // Decrease current time by 1 minute
 			updateDisplay = true;
-					}
+		}
 	}
 	checkBoosts(); // Run through the boost timers, checking if they need altering
 
@@ -322,6 +322,10 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 		updateDisplay = true; // Update the display
 		timer.checkMidnight(udp); // Check if its midnight (update midnight and check that the time is correct
 		lastTimeUpdate = millis(); // Update the lsat time the time was updated
+	}
+
+	if ((millis() - lastHourlyUpdate) >= 3600000) { // Hourly updates
+		timer.setMidnightNTP(udp);
 	}
 };
 
