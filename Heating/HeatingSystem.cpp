@@ -325,7 +325,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	}
 
 	if ((millis() - lastHourlyUpdate) >= 3600000) { // Hourly updates
-		timer.setMidnightNTP(udp);
+		timer.setMidnightNTP(udp); // Try to update the time every hour
 	}
 };
 
