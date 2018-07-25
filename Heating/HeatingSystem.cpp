@@ -413,6 +413,7 @@ bool HeatingSystem::temperatureCheck() { // Functiom for checking the temperatur
 }
 
 
+
 void HeatingSystem::setHeatingOn() { // Function for turning on the heating
 	boiler.enable(); // Turn the boiler on
 	pump.enable(); // Turn the pump on

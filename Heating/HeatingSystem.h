@@ -45,6 +45,7 @@ private:
 	bool heatingBoostActive = false; // Variable to store whether heating boost is currently active or not. Defaults to off
 	bool waterBoostActive = false; // Variable to store whether the hot water boost is currently active or not. Defaults to off
 	bool incorrectTemp = false; // Variable to store whether the requested temperature is currently being met
+	bool requestTemp; // Variable to store if we need to collect the temperature
 	unsigned long startTimeHeatingBoost; // Variable to store the time at which the heating boost was turned on
 	unsigned long startTimeWaterBoost; // Variable to store the time at which the hot water boost was turned on
 	byte touchOption; // Variable to store what the current touch option is

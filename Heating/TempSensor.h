@@ -9,18 +9,25 @@
 	#include "WProgram.h"
 #endif
 
-#include <Wire.h>
-#include <LM75.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
+//#include <LM75.h>
 
 // This class is a temperature sensor
 
 class TempSensor {
 public:
-	float getTemp() const; // Function for getting the current temperature from the sensor
+	float getTemp(); // Function for getting the current temperature from the sensor
 	TempSensor(int pinNum); // Constructor that takes the pin number of the temperature sensor
 private:
-	LM75 sensor; // Temperature sensor
-
+	//LM75 sensor; // Temperature sensor
+	float lastTemp;
+	unsigned long lastTempUpdate;
+	OneWire oneWire;
+	DallasTemperature sensor;
+	uint8_t address[8] = { 0x28, 0xFF, 0x9D, 0x10, 0xB0, 0x16, 0x04, 0xB0 };
+	unsigned long lastRequest = 0;
+	
 };
 
 #endif
