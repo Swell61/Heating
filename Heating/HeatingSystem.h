@@ -51,6 +51,8 @@ private:
 	byte touchOption; // Variable to store what the current touch option is
 	byte remoteOption; // variable to store what the current option selected by a remote source (web interface, app, etc.)
 	float currentTemp; // Variable to store the current temperature being displayed
+	float lastChangedTemp = 0; // Variable to store the temperature at which the heating system was changed due to temperature difference
+	const float minTempDifference = 0.5; // Variable to store the minimum temperature difference neded to warrat any heating system change
 
 	bool SDAvailable = false; // Variable to store whether the SD card containing some required files is available
 
@@ -68,7 +70,8 @@ private:
 	void setWaterOn(); // Function for setting state of hot water components to on
 	void setWaterWithoutHeating(); // Function for setting the state of the hot water when the heating is not on
 	void checkBoosts(); // Function for checking whether heating and hot water need to be on or off depending on active boosts
-	bool temperatureCheck(); // Function for checking the temperature against requested temperature
+	byte temperatureCheck(); // Function for checking the temperature against requested temperature
+	bool needToChangeTemp(); // Function for checking whether temperature has moved enough to warrant changing the state of the heating
 	void changeRelayStates(); // Function for setting final relay states
 	void loadTimer(); // Function for loading configuration from SD card
 	bool saveTimer(const char* timerCase, int time); // Function for saving timer configuration
