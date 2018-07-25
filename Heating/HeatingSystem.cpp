@@ -31,7 +31,18 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 
 	display->mainDisplay(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive); // Show the main display
 	
+	setupWatchdog();
 };
+
+void HeatingSystem::setupWatchdog() {
+	cli(); // disable all interrupts
+	wdt_reset(); // reset the WDT timer
+				 
+	WDTCSR |= (1 << WDCE) | (1 << WDE); // Enter watchdog config mode
+	// Set Watchdog settings:
+	WDTCSR = (0 << WDIE) | (1 << WDE) | (1 << WDP3) | (0 << WDP2) | (0 << WDP1) | (1 << WDP0);
+	sei();
+}
 
 void HeatingSystem::loadTimer() {
 	// Load timer
@@ -74,7 +85,7 @@ bool HeatingSystem::saveTimer(const char* timerCase, int time) {
 }
 
 void HeatingSystem::monitorSystem() { // This function runs through the process required to monitor and manage the heating system
-	
+	wdt_reset(); // Reset the timer
 	if (updateDisplay) { // If the screen needs updating
 		if (screen == 0) { // If on main display
 			display->displayUpdate(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive); // Show the main display
@@ -109,7 +120,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	else if (touchOption == 0) { // Touschreen takes priority. If no touch option, check remote requests
 		touchOption = remoteOption;
 	}
-	
+	wdt_reset(); // Reset the timer
 	if (touchOption == 1) { // User requested temperature up one degree
 		if (requestedTemp < 25) {
 			requestedTemp++; // Increase the requested temperature up by one
@@ -314,6 +325,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 			updateDisplay = true;
 		}
 	}
+	
 	checkBoosts(); // Run through the boost timers, checking if they need altering
 
 	changeRelayStates(); // make any required changed to the relays
@@ -327,6 +339,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	if ((millis() - lastHourlyUpdate) >= 3600000) { // Hourly updates
 		timer.setMidnightNTP(udp); // Try to update the time every hour
 	}
+	wdt_reset(); // Reset timer
 };
 
 void HeatingSystem::checkBoosts() { // Boosts have priority over everything

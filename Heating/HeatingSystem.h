@@ -18,6 +18,7 @@
 #include <Time.h>
 #include <SD.h>
 #include "Config.h"
+#include <avr/wdt.h>
 
 // This class contains all components of the heating system
 
@@ -70,6 +71,8 @@ private:
 	void changeRelayStates(); // Function for setting final relay states
 	void loadTimer(); // Function for loading configuration from SD card
 	bool saveTimer(const char* timerCase, int time); // Function for saving timer configuration
+
+	void setupWatchdog(); // Function for initiating the watchdog
 	
 public:
 	HeatingSystem(int boilerPinNum, int pumpPinNum, int tempSensorPinNum); // Contructor. Takes boiler pin number, pump pin number and temperature sensor pin number as parameters
