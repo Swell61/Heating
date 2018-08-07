@@ -526,11 +526,13 @@ void Display::updateEditTime(int time) { // Function for updating time edit scre
 	tft.setTextSize(3);
 }
 
-void Display::loadingScreen(int tryNum) { // Function for displaying the loading screen
+void Display::loadingScreen(bool SDAvailable, int tryNum) { // Function for displaying the loading screen
 	tft.setTextColor(0xFFFFF, 0x00000); // Set the text colour to white and background to black
 	tft.setCursor(0, 0); // Set the cursor to write text to the TFT
 	tft.setTextSize(2); // Set text size to 2
 	tft.println(F("Loading...")); // Print description of what is happening
+	tft.print(F("SD "));
+	tft.println(SDAvailable ? "UP" : "DOWN");
 	tft.println("Getting time from NTP server...  (" + (String)tryNum + "/5)"); // Print current number of tries to get time from NTP server
 	if (tryNum > 1) { // If it has taken more than one try...
 		tft.println(F("Check Ethernet cable and internet conectivity")); // ...ask the user to check possible faults

@@ -4,11 +4,11 @@
 
 #include "HeatingSystem.h"
 
-HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)), timer(Timer()), display(new Display()), remote(WebInterface(SD.begin(49))), config(Config("config.txt")) { // Constructor. Initialises the componenets of the heating system
+HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)), timer(Timer()), display(new Display()), remote(WebInterface(SD.begin(5))), config(Config("config.txt")) { // Constructor. Initialises the componenets of the heating system
 	currentTemp = tempSensor.getTemp(); // Gets the current temperature to display
 	setHeatingOff(); // Disables the heating
 	setWaterOff(); // Disables the ho twater
-	Serial.println((SDAvailable = SD.begin(49)) ? "SD UP" : "SD DOWN"); // Checks whether the SD card is available or not
+	Serial.println((SDAvailable = SD.begin(5)) ? "SD UP" : "SD DOWN"); // Checks whether the SD card is available or not
 	if (SDAvailable) {
 		loadTimer();
 	}
@@ -16,7 +16,7 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 	unsigned long time = 0; // Variable to store the time from the NTP server
 	while (NTPTryCount < 5) { // Tries 5 times to get the time
 		
-		display->loadingScreen(NTPTryCount + 1); // Shows the loading screen
+		display->loadingScreen(SDAvailable, NTPTryCount + 1); // Shows the loading screen
 		time = timer.getNTPTime(udp); // Tries to get the time
 		if (time != 0) { // If the time is not zero (very unlikely it will be zero and if it is, it will run another check if it has 1+ remaining)
 			int currentTime = (time / 60) % 1440; // Gets the current time in minutes
@@ -106,7 +106,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 					}
 		updateDisplay = false; // Updating screen has completed
 			}
-	if (currentTemp != tempSensor.getTemp()) { // Run temperature check for currently displayed temperature
+	if (abs(currentTemp - tempSensor.getTemp()) >= minTempDifference) { // Run temperature check for currently displayed temperature
 		currentTemp = tempSensor.getTemp(); // If not correct, get corret temperature and...
 		updateDisplay = true; // ...update the display
 	};
@@ -122,7 +122,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	}
 	wdt_reset(); // Reset the timer
 	if (touchOption == 1) { // User requested temperature up one degree
-		if (requestedTemp < 25) {
+		if (requestedTemp < 28) {
 			requestedTemp++; // Increase the requested temperature up by one
 			updateDisplay = true; // The display needs updating
 		}
@@ -357,10 +357,10 @@ void HeatingSystem::changeRelayStates() { // Function checks current system stat
 	if (heatingBoostActive) { // If heating boost is active...
 		enableHeating(); // ...turn the heating on
 	}
-	else if (temperatureCheck() && (heatingMode == 2 || (heatingMode == 1 && timer.getHeatingTimerStatus()))) { // if ((Heating is ON OR (Heating Timer is ON and ACTIVE)) AND temperature is too low)
+	else if (temperatureCheck() == 1 && (heatingMode == 2 || (heatingMode == 1 && timer.getHeatingTimerStatus()))) { // if ((Heating is ON OR (Heating Timer is ON and ACTIVE)) AND temperature is too low)
 		enableHeating();
 	}
-	else {
+	else if (heatingMode == 0 || (temperatureCheck() == 0 && (heatingMode == 2 || (heatingMode == 1 && timer.getHeatingTimerStatus())))) {
 		disableHeating();
 	}
 
@@ -403,15 +403,23 @@ void HeatingSystem::changeRelayStates() { // Function checks current system stat
 }
 
 
-bool HeatingSystem::temperatureCheck() { // Functiom for checking the temperature
-	if (tempSensor.getTemp() < (requestedTemp - maxDrift)) { // If the temperature of the zone has gone below the required temperature...
-		return true;
+byte HeatingSystem::temperatureCheck() { // Function for checking the temperature
+	if (tempSensor.getTemp() <= (requestedTemp - maxDrift)) { // If the temperature of the zone has gone below the required temperature...
+		return 1;
 	}
 	else if (tempSensor.getTemp() >= requestedTemp) { // If the temperature of the zone has reached the requried temperature...
-		return false;
+		return 0;
 	}
+	return 2;
 }
 
+bool HeatingSystem::needToChangeTemp() {
+	if (abs(lastChangedTemp - tempSensor.getTemp()) >= minTempDifference) { // If the difference between the current temperature and the last temperature is greater than min diff
+		lastChangedTemp = tempSensor.getTemp();
+		return true; // Heating system can be changed
+	}
+	return false; // Heating system won't need to be changed
+}
 
 void HeatingSystem::setHeatingOn() { // Function for turning on the heating
 	boiler.enable(); // Turn the boiler on

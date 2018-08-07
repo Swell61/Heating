@@ -11,6 +11,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IniFile", "..\..\..\..\Ardu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MemoryFree-master", "..\..\..\..\Arduino\libraries\MemoryFree-master\MemoryFree-master.vcxitems", "{7997EC65-403B-4507-84D0-343C9D560F2D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OneWire", "..\..\..\..\Arduino\libraries\OneWire\OneWire.vcxitems", "{08935E8D-79DE-4941-AA22-D0DCBD8A2F1E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DallasTemperature", "..\..\..\..\Arduino\libraries\DallasTemperature\DallasTemperature.vcxitems", "{F5AD8F6D-DD19-4D2A-AD0C-3402F245880A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
