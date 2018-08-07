@@ -3,7 +3,6 @@
 // 
 
 #include "WebInterface.h"
-#include <MemoryFree.h>
 WebInterface::WebInterface(bool SDAvailable) : webFilesAvailable(SDAvailable) {
 	Ethernet.begin(mac, ip);
 	
