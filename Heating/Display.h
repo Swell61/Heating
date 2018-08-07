@@ -29,7 +29,7 @@ public:
 	void timerUpdate(bool heatingTimerStatus, bool waterTimerStatus, int heatingOnMorning, int heatingOffMorning, int heatingOnAfternoon, int heatingOffAfternoon, int waterOnMorning, int waterOffMorning, int waterOnAfternoon, int waterOffAfternoon); // Function that updates the timer display. Parameters taken are the same as timerDisplay
 	void editTime(int time); // Function that display the time update screen. Takes the current time as a parameter
 	void updateEditTime(int time); // Function that updates the time edit screen. Tkaes the current time as a parameter
-	void loadingScreen(int NTPTryCount); // Function that displays the loading screen. Takes the current number of tries to get the time via NTP as a parameter
+	void loadingScreen(bool SDAvailable, int NTPTryCount); // Function that displays the loading screen. Takes the current number of tries to get the time via NTP as a parameter
 };
 
 #endif

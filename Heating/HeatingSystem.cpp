@@ -4,11 +4,11 @@
 
 #include "HeatingSystem.h"
 
-HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)), timer(Timer()), display(new Display()), remote(WebInterface(SD.begin(49))), config(Config("config.txt")) { // Constructor. Initialises the componenets of the heating system
+HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)), timer(Timer()), display(new Display()), remote(WebInterface(SD.begin(5))), config(Config("config.txt")) { // Constructor. Initialises the componenets of the heating system
 	currentTemp = tempSensor.getTemp(); // Gets the current temperature to display
 	setHeatingOff(); // Disables the heating
 	setWaterOff(); // Disables the ho twater
-	Serial.println((SDAvailable = SD.begin(49)) ? "SD UP" : "SD DOWN"); // Checks whether the SD card is available or not
+	Serial.println((SDAvailable = SD.begin(5)) ? "SD UP" : "SD DOWN"); // Checks whether the SD card is available or not
 	if (SDAvailable) {
 		loadTimer();
 	}
@@ -16,7 +16,7 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 	unsigned long time = 0; // Variable to store the time from the NTP server
 	while (NTPTryCount < 5) { // Tries 5 times to get the time
 		
-		display->loadingScreen(NTPTryCount + 1); // Shows the loading screen
+		display->loadingScreen(SDAvailable, NTPTryCount + 1); // Shows the loading screen
 		time = timer.getNTPTime(udp); // Tries to get the time
 		if (time != 0) { // If the time is not zero (very unlikely it will be zero and if it is, it will run another check if it has 1+ remaining)
 			int currentTime = (time / 60) % 1440; // Gets the current time in minutes
