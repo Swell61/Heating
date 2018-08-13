@@ -18,5 +18,8 @@ float TempSensor::getTemp(){ // Returns the current temperature from the sensor
 		lastRequest = millis();
 	}
 	// If new temp is not yet ready, return the previous temp
+	if (lastTemp < 0) {
+		lastTemp = 99; // If temperature sensor becomes fautly, stop thermostat from keeping heatng on
+	}
 	return lastTemp;
 };
