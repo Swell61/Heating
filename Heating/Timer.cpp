@@ -6,7 +6,7 @@
 
 bool Timer::getHeatingTimerStatus() { // Function for getting the status of the heating
 	// If the heating should be on based on the timer, return true. Otherwise return false
-	int time = getTime() + 1;
+	int time = getTime();
 	if ((time > heatingOnMorning) && (time < heatingOffMorning)) { // If within morning on period...
 		return true;
 	}
@@ -204,7 +204,7 @@ unsigned long inline Timer::ntpUnixTime(UIPUDP &udp)
 	udp.flush();
 	time = time - 2208988800ul; // Convert to unix time
 
-
+	udp.stop();
 	return time;
 }
 int Timer::dstOffset(unsigned long unixTime)

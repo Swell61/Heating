@@ -87,6 +87,7 @@ bool HeatingSystem::saveTimer(const char* timerCase, int time) {
 void HeatingSystem::monitorSystem() { // This function runs through the process required to monitor and manage the heating system
 	wdt_reset(); // Reset the timer
 	if (updateDisplay) { // If the screen needs updating
+
 		if (screen == 0) { // If on main display
 			display->displayUpdate(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive); // Show the main display
 			// Update any connected clients with the current status
@@ -325,12 +326,10 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 			updateDisplay = true;
 		}
 	}
-	
 	checkBoosts(); // Run through the boost timers, checking if they need altering
-
 	changeRelayStates(); // make any required changed to the relays
 
-	if ((millis() - lastTimeUpdate) >= 60000) { // Update the display once every minute to update the time
+	if ((millis() - lastTimeUpdate) >= 59900) { // Update the display once every minute to update the time
 		updateDisplay = true; // Update the display
 		//timer.checkMidnight(udp); // Check if its midnight (update midnight and check that the time is correct
 		timer.checkMidnight();
@@ -338,7 +337,8 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	}
 
 	if ((millis() - lastHourlyUpdate) >= 3600000) { // Hourly updates
-		//timer.setMidnightNTP(udp); // Try to update the time every hour
+		timer.setMidnightNTP(udp); // Try to update the time every hour
+		lastHourlyUpdate = millis();
 	}
 	wdt_reset(); // Reset timer
 };
