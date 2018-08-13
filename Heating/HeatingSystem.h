@@ -31,7 +31,7 @@ private:
 	const int maxDrift = 1; // Set the maximum number of degrees the temperature can drift before heating is turned on
 	bool updateDisplay = false; // Whether the system needs to update the display or not
 	byte screen = 0; // 0 = Regular screen. 1 = Timer screen. 2 = Time change screen
-	byte heatingMode = 0; // 0 = off, 1 = timer, 2 = on
+	byte heatingMode = 2; // 0 = off, 1 = timer, 2 = on. Defaults to on at 15 degrees
 	byte waterMode = 0; // 0 = off, 1 = timer, 2 = on
 	byte lastSystemMode = 3; // 0 = Heating and Water ON, 1 = Heating ON and Water OFF, 2 = Heating OFF and Water ON, 3 = Heating and Water OFF
 	unsigned long lastTimeUpdate = 0; // Variable to store the last state the system was in. Stops the system trying to enter a state it is already in
