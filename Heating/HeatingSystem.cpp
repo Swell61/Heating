@@ -31,7 +31,7 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 
 	display->mainDisplay(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive); // Show the main display
 	
-	//setupWatchdog();
+	setupWatchdog();
 };
 
 void HeatingSystem::setupWatchdog() {
