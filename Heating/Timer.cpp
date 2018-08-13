@@ -47,9 +47,14 @@ void Timer::checkMidnight(UIPUDP &udp) { // Function for updating midnight and c
 	if (((millis() / 60000) - midnight) >= 1440) {
 		midnight = millis() / 60000;
 		
-		if (!setMidnightNTP(udp)) {
-			(setMidnightNTP(udp));
-		}
+		setMidnightNTP(udp);
+	}
+}
+void Timer::checkMidnight() { // Function for updating midnight and checking the time using NTP server
+	if (((millis() / 60000) - midnight) >= 1440) {
+		midnight = millis() / 60000;
+
+		
 	}
 }
 

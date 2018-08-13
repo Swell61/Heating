@@ -31,7 +31,7 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 
 	display->mainDisplay(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive); // Show the main display
 	
-	setupWatchdog();
+	//setupWatchdog();
 };
 
 void HeatingSystem::setupWatchdog() {
@@ -332,12 +332,13 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 
 	if ((millis() - lastTimeUpdate) >= 60000) { // Update the display once every minute to update the time
 		updateDisplay = true; // Update the display
-		timer.checkMidnight(udp); // Check if its midnight (update midnight and check that the time is correct
+		//timer.checkMidnight(udp); // Check if its midnight (update midnight and check that the time is correct
+		timer.checkMidnight();
 		lastTimeUpdate = millis(); // Update the lsat time the time was updated
 	}
 
 	if ((millis() - lastHourlyUpdate) >= 3600000) { // Hourly updates
-		timer.setMidnightNTP(udp); // Try to update the time every hour
+		//timer.setMidnightNTP(udp); // Try to update the time every hour
 	}
 	wdt_reset(); // Reset timer
 };
@@ -360,7 +361,7 @@ void HeatingSystem::changeRelayStates() { // Function checks current system stat
 	else if (temperatureCheck() == 1 && (heatingMode == 2 || (heatingMode == 1 && timer.getHeatingTimerStatus()))) { // if ((Heating is ON OR (Heating Timer is ON and ACTIVE)) AND temperature is too low)
 		enableHeating();
 	}
-	else if (heatingMode == 0 || (temperatureCheck() == 0 && (heatingMode == 2 || (heatingMode == 1 && timer.getHeatingTimerStatus())))) {
+	else if (heatingMode == 0 || (temperatureCheck() == 0 && (heatingMode == 2 || (heatingMode == 1 && timer.getHeatingTimerStatus()))) || (heatingMode == 1 && !timer.getHeatingTimerStatus())) {
 		disableHeating();
 	}
 

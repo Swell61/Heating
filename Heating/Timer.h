@@ -47,6 +47,7 @@ public:
 
 	int getMidnight(); // Function for getting midnight
 	void checkMidnight(UIPUDP &udp); // Function for checking midnight using NTP time
+	void checkMidnight();
 	bool setMidnight(int time); // Function for setting midnight based on parameter
 	bool setMidnightNTP(UIPUDP &udp); // Function for setting midnight using NTP time
 
