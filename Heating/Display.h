@@ -19,6 +19,7 @@ private:
 	MCUFRIEND_kbv tft; // The LCD screen
 	TouchScreen ts; // The touschreen
 	uint16_t xpos, ypos;  // Screen touch coordinates
+	void printTime(int hours, int mins);
 	
 public:
 	Display(); // Default constructor

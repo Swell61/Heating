@@ -67,15 +67,15 @@ void Display::mainDisplay(int time, byte heatingMode, byte waterMode, float temp
 	tft.setTextColor(0xFFFFF, 0x00000); // Set text colour to white with background of text in black (overwrites existing text)
 	tft.print(F("Current temp: ")); // Print label
 	tft.setCursor(160, 3); // Set the cursor to write text to the TFT
-	tft.print((String)temp); // Print the current temperature
+	tft.print(temp); // Print the current temperature
 
 	tft.setCursor(0, 20); // Set the cursor to write text to the TFT
 	tft.println(F("Status: Heating - ")); //Print label
 	tft.setCursor(215, 20); // Set the cursor to write text to the TFT
-	tft.print((String)(heatingStatus ? "ON " : "OFF")); // If heating is on, print on. Otherwise, print off
+	tft.print((heatingStatus ? "ON " : "OFF")); // If heating is on, print on. Otherwise, print off
 	tft.print(" Water - "); // Print label
 	tft.setCursor(360, 20); // Set the cursor to write text to the TFT
-	tft.print((String)(waterStatus ? "ON " : "OFF")); // If hot water is on, print on. Otherwise, print off
+	tft.print((waterStatus ? "ON " : "OFF")); // If hot water is on, print on. Otherwise, print off
 
 	tft.fillTriangle(340, 70, 290, 90, 390, 90, 0xFFFFF); // Create triangle button for requested temperature adjust
 	tft.fillTriangle(340, 185, 290, 165, 390, 165, 0xFFFFF); // Create triangle button for requested temperature adjust
@@ -96,8 +96,8 @@ void Display::mainDisplay(int time, byte heatingMode, byte waterMode, float temp
 
 	hours = time / 60; // Calculate number of hours
 	minutes = time % 60; // Calculate number of minutes
-
-	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes)); // Print the time
+	
+	printTime(hours, minutes);
 	
 }
 void Display::displayUpdate(int time, byte heatingMode, byte waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost) { // Main display update
@@ -147,7 +147,7 @@ void Display::displayUpdate(int time, byte heatingMode, byte waterMode, float te
 
 	tft.setTextColor(0xFFFFF, 0x00000);
 	tft.setCursor(160, 3);
-	tft.print((String)temp);
+	tft.print(temp);
 
 	tft.setCursor(215, 20);
 	tft.print((heatingStatus ? "ON " : "OFF"));
@@ -165,7 +165,8 @@ void Display::displayUpdate(int time, byte heatingMode, byte waterMode, float te
 	hours = time / 60;
 	minutes = time % 60;
 
-	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+	printTime(hours, minutes);
+
 }
 
 byte Display::touchUpdate(byte screen) { // Function for checking the touchscreen
@@ -319,50 +320,50 @@ void Display::timerDisplay(bool heatingTimerStatus, bool waterTimerStatus, int h
 	tft.setCursor(145, 50);
 	hours = (heatingOnMorning / 60);
 	minutes = (heatingOnMorning % 60);
-	tft.println(((hours <= 9) ? "0" : "") + (String)(hours) + ":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+	printTime(hours, minutes);
+
 
 	// Print morning off for heating
 	tft.setCursor(145, 100);
 	hours = (heatingOffMorning / 60);
 	minutes = (heatingOffMorning % 60);
-	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+ ":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+	printTime(hours, minutes);
 
 	// Print afternoon on for heating
 	tft.setCursor(145, 150);
 	hours = (heatingOnAfternoon / 60);
 	minutes = (heatingOnAfternoon % 60);
-	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+ ":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+	printTime(hours, minutes);
 
 	// Print afternoon off for heating
 	tft.setCursor(145, 200);
 	hours = (heatingOffAfternoon / 60);
 	minutes = (heatingOffAfternoon % 60);
-	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+ ":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
-
+	printTime(hours, minutes);
 
 	// Print morning on for water
 	tft.setCursor(300, 50);
 	hours = (waterOnMorning / 60);
 	minutes = (waterOnMorning % 60);
-	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+ ":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+	printTime(hours, minutes);
 
 	// Print morning off for water
 	tft.setCursor(300, 100);
 	hours = (waterOffMorning / 60);
 	minutes = (waterOffMorning % 60);
-	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+ ":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+	printTime(hours, minutes);
 
 	// Print afternoon on for water
 	tft.setCursor(300, 150);
 	hours = (waterOnAfternoon / 60);
 	minutes = (waterOnAfternoon % 60);
-	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+ ":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+	printTime(hours, minutes);
 
 	// Print afternoon off for water
 	tft.setCursor(300, 200);
 	hours = (waterOffAfternoon / 60);
 	minutes = (waterOffAfternoon % 60);
-	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+ ":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+	printTime(hours, minutes);
 
 	// Print the plus and minus buttons for heating
 	int y = 50;
@@ -419,51 +420,51 @@ void Display::timerUpdate(bool heatingTimerStatus, bool waterTimerStatus, int he
 	// Print morning on for heating
 	tft.setCursor(145, 50);
 	hours = (heatingOnMorning / 60);
-	minutes = (heatingOnMorning % 60);
-	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
-
+	minutes = (heatingOnMorning % 60);	
+	printTime(hours, minutes);
+	
 	// Print morning off for heating
 	tft.setCursor(145, 100);
 	hours = (heatingOffMorning / 60);
 	minutes = (heatingOffMorning % 60);
-	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+	printTime(hours, minutes);
 
 	// Print afternoon on for heating
 	tft.setCursor(145, 150);
 	hours = (heatingOnAfternoon / 60);
 	minutes = (heatingOnAfternoon % 60);
-	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+	printTime(hours, minutes);
 
 	// Print afternoon off for heating
 	tft.setCursor(145, 200);
 	hours = (heatingOffAfternoon / 60);
 	minutes = (heatingOffAfternoon % 60);
-	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
-
+	printTime(hours, minutes);
 
 	// Print morning on for water
 	tft.setCursor(300, 50);
 	hours = (waterOnMorning / 60);
 	minutes = (waterOnMorning % 60);
-	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+	printTime(hours, minutes);
 
 	// Print morning off for water
 	tft.setCursor(300, 100);
 	hours = (waterOffMorning / 60);
 	minutes = (waterOffMorning % 60);
-	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+	printTime(hours, minutes);
 
 	// Print afternoon on for water
 	tft.setCursor(300, 150);
 	hours = (waterOnAfternoon / 60);
 	minutes = (waterOnAfternoon % 60);
-	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+	printTime(hours, minutes);
 
 	// Print afternoon off for water
 	tft.setCursor(300, 200);
 	hours = (waterOffAfternoon / 60);
 	minutes = (waterOffAfternoon % 60);
-	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+	printTime(hours, minutes);
+
 }
 
 void Display::editTime(int time) { // Function for displaying the time update screen
@@ -477,7 +478,8 @@ void Display::editTime(int time) { // Function for displaying the time update sc
 	tft.setTextColor(0xFFFFF); // Set tetx colour to white
 	tft.setTextSize(7); // Increase text size to 7
 	tft.setCursor(95, 100); // Set the cursor to write text to the TFT
-	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes)); // Print the current time
+	printTime(hours, minutes);
+
 
 	tft.setTextSize(4); // Decrease text size to 4
 
@@ -521,7 +523,7 @@ void Display::updateEditTime(int time) { // Function for updating time edit scre
 	tft.setTextColor(0xFFFFF, 0x00000);
 	tft.setTextSize(7);
 	tft.setCursor(95, 100);
-	tft.println(((hours <= 9) ? "0" : "") + (String)(hours)+":" + ((minutes <= 9) ? "0" : "") + (String)(minutes));
+	printTime(hours, minutes);
 
 	tft.setTextSize(3);
 }
@@ -533,8 +535,18 @@ void Display::loadingScreen(bool SDAvailable, int tryNum) { // Function for disp
 	tft.println(F("Loading...")); // Print description of what is happening
 	tft.print(F("SD "));
 	tft.println(SDAvailable ? "UP" : "DOWN");
-	tft.println("Getting time from NTP server...  (" + (String)tryNum + "/5)"); // Print current number of tries to get time from NTP server
+	tft.print("Getting time from NTP server...  (");
+	tft.print(tryNum);
+	tft.println("/5)"); // Print current number of tries to get time from NTP server
 	if (tryNum > 1) { // If it has taken more than one try...
 		tft.println(F("Check Ethernet cable and internet conectivity")); // ...ask the user to check possible faults
 	}
+}
+
+void Display::printTime(int hours, int minutes) {
+	tft.print(((hours <= 9) ? "0" : ""));
+	tft.print(hours);
+	tft.print(":");
+	tft.print((minutes <= 9) ? "0" : "");
+	tft.print(minutes); // Print the time
 }
