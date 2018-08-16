@@ -353,11 +353,6 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	if ((millis() - lastTimeUpdate) >= 59900) { // Update the display once every minute to update the time
 
 		updateDisplay = true; // Update the display
-		pinMode(53, OUTPUT);
-		digitalWrite(53, LOW);
-		timer.checkMidnight();
-		pinMode(53, OUTPUT);
-		digitalWrite(53, HIGH);
 		lastTimeUpdate = millis(); // Update the lsat time the time was updated
 	}
 

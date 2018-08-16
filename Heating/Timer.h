@@ -45,7 +45,6 @@ public:
 	bool getHeatingTimerStatus();
 	bool getWaterTimerStatus();
 
-	void checkMidnight();
 	bool setSystemTime(unsigned long time);
 	bool setSystemHour(int newHour);
 	bool setSystemMinute(int newMinute);

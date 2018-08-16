@@ -88,14 +88,6 @@ bool Timer::getWaterTimerStatus() { // Function for getting the status of the ho
 	}
 }
 
-
-
-void Timer::checkMidnight() { // Function for updating midnight and checking the time using NTP server
-	if (((millis() / 60000) - midnight) >= 1440) {
-		midnight = millis() / 60000;
-			
-	}
-}
 unsigned long Timer::getNTPTime(UIPUDP &udp) {
 	return ntpUnixTime(udp);
 }

@@ -50,11 +50,6 @@ void WebInterface::processRemoteOutput(int time, byte heatingMode, byte waterMod
 	strcat(output, "\0");
 	strcat(buffer, "\0");
 
-	
-	
-	
-	
-	
 	webServerStack_ProcessMsgOut(output);
 	
 }
