@@ -38,11 +38,9 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 void HeatingSystem::setupWatchdog() {
 	cli(); // disable all interrupts
 	wdt_reset(); // reset the WDT timer
-				 
-	WDTCSR |= (1 << WDCE) | (1 << WDE); // Enter watchdog config mode
-	// Set Watchdog settings:
-	WDTCSR = (0 << WDIE) | (1 << WDE) | (1 << WDP3) | (0 << WDP2) | (0 << WDP1) | (1 << WDP0);
-	sei();
+	wdt_enable(WDTO_4S);
+	wdt_reset(); // reset the WDT timer
+
 }
 
 void HeatingSystem::loadTimer() {
