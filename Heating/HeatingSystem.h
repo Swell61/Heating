@@ -78,6 +78,9 @@ private:
 
 	void setupWatchdog(); // Function for initiating the watchdog
 	
+	char START_COUNTER = 0; // starts at 1
+	char buffer[1];
+
 public:
 	HeatingSystem(int boilerPinNum, int pumpPinNum, int tempSensorPinNum); // Contructor. Takes boiler pin number, pump pin number and temperature sensor pin number as parameters
 	void monitorSystem(); // Function for monitoring all system states

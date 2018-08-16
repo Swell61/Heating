@@ -19,19 +19,20 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 		display->loadingScreen(SDAvailable, NTPTryCount + 1); // Shows the loading screen
 		time = timer.getNTPTime(udp); // Tries to get the time
 		if (time != 0) { // If the time is not zero (very unlikely it will be zero and if it is, it will run another check if it has 1+ remaining)
-			int currentTime = (time / 60) % 1440; // Gets the current time in minutes
-			
-			timer.setMidnight((millis() / 60000) - currentTime); // Sets midnight
+			timer.setSystemTime(time);
 			NTPTryCount = 5; // Exceeds the max tries so the loop will break
 		}
 		else { // If failed to get time...
 			NTPTryCount++; // ...increase the try count and loop round again if 1+ tries left
 		}
 	}
-
-	display->mainDisplay(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive); // Show the main display
-	
 	setupWatchdog();
+	
+	display->mainDisplay(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive); // Show the main display
+	pinMode(53, OUTPUT);
+	digitalWrite(53, HIGH);
+	pinMode(49, OUTPUT);
+	digitalWrite(49, HIGH);
 };
 
 void HeatingSystem::setupWatchdog() {
@@ -86,42 +87,62 @@ bool HeatingSystem::saveTimer(const char* timerCase, int time) {
 
 void HeatingSystem::monitorSystem() { // This function runs through the process required to monitor and manage the heating system
 	wdt_reset(); // Reset the timer
+	
 	if (updateDisplay) { // If the screen needs updating
 
 		if (screen == 0) { // If on main display
-			display->displayUpdate(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive); // Show the main display
+			display->displayUpdate(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive); // Show the main display
 			// Update any connected clients with the current status
-			remote.processRemoteOutput(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+			pinMode(53, OUTPUT);
+			digitalWrite(53, LOW);
+			remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
 			remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
-
+			pinMode(53, OUTPUT);
+			digitalWrite(53, HIGH);
 		}
 		else if (screen == 1) { // If on the timer display
 			display->timerUpdate(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon()); // Show the timer display
 			// Update any connected clients with the current status
+			pinMode(53, OUTPUT);
+			digitalWrite(53, LOW);
 			remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
-			remote.processRemoteOutput(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
-			
+			remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+			pinMode(53, OUTPUT);
+			digitalWrite(53, HIGH);
 		}
 		else if (screen == 2) { // If on the time edit display
-			display->updateEditTime(timer.getTime()); // Show the time edit display
+
+			display->updateEditTime(timer.getTimeInMinutes()); // Show the time edit display
 					}
 		updateDisplay = false; // Updating screen has completed
 			}
 	if (abs(currentTemp - tempSensor.getTemp()) >= minTempDifference) { // Run temperature check for currently displayed temperature
+		
 		currentTemp = tempSensor.getTemp(); // If not correct, get corret temperature and...
 		updateDisplay = true; // ...update the display
 	};
+	pinMode(53, OUTPUT);
+	digitalWrite(53, LOW);
 	remoteOption = remote.processRemoteInput(); // Process any clients
+	pinMode(53, OUTPUT);
+	digitalWrite(53, HIGH);
 	touchOption = display->touchUpdate(screen); // Get the current requested touchscreen option
 	if (remoteOption == 255) { // If a new client has just joined
 		// Send current system status
-		remote.processRemoteOutput(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+		pinMode(53, OUTPUT);
+		digitalWrite(53, LOW);
+		remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
 		remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
+		pinMode(53, OUTPUT);
+		digitalWrite(53, HIGH);
 	}
 	else if (touchOption == 0) { // Touschreen takes priority. If no touch option, check remote requests
 		touchOption = remoteOption;
 	}
 	wdt_reset(); // Reset the timer
+	
+	pinMode(49, OUTPUT);
+	digitalWrite(49, LOW);
 	if (touchOption == 1) { // User requested temperature up one degree
 		if (requestedTemp < 28) {
 			requestedTemp++; // Increase the requested temperature up by one
@@ -158,7 +179,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	else if (touchOption == 6) { // Go to main display
 		updateDisplay = true;
 		screen = 0;
-		display->mainDisplay(timer.getTime(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+		display->mainDisplay(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
 	}
 	else if (touchOption == 7) { // Change heating on morning time 
 		if (timer.setHeatingOnMorning(timer.getHeatingOnMorning() - timerTimeInc)) {
@@ -280,64 +301,70 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	}
 	else if (touchOption == 27) {
 		screen = 2; // Change to edit time screen
-		display->editTime(timer.getTime());
+		display->editTime(timer.getTimeInMinutes());
 		updateDisplay = true;
 	}
 	else if (touchOption == 28) {
 
-		if (timer.setMidnight(timer.getMidnight() - 600)) { // Increase current time by 10 hours
+		if (timer.setSystemHour(timer.getHour() + 10)) { // Increase current time by 10 hours
 			updateDisplay = true;
 		}
 	}
 	else if (touchOption == 29) {
-		if (timer.setMidnight(timer.getMidnight() + 600)) { // Decrease current time by 10 hours
+		if (timer.setSystemHour(timer.getHour() - 10)) { // Decrease current time by 10 hours
 			updateDisplay = true;
 		}
 	}
 	else if (touchOption == 30) {
-		if (timer.setMidnight(timer.getMidnight() - 60)) { // Increase current time by 1 hour
+		if (timer.setSystemHour(timer.getHour() + 1)) { // Increase current time by 1 hour
 			updateDisplay = true;
 		}
 	}
 	else if (touchOption == 31) {
-		if (timer.setMidnight(timer.getMidnight() + 60)) { // Decrease current time by 1 hour
+		if (timer.setSystemHour(timer.getHour() - 1)) { // Decrease current time by 1 hour
 			updateDisplay = true;
 		}
 	}
 	else if (touchOption == 32) {
-		if (timer.setMidnight(timer.getMidnight() - 10)) { // Increase current time by 10 minutes
+		if (timer.setSystemMinute(timer.getMinute() + 10)) { // Increase current time by 10 minutes
 			updateDisplay = true;
 		}
 	}
 	else if (touchOption == 33) {
-		if (timer.setMidnight(timer.getMidnight() + 10)) { // Decrease current time by 10 hours
+		if (timer.setSystemMinute(timer.getMinute() - 10)) { // Decrease current time by 10 hours
 			updateDisplay = true;
 		}
 	}
 	else if (touchOption == 34) {
 
-		if (timer.setMidnight(timer.getMidnight() - 1)) { // Increase current time by 1 minute
+		if (timer.setSystemMinute(timer.getMinute() + 1)) { // Increase current time by 1 minute
 			updateDisplay = true;
 		}
 	}
 	else if (touchOption == 35) {
 
-		if (timer.setMidnight(timer.getMidnight() + 1)) { // Decrease current time by 1 minute
+		if (timer.setSystemMinute(timer.getMinute() - 1)) { // Decrease current time by 1 minute
 			updateDisplay = true;
 		}
 	}
+	pinMode(49, OUTPUT);
+	digitalWrite(49, HIGH);
 	checkBoosts(); // Run through the boost timers, checking if they need altering
 	changeRelayStates(); // make any required changed to the relays
 
 	if ((millis() - lastTimeUpdate) >= 59900) { // Update the display once every minute to update the time
+
 		updateDisplay = true; // Update the display
-		//timer.checkMidnight(udp); // Check if its midnight (update midnight and check that the time is correct
+		pinMode(53, OUTPUT);
+		digitalWrite(53, LOW);
 		timer.checkMidnight();
+		pinMode(53, OUTPUT);
+		digitalWrite(53, HIGH);
 		lastTimeUpdate = millis(); // Update the lsat time the time was updated
 	}
 
 	if ((millis() - lastHourlyUpdate) >= 3600000) { // Hourly updates
-		timer.setMidnightNTP(udp); // Try to update the time every hour
+		
 		lastHourlyUpdate = millis();
 	}
 	wdt_reset(); // Reset timer

@@ -10,12 +10,11 @@
 #endif
 #include <UIPEthernet.h>
 #include <Time.h>
-
+#include <DS3232RTC.h> 
 // This class stores the properties of the timer
 
 class Timer {
 private:
-	
 	int midnight = 0; //  Variable to store midnight so the timer can keep track of whether components need to be on or off
 
 	// Store current timer status
@@ -37,6 +36,7 @@ private:
 	unsigned long inline ntpUnixTime(UIPUDP &udp); // Function for getting the time from and NTP server
 
 public:
+	Timer();
 	// Methods for changing timer states
 	void setHeatingTimerState(bool state);
 	void setWaterTimerState(bool state);
@@ -46,10 +46,14 @@ public:
 	bool getWaterTimerStatus();
 
 	int getMidnight(); // Function for getting midnight
-	void checkMidnight(UIPUDP &udp); // Function for checking midnight using NTP time
 	void checkMidnight();
-	bool setMidnight(int time); // Function for setting midnight based on parameter
-	bool setMidnightNTP(UIPUDP &udp); // Function for setting midnight using NTP time
+	bool setSystemTime(unsigned long time);
+	bool setSystemHour(int newHour);
+	bool setSystemMinute(int newMinute);
+	int getHour(); 
+	int getMinute();
+	int getTimeInMinutes(); // Function to get current time
+	unsigned long getNTPTime(UIPUDP &udp); // Function for getting current time using NTP server
 
 	// Function for getting timer times
 	int getHeatingOnMorning();
@@ -71,8 +75,7 @@ public:
 	bool setWaterOnAfternoon(int state);
 	bool setWaterOffAfternoon(int state);
 
-	int getTime(); // Function to get current time
-	unsigned long getNTPTime(UIPUDP &udp); // Function for getting current time using NTP server
+	
 };
 
 #endif

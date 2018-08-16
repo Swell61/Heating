@@ -15,6 +15,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OneWire", "..\..\..\..\Ardu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DallasTemperature", "..\..\..\..\Arduino\libraries\DallasTemperature\DallasTemperature.vcxitems", "{F5AD8F6D-DD19-4D2A-AD0C-3402F245880A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RTClib", "..\..\..\..\Arduino\libraries\RTClib\RTClib.vcxitems", "{A8F3BF2B-EC42-4D22-AD8B-0130A066C309}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DS3232RTC", "..\..\..\..\Arduino\libraries\DS3232RTC\DS3232RTC.vcxitems", "{BCF4938E-E2F8-4E11-95FE-8AB1F9A2DA72}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
