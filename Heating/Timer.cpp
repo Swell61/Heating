@@ -11,8 +11,8 @@ Timer::Timer() { // Constructor
 }
 
 int Timer::getTimeInMinutes() {
-	if (((hour() * 60) + minute() + (dstOffset(now()) / 60)) >= 1440) {
-		return ((hour() * 60) + minute()) + (dstOffset(now()) / 60) - 1440;
+	if (((hour() * 60) + minute() + (dstOffset(now()) / 60)) >= 1440) { // If daylight savings pushes clock over at midnight...
+		return ((hour() * 60) + minute()) + (dstOffset(now()) / 60) - 1440; // Instead of displaying 24:XX, loop round to display 00:XX
 	}
 	else {
 		return ((hour() * 60) + minute()) + (dstOffset(now()) / 60); // Return the current system time in minutes
@@ -20,42 +20,41 @@ int Timer::getTimeInMinutes() {
 }
 
 bool Timer::setSystemTime(unsigned long time) { // Function for setting the RTC clock
-	time_t t = time;
-	RTC.set(t);
-	setTime(t);
+	time_t t = time; // Store the current time
+	RTC.set(t); // Set the RTC to the current time
+	setTime(t); // Set the Time library to the current time (instead of waiting for library to sync to RTC)
 }
 
 bool Timer::setSystemHour(int newHour) {
-	if (newHour >= 23) {
-		newHour = 0;
+	if (newHour >= 23) { // If trying to go past 23 hours...
+		newHour = 0; // Loop back to 0
 	}
-	else if (newHour <= 0) {
-		newHour = 23;
+	else if (newHour <= 0) { // If trying to go behind 0 hours...
+		newHour = 23; // Loop back to 23 hours
 	}
-	Serial.println(newHour);
-	setTime(newHour, minute(), 0, day(), month(), year());
-	RTC.set(now());
+	setTime(newHour, minute(), 0, day(), month(), year()); // Set new time and reset seconds to 0
+	RTC.set(now()); // Set the RTC to the new time
 	return true;
 }
 
 bool Timer::setSystemMinute(int newMinute) {
-	if (newMinute >= 59) {
-		newMinute = 0;
+	if (newMinute >= 59) { // If trying to go past 59 minutes...
+		newMinute = 0; // Loop back to 0
 	}
-	else if (newMinute <= 0) {
-		newMinute = 59;	
+	else if (newMinute <= 0) { // If trying to go behind 0 minutes...
+		newMinute = 59;	// Loop back to 59 minutes
 	}
-	setTime(hour(), newMinute, 0, day(), month(), year());
-	RTC.set(now());
+	setTime(hour(), newMinute, 0, day(), month(), year()); // Set new time and reset seconds to 0
+	RTC.set(now()); // Set the RTC to the new time
 	return true;
 }
 
 int Timer::getHour() {
-	return hour();
+	return hour(); // Return the current system hours
 }
 
 int Timer::getMinute() {
-	return minute();
+	return minute(); // Return the current system minutes
 }
 
 bool Timer::getHeatingTimerStatus() { // Function for getting the status of the heating
@@ -188,10 +187,6 @@ void Timer::setHeatingTimerState(bool state) {
 }
 void Timer::setWaterTimerState(bool state) {
 	waterTimerState = state;
-}
-
-int Timer::getMidnight() {
-	return midnight;
 }
 
 unsigned long inline Timer::ntpUnixTime(UIPUDP &udp)
