@@ -77,6 +77,9 @@ private:
 	bool saveTimer(const char* timerCase, int time); // Function for saving timer configuration
 
 	void setupWatchdog(); // Function for initiating the watchdog
+
+	byte resetCounter = 0;
+	char buffer[3];
 	
 public:
 	HeatingSystem(int boilerPinNum, int pumpPinNum, int tempSensorPinNum); // Contructor. Takes boiler pin number, pump pin number and temperature sensor pin number as parameters

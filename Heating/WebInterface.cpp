@@ -102,7 +102,15 @@ void WebInterface::processRemoteOutput(bool heatingTimerStatus, bool waterTimerS
 	
 	webServerStack_ProcessMsgOut(output);
 }
-
+int WebInterface::processRemoteInput(const char* buffer, Config config) {
+	if (server.available()) { // If a client has a message to send...
+		config.writeProperty(buffer, "5");
+		return webServerStack_ProcessMsgIn(); // Process it
+	}
+	else { // Otherwise no client message processing needed
+		return 0;
+	}
+}
 int WebInterface::processRemoteInput() { // Process a client
 	if (server.available()) { // If a client has a message to send...
 		return webServerStack_ProcessMsgIn(); // Process it

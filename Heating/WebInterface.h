@@ -12,6 +12,7 @@
 #include <SPI.h>
 #include "UIPEthernet.h"
 #include <SD.h>
+#include "Config.h"
 
 // Class for web and remote interface interraction
 
@@ -39,7 +40,8 @@ public:
 	void processRemoteOutput(int time, byte heatingMode, byte waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost); // Function for sending main display status to clients
 	void processRemoteOutput(bool heatingTimerStatus, bool waterTimerStatus, int heatingOnMorning, int heatingOffMorning, int heatingOnAfternoon, int heatingOffAfternoon, int waterOnMorning, int waterOffMorning, int waterOnAfternoon, int waterOffAfternoon); // Function for sending timer status to clients
 
-		int processRemoteInput(); // Function for processing client messages
+	int processRemoteInput(); // Function for processing client messages
+	int processRemoteInput(const char* buffer, Config config);
 };
 
 #endif
