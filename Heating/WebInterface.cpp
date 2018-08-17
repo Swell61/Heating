@@ -115,6 +115,7 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 	bool inMsgPassed = false;
 		// Process for connected client
 		for (int i = 0; i < MAX_CLIENT_NUM; i++) {
+			wdt_reset();
 			if (webSocketStack[i].client) {
 				if (webSocketStack[i].client.connected()) {
 					// Incoming msg
@@ -126,7 +127,7 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 							return atoi(data); // Return it
 						}
 						else {
-							webSocketStack[i].client.stop(); // IE and Edge send rubbish through websocket when refreshing or closing. Cick the client if non-valid data sent
+							webSocketStack[i].client.stop(); // IE and Edge send rubbish through websocket when refreshing or closing. Kick the client if non-valid data sent
 						}
 						
 						inMsgPassed = true;
@@ -161,6 +162,7 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 		if (j < MAX_CLIENT_NUM) { // If there is room on the stack for another client
 			webSocketStack[j].client = server.available();
 			if (webSocketStack[j].client.connected()) {
+				wdt_reset();
 				byte request = webSocketStack[j].webSocketServer.handshake(webSocketStack[j].client); // try to handshake. Will return 2 if web files need to be sent
 				
 				if (request == 1) { // If handshake succeeded

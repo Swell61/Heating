@@ -356,10 +356,6 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 		lastTimeUpdate = millis(); // Update the lsat time the time was updated
 	}
 
-	if ((millis() - lastHourlyUpdate) >= 3600000) { // Hourly updates
-		
-		lastHourlyUpdate = millis();
-	}
 	wdt_reset(); // Reset timer
 };
 
