@@ -13,6 +13,8 @@
 #include "UIPEthernet.h"
 #include <SD.h>
 #include "Config.h"
+#include <avr/wdt.h>
+
 
 // Class for web and remote interface interraction
 
