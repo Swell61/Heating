@@ -4,18 +4,18 @@
 
 #include "HeatingSystem.h"
 
-HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)), timer(Timer()), display(new Display()), remote(WebInterface(SD.begin(49))), config(Config("config.txt")) { // Constructor. Initialises the componenets of the heating system
+HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)), timer(Timer()), display(new Display()), remote(WebInterface(SD.begin(5))), config(Config("config.txt")) { // Constructor. Initialises the componenets of the heating system
 	currentTemp = tempSensor.getTemp(); // Gets the current temperature to display
 	setHeatingOff(); // Disables the heating
 	setWaterOff(); // Disables the ho twater
-	Serial.println((SDAvailable = SD.begin(49)) ? "SD UP" : "SD DOWN"); // Checks whether the SD card is available or not
+	Serial.println((SDAvailable = SD.begin(5)) ? "SD UP" : "SD DOWN"); // Checks whether the SD card is available or not
 	if (SDAvailable) {
 		loadTimer();
 	}
 	int NTPTryCount = 0; // Variable to store the number of tries to get the time from the NTP server
 	unsigned long time = 0; // Variable to store the time from the NTP server
 	while (NTPTryCount < 5) { // Tries 5 times to get the time
-
+		
 		display->loadingScreen(SDAvailable, NTPTryCount + 1); // Shows the loading screen
 		time = timer.getNTPTime(udp); // Tries to get the time
 		if (time != 0) { // If the time is not zero (very unlikely it will be zero and if it is, it will run another check if it has 1+ remaining)
@@ -34,10 +34,10 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 	config.writeProperty("reset", buffer);
 
 	display->mainDisplay(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive); // Show the main display
-	pinMode(53, OUTPUT);
-	digitalWrite(53, HIGH);
-	pinMode(49, OUTPUT);
-	digitalWrite(49, HIGH);
+	pinMode(12, OUTPUT);
+	digitalWrite(12, HIGH);
+	pinMode(5, OUTPUT);
+	digitalWrite(5, HIGH);
 };
 
 void HeatingSystem::setupWatchdog() {
@@ -97,24 +97,24 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 			config.writeProperty(buffer, "1");
 			display->displayUpdate(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive); // Show the main display
 																																																	   // Update any connected clients with the current status
-			pinMode(53, OUTPUT);
-			digitalWrite(53, LOW);
+			pinMode(12, OUTPUT);
+			digitalWrite(12, LOW);
 			remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
 			remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
-			pinMode(53, OUTPUT);
-			digitalWrite(53, HIGH);
+			pinMode(12, OUTPUT);
+			digitalWrite(12, HIGH);
 		}
 		else if (screen == 1) { // If on the timer display
 			config.writeProperty(buffer, "2");
 
 			display->timerUpdate(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon()); // Show the timer display
 																																																																																			  // Update any connected clients with the current status
-			pinMode(53, OUTPUT);
-			digitalWrite(53, LOW);
+			pinMode(12, OUTPUT);
+			digitalWrite(12, LOW);
 			remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
 			remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
-			pinMode(53, OUTPUT);
-			digitalWrite(53, HIGH);
+			pinMode(12, OUTPUT);
+			digitalWrite(12, HIGH);
 		}
 		else if (screen == 2) { // If on the time edit display
 			config.writeProperty(buffer, "3");
@@ -129,11 +129,11 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 		currentTemp = tempSensor.getTemp(); // If not correct, get corret temperature and...
 		updateDisplay = true; // ...update the display
 	};
-	pinMode(53, OUTPUT);
-	digitalWrite(53, LOW);
+	pinMode(12, OUTPUT);
+	digitalWrite(12, LOW);
 	remoteOption = remote.processRemoteInput(buffer, config); // Process any clients
-	pinMode(53, OUTPUT);
-	digitalWrite(53, HIGH);
+	pinMode(12, OUTPUT);
+	digitalWrite(12, HIGH);
 	touchOption = display->touchUpdate(screen); // Get the current requested touchscreen option
 
 	
@@ -141,12 +141,12 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	if (remoteOption == 255) { // If a new client has just joined
 		config.writeProperty(buffer, "6");
 							   // Send current system status
-		pinMode(53, OUTPUT);
-		digitalWrite(53, LOW);
+		pinMode(12, OUTPUT);
+		digitalWrite(12, LOW);
 		remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
 		remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
-		pinMode(53, OUTPUT);
-		digitalWrite(53, HIGH);
+		pinMode(12, OUTPUT);
+		digitalWrite(12, HIGH);
 	}
 	else if (touchOption == 0) { // Touschreen takes priority. If no touch option, check remote requests
 		touchOption = remoteOption;
@@ -164,8 +164,8 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	else if (remoteOption >= 28 && remoteOption <= 35) {
 		config.writeProperty(buffer, "10");
 	}
-	pinMode(49, OUTPUT);
-	digitalWrite(49, LOW);
+	pinMode(5, OUTPUT);
+	digitalWrite(5, LOW);
 	if (touchOption == 1) { // User requested temperature up one degree
 		if (requestedTemp < 28) {
 			requestedTemp++; // Increase the requested temperature up by one
@@ -370,8 +370,8 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 			updateDisplay = true;
 		}
 	}
-	pinMode(49, OUTPUT);
-	digitalWrite(49, HIGH);
+	pinMode(5, OUTPUT);
+	digitalWrite(5, HIGH);
 	checkBoosts(); // Run through the boost timers, checking if they need altering
 	changeRelayStates(); // make any required changed to the relays
 
