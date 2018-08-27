@@ -37,7 +37,7 @@ private:
 	unsigned long lastTimeUpdate = 0; // Variable to store the last state the system was in. Stops the system trying to enter a state it is already in
 	unsigned long lastHourlyUpdate = 0; // Variable to store when the last hourly update was done
 
-	int requestedTemp = 15; // Variable to store requested temperature. Default is 15 degrees
+	int requestedTemp = 11.5; // Variable to store requested temperature. Default is 15 degrees
 
 	bool heatingStatus = false; // Variable to store the required status of the heating
 	bool waterStatus = false; // Variable to store the required status of the hot water
