@@ -29,6 +29,7 @@ private:
 	const byte boostLengthHeating = 30; // Length of time in minutes for heating boost
 	const byte timerTimeInc = 5; // Length of time in minutes for the adjustment value for timer
 	const int maxDrift = 1; // Set the maximum number of degrees the temperature can drift before heating is turned on
+	const float tempChange = 0.5;
 	bool updateDisplay = false; // Whether the system needs to update the display or not
 	byte screen = 0; // 0 = Regular screen. 1 = Timer screen. 2 = Time change screen
 	byte heatingMode = 2; // 0 = off, 1 = timer, 2 = on. Defaults to on at 15 degrees
@@ -37,7 +38,7 @@ private:
 	unsigned long lastTimeUpdate = 0; // Variable to store the last state the system was in. Stops the system trying to enter a state it is already in
 	unsigned long lastHourlyUpdate = 0; // Variable to store when the last hourly update was done
 
-	int requestedTemp = 11.5; // Variable to store requested temperature. Default is 15 degrees
+	float requestedTemp = 11.5; // Variable to store requested temperature. Default is 15 degrees
 
 	bool heatingStatus = false; // Variable to store the required status of the heating
 	bool waterStatus = false; // Variable to store the required status of the hot water

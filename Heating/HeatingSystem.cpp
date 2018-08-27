@@ -168,13 +168,13 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	digitalWrite(5, LOW);
 	if (touchOption == 1) { // User requested temperature up one degree
 		if (requestedTemp < 28) {
-			requestedTemp++; // Increase the requested temperature up by one
+			requestedTemp + tempChange; // Increase the requested temperature up by one
 			updateDisplay = true; // The display needs updating
 		}
 	}
 	else if (touchOption == 2) { // User requested temperature down one degree
 		if (requestedTemp > 10) {
-			requestedTemp--; // Decrease the requested temperature down by one
+			requestedTemp - tempChange; // Decrease the requested temperature down by one
 			updateDisplay = true; // The display needs updating
 		}
 	}
