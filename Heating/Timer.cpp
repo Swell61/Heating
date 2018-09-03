@@ -3,8 +3,6 @@
 // 
 
 #include "Timer.h"
-#include <MemoryFree.h>
-
 
 Timer::Timer() { // Constructor
 	setSyncProvider(RTC.get); // Synchronise the Time library with the RTC clock

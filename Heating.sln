@@ -19,6 +19,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RTClib", "..\..\..\..\Ardui
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DS3232RTC", "..\..\..\..\Arduino\libraries\DS3232RTC\DS3232RTC.vcxitems", "{BCF4938E-E2F8-4E11-95FE-8AB1F9A2DA72}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Arduino-Websocket", "..\..\..\..\Arduino\libraries\Arduino-Websocket\Arduino-Websocket.vcxitems", "{9DE6107D-E4E2-42CD-B472-5ABFE56C3808}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
