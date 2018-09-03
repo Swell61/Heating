@@ -38,6 +38,7 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 	digitalWrite(12, HIGH);
 	pinMode(5, OUTPUT);
 	digitalWrite(5, HIGH);
+	Serial.println("Boot complete");
 };
 
 void HeatingSystem::setupWatchdog() {
@@ -168,13 +169,13 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	digitalWrite(5, LOW);
 	if (touchOption == 1) { // User requested temperature up one degree
 		if (requestedTemp < 28) {
-			requestedTemp + tempChange; // Increase the requested temperature up by one
+			requestedTemp = requestedTemp + tempChange; // Increase the requested temperature up by tempChange
 			updateDisplay = true; // The display needs updating
 		}
 	}
 	else if (touchOption == 2) { // User requested temperature down one degree
 		if (requestedTemp > 10) {
-			requestedTemp - tempChange; // Decrease the requested temperature down by one
+			requestedTemp = requestedTemp - tempChange; // Decrease the requested temperature down by tempChange
 			updateDisplay = true; // The display needs updating
 		}
 	}
