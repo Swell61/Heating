@@ -132,6 +132,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	if (abs(currentInternalTemp - internalTempSensor.getTemp()) >= minTempDifference) {
 		config.writeProperty(buffer, "11");
 		currentInternalTemp = internalTempSensor.getTemp();
+		updateDisplay = true;
 	};
 
 	pinMode(12, OUTPUT);
