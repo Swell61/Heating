@@ -4,7 +4,7 @@
 
 #include "HeatingSystem.h"
 
-HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)), timer(Timer()), display(new Display()), remote(WebInterface(SD.begin(5))), config(Config("config.txt")) { // Constructor. Initialises the componenets of the heating system
+HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin, int intTempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)), internalTempSensor(TempSensor(intTempSensorPin)), timer(Timer()), display(new Display()), remote(WebInterface(SD.begin(5))), config(Config("config.txt")) { // Constructor. Initialises the componenets of the heating system
 	currentTemp = tempSensor.getTemp(); // Gets the current temperature to display
 	setHeatingOff(); // Disables the heating
 	setWaterOff(); // Disables the ho twater
@@ -129,6 +129,11 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 		currentTemp = tempSensor.getTemp(); // If not correct, get corret temperature and...
 		updateDisplay = true; // ...update the display
 	};
+	if (abs(currentInternalTemp - internalTempSensor.getTemp()) >= minTempDifference) {
+		config.writeProperty(buffer, "11");
+		currentInternalTemp = internalTempSensor.getTemp();
+	};
+
 	pinMode(12, OUTPUT);
 	digitalWrite(12, LOW);
 	remoteOption = remote.processRemoteInput(buffer, config); // Process any clients

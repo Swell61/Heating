@@ -52,6 +52,7 @@ private:
 	byte touchOption; // Variable to store what the current touch option is
 	byte remoteOption; // variable to store what the current option selected by a remote source (web interface, app, etc.)
 	float currentTemp; // Variable to store the current temperature being displayed
+	float currentInternalTemp; // Variale to store the current internal temperature of the thermostat
 	float lastChangedTemp = 0; // Variable to store the temperature at which the heating system was changed due to temperature difference
 	const float minTempDifference = 0.5; // Variable to store the minimum temperature difference neded to warrat any heating system change
 
@@ -61,6 +62,7 @@ private:
 	Pump pump; // Pump component
 	Boiler boiler; // Boiler component
 	TempSensor tempSensor; // Temperature sensor component
+	TempSensor internalTempSensor; // Temperature sensor inside the thermostat
 	Display* display; // Display component
 	Timer timer; // Timer component
 	WebInterface remote; // Web interface component
@@ -83,7 +85,7 @@ private:
 	char buffer[3];
 	
 public:
-	HeatingSystem(int boilerPinNum, int pumpPinNum, int tempSensorPinNum); // Contructor. Takes boiler pin number, pump pin number and temperature sensor pin number as parameters
+	HeatingSystem(int boilerPinNum, int pumpPinNum, int tempSensorPinNum, int intTempSensorPin); // Contructor. Takes boiler pin number, pump pin number and temperature sensor pin number as parameters
 	void monitorSystem(); // Function for monitoring all system states
 	void boostHeating(bool state); // Function for enabling or disabling heating boost
 	void boostWater(bool state); // Function for enabling or disabling hot water boost
