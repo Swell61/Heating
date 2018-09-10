@@ -18,14 +18,15 @@
 class TempSensor {
 public:
 	float getTemp(); // Function for getting the current temperature from the sensor
-	TempSensor(int pinNum); // Constructor that takes the pin number of the temperature sensor
-	TempSensor(int pinNum, uint8_t newAddress[8]);
+	TempSensor(); // Constructor that takes the pin number of the temperature sensor
+	TempSensor(uint8_t newAddress[8]);
+	static void begin(int pinNum);
 private:
 	//LM75 sensor; // Temperature sensor
 	float lastTemp;
 	unsigned long lastTempUpdate;
-	OneWire oneWire;
-	DallasTemperature sensor;
+	static OneWire oneWire;
+	static DallasTemperature sensor;
 	uint8_t address[8] = { 0x28, 0xFF, 0x60, 0x9A, 0xA1, 0x17, 0x5, 0x43 };
 	unsigned long lastRequest = 0;
 	void initialiseTempSensor();

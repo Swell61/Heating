@@ -4,9 +4,13 @@
 
 #include "HeatingSystem.h"
 
-HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin, int intTempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)), timer(Timer()), display(new Display()), remote(WebInterface(SD.begin(5))), config(Config("config.txt")) { // Constructor. Initialises the componenets of the heating system
+HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin, int intTempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), timer(Timer()), display(new Display()), remote(WebInterface(SD.begin(5))), config(Config("config.txt")) { // Constructor. Initialises the componenets of the heating system
+	TempSensor::begin(tempSensorPin);
+	tempSensor = TempSensor();
+	uint8_t internalTempSensorAddress[8] = { 0x28, 0xFF, 0x68, 0x08, 0xA2, 0x17, 0x04, 0x21 };
+	internalTempSensor = TempSensor(internalTempSensorAddress);
 	currentTemp = tempSensor.getTemp(); // Gets the current temperature to display
-	internalTempSensor = TempSensor(intTempSensorPin);
+	currentInternalTemp = internalTempSensor.getTemp();
 	setHeatingOff(); // Disables the heating
 	setWaterOff(); // Disables the ho twater
 	Serial.println((SDAvailable = SD.begin(5)) ? "SD UP" : "SD DOWN"); // Checks whether the SD card is available or not

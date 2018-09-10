@@ -3,18 +3,25 @@
 // 
 
 #include "TempSensor.h"
-TempSensor::TempSensor(int pinNum) : oneWire(OneWire(pinNum)), sensor(DallasTemperature(&oneWire)) { // Constructor that sets up the temperature sensor
+OneWire TempSensor::oneWire = NULL;
+DallasTemperature TempSensor::sensor;
+TempSensor::TempSensor() { // Constructor that sets up the temperature sensor
 	initialiseTempSensor();
 };
-TempSensor::TempSensor(int pinNum, uint8_t newAddress[8]) : oneWire(OneWire(pinNum)), sensor(DallasTemperature(&oneWire)) {
+TempSensor::TempSensor(uint8_t newAddress[8]) {
 	for (byte i = 0; i <= 7; i++) {
 		address[i] = newAddress[i];
 	}
 	initialiseTempSensor();
 }
-void TempSensor::initialiseTempSensor() {
+void TempSensor::begin(int pinNum) {
+	oneWire = OneWire(pinNum);
+	sensor = DallasTemperature(&oneWire);
 	sensor.begin();
 	sensor.setWaitForConversion(false);
+
+}
+void TempSensor::initialiseTempSensor() {
 	sensor.setResolution(address, 10);
 	sensor.requestTemperaturesByAddress(address);
 	lastRequest = millis();
