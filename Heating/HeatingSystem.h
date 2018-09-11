@@ -81,7 +81,7 @@ private:
 
 	void setupWatchdog(); // Function for initiating the watchdog
 
-	byte resetCounter = 0;
+	int resetCounter = 0;
 	char buffer[3];
 	
 public:
