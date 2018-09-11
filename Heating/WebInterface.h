@@ -39,7 +39,7 @@ private:
 public:
 	WebInterface(bool webFilesAvailabe); // Constructor which takes parameter for whether web server files are available or not
 
-	void processRemoteOutput(int time, byte heatingMode, byte waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost); // Function for sending main display status to clients
+	void processRemoteOutput(int time, byte heatingMode, byte waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost, float internalTemp); // Function for sending main display status to clients
 	void processRemoteOutput(bool heatingTimerStatus, bool waterTimerStatus, int heatingOnMorning, int heatingOffMorning, int heatingOnAfternoon, int heatingOffAfternoon, int waterOnMorning, int waterOffMorning, int waterOnAfternoon, int waterOffAfternoon); // Function for sending timer status to clients
 
 	int processRemoteInput(); // Function for processing client messages

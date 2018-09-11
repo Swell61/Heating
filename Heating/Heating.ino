@@ -14,7 +14,7 @@
 HeatingSystem* ashanti;
 void setup() {
 	Serial.begin(9600);
-	ashanti = new HeatingSystem(3, 2, A4); // Pump pin, boiler pin, thermometer pin
+	ashanti = new HeatingSystem(3, 2, A4, A4); // Pump pin, boiler pin, thermometer pin
 	
 }
 void loop() {

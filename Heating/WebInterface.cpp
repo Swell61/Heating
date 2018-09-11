@@ -11,7 +11,7 @@ WebInterface::WebInterface(bool SDAvailable) : webFilesAvailable(SDAvailable) {
 	server.begin();
 }
 
-void WebInterface::processRemoteOutput(int time, byte heatingMode, byte waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost) {
+void WebInterface::processRemoteOutput(int time, byte heatingMode, byte waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost, float internalTemp) {
 	// Send a string containing the status of the main display
 	
 	char buffer[8];
@@ -47,6 +47,11 @@ void WebInterface::processRemoteOutput(int time, byte heatingMode, byte waterMod
 	strcat(output, ":");
 
 	strcat(output, waterBoost ? "1" : "0");
+	strcat(output, ":");
+
+
+	dtostrf(internalTemp, 5, 2, buffer);
+	strcat(output, buffer);
 	strcat(output, "\0");
 	strcat(buffer, "\0");
 
@@ -103,6 +108,7 @@ void WebInterface::processRemoteOutput(bool heatingTimerStatus, bool waterTimerS
 	webServerStack_ProcessMsgOut(output);
 }
 int WebInterface::processRemoteInput(const char* buffer, Config config) {
+	Ethernet.maintain();
 	if (server.available()) { // If a client has a message to send...
 		config.writeProperty(buffer, "5");
 		return webServerStack_ProcessMsgIn(); // Process it

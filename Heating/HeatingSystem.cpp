@@ -4,8 +4,13 @@
 
 #include "HeatingSystem.h"
 
-HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), tempSensor(TempSensor(tempSensorPin)), timer(Timer()), display(new Display()), remote(WebInterface(SD.begin(5))), config(Config("config.txt")) { // Constructor. Initialises the componenets of the heating system
+HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin, int intTempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), timer(Timer()), display(new Display()), remote(WebInterface(SD.begin(5))), config(Config("config.txt")) { // Constructor. Initialises the componenets of the heating system
+	TempSensor::begin(tempSensorPin);
+	tempSensor = TempSensor();
+	uint8_t internalTempSensorAddress[8] = { 0x28, 0xFF, 0x68, 0x08, 0xA2, 0x17, 0x04, 0x21 };
+	internalTempSensor = TempSensor(internalTempSensorAddress);
 	currentTemp = tempSensor.getTemp(); // Gets the current temperature to display
+	currentInternalTemp = internalTempSensor.getTemp();
 	setHeatingOff(); // Disables the heating
 	setWaterOff(); // Disables the ho twater
 	Serial.println((SDAvailable = SD.begin(5)) ? "SD UP" : "SD DOWN"); // Checks whether the SD card is available or not
@@ -28,7 +33,7 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 	}
 	setupWatchdog();
 
-	resetCounter = (byte)config.readProperty("reset");
+	resetCounter = atoi(config.readProperty("reset"));
 	resetCounter++;
 	itoa(resetCounter, buffer, 10);
 	config.writeProperty("reset", buffer);
@@ -38,7 +43,6 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin) : pu
 	digitalWrite(12, HIGH);
 	pinMode(5, OUTPUT);
 	digitalWrite(5, HIGH);
-	Serial.println("Boot complete");
 };
 
 void HeatingSystem::setupWatchdog() {
@@ -100,7 +104,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 																																																	   // Update any connected clients with the current status
 			pinMode(12, OUTPUT);
 			digitalWrite(12, LOW);
-			remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+			remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive, currentInternalTemp);
 			remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
 			pinMode(12, OUTPUT);
 			digitalWrite(12, HIGH);
@@ -113,7 +117,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 			pinMode(12, OUTPUT);
 			digitalWrite(12, LOW);
 			remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
-			remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+			remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive, currentInternalTemp);
 			pinMode(12, OUTPUT);
 			digitalWrite(12, HIGH);
 		}
@@ -130,6 +134,12 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 		currentTemp = tempSensor.getTemp(); // If not correct, get corret temperature and...
 		updateDisplay = true; // ...update the display
 	};
+	if (abs(currentInternalTemp - internalTempSensor.getTemp()) >= minTempDifference) {
+		config.writeProperty(buffer, "11");
+		currentInternalTemp = internalTempSensor.getTemp();
+		updateDisplay = true;
+	};
+
 	pinMode(12, OUTPUT);
 	digitalWrite(12, LOW);
 	remoteOption = remote.processRemoteInput(buffer, config); // Process any clients
@@ -144,7 +154,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 							   // Send current system status
 		pinMode(12, OUTPUT);
 		digitalWrite(12, LOW);
-		remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+		remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive, currentInternalTemp);
 		remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
 		pinMode(12, OUTPUT);
 		digitalWrite(12, HIGH);
@@ -169,13 +179,13 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	digitalWrite(5, LOW);
 	if (touchOption == 1) { // User requested temperature up one degree
 		if (requestedTemp < 28) {
-			requestedTemp = requestedTemp + tempChange; // Increase the requested temperature up by tempChange
+			requestedTemp = requestedTemp + tempChange; // Increase the requested temperature up by one
 			updateDisplay = true; // The display needs updating
 		}
 	}
 	else if (touchOption == 2) { // User requested temperature down one degree
 		if (requestedTemp > 10) {
-			requestedTemp = requestedTemp - tempChange; // Decrease the requested temperature down by tempChange
+			requestedTemp = requestedTemp - tempChange; // Decrease the requested temperature down by one
 			updateDisplay = true; // The display needs updating
 		}
 	}
