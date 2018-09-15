@@ -240,8 +240,8 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 void WebInterface::webServerStack_ProcessMsgOut(const char *output) {
 	
 	for (int i = 0; i < MAX_CLIENT_NUM; i++) { // Loop through each client connected
-		
 		if (webSocketStack[i].client) {
+			wdt_reset(); // Reset the timer
 			if (webSocketStack[i].client.connected()) {
 				
 					sendClientData(i, output);
