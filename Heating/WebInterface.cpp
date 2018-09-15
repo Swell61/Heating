@@ -118,6 +118,7 @@ int WebInterface::processRemoteInput(const char* buffer, Config config) {
 	}
 }
 int WebInterface::processRemoteInput() { // Process a client
+	Ethernet.maintain();
 	if (server.available()) { // If a client has a message to send...
 		return webServerStack_ProcessMsgIn(); // Process it
 	}

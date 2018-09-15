@@ -25,7 +25,7 @@
 class HeatingSystem {
 private:
 
-	const byte boostLengthWater = 30; // Length of time in minutes for hot water boost
+	const byte boostLengthWater = 20; // Length of time in minutes for hot water boost
 	const byte boostLengthHeating = 30; // Length of time in minutes for heating boost
 	const byte timerTimeInc = 5; // Length of time in minutes for the adjustment value for timer
 	const int maxDrift = 1; // Set the maximum number of degrees the temperature can drift before heating is turned on

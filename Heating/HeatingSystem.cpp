@@ -410,15 +410,11 @@ void HeatingSystem::checkBoosts() { // Boosts have priority over everything
 void HeatingSystem::changeRelayStates() { // Function checks current system status and decides whether the heating and hot water need to be on or not
 
 										  // Heating settings
-	if (heatingBoostActive) { // If heating boost is active...
-
-		enableHeating(); // ...turn the heating on
-	}
-	else if (temperatureCheck() == 1 && (heatingMode == 2 || (heatingMode == 1 && timer.getHeatingTimerStatus()))) { // if ((Heating is ON OR (Heating Timer is ON and ACTIVE)) AND temperature is too low)
+	if (temperatureCheck() == 1 && (heatingBoostActive || heatingMode == 2 || (heatingMode == 1 && timer.getHeatingTimerStatus()))) { // if ((Heating is ON OR (Heating Timer is ON and ACTIVE)) AND temperature is too low)
 
 		enableHeating();
 	}
-	else if (heatingMode == 0 || (temperatureCheck() == 0 && (heatingMode == 2 || (heatingMode == 1 && timer.getHeatingTimerStatus()))) || (heatingMode == 1 && !timer.getHeatingTimerStatus())) {
+	else if (heatingMode == 0 || (temperatureCheck() == 0 && (heatingBoostActive || heatingMode == 2 || (heatingMode == 1 && timer.getHeatingTimerStatus()))) || (heatingMode == 1 && !timer.getHeatingTimerStatus())) {
 
 		disableHeating();
 	}
