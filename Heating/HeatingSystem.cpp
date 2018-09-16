@@ -99,7 +99,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	if (updateDisplay) { // If the screen needs updating
 
 		if (screen == 0) { // If on main display
-			config.writeProperty(buffer, "1");
+			Serial.println("1");
 			display->displayUpdate(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive); // Show the main display
 																																																	   // Update any connected clients with the current status
 			pinMode(12, OUTPUT);
@@ -110,7 +110,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 			digitalWrite(12, HIGH);
 		}
 		else if (screen == 1) { // If on the timer display
-			config.writeProperty(buffer, "2");
+			Serial.println("2");
 
 			display->timerUpdate(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon()); // Show the timer display
 																																																																																			  // Update any connected clients with the current status
@@ -122,20 +122,20 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 			digitalWrite(12, HIGH);
 		}
 		else if (screen == 2) { // If on the time edit display
-			config.writeProperty(buffer, "3");
+			Serial.println("3");
 
 			display->updateEditTime(timer.getTimeInMinutes()); // Show the time edit display
 		}
 		updateDisplay = false; // Updating screen has completed
 	}
 	if (abs(currentTemp - tempSensor.getTemp()) >= minTempDifference) { // Run temperature check for currently displayed temperature
-		config.writeProperty(buffer, "4");
+		Serial.println("4");
 
 		currentTemp = tempSensor.getTemp(); // If not correct, get corret temperature and...
 		updateDisplay = true; // ...update the display
 	};
 	if (abs(currentInternalTemp - internalTempSensor.getTemp()) >= minTempDifference) {
-		config.writeProperty(buffer, "17");
+		Serial.println("17");
 		currentInternalTemp = internalTempSensor.getTemp();
 		updateDisplay = true;
 	};
@@ -150,7 +150,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	
 
 	if (remoteOption == 255) { // If a new client has just joined
-		config.writeProperty(buffer, "6");
+		Serial.println("6");
 							   // Send current system status
 		pinMode(12, OUTPUT);
 		digitalWrite(12, LOW);
@@ -164,16 +164,16 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	}
 	wdt_reset(); // Reset the timer
 	if (remoteOption >= 1 && remoteOption <= 6) {
-		config.writeProperty(buffer, "7");
+		Serial.println("7");
 	}
 	else if (remoteOption >= 7 && remoteOption <= 22) {
-		config.writeProperty(buffer, "8");
+		Serial.println("8");
 	}
 	else if (remoteOption >= 23 && remoteOption <= 27) {
-		config.writeProperty(buffer, "9");
+		Serial.println("9");
 	}
 	else if (remoteOption >= 28 && remoteOption <= 35) {
-		config.writeProperty(buffer, "10");
+		Serial.println("10");
 	}
 	pinMode(5, OUTPUT);
 	digitalWrite(5, LOW);
@@ -397,11 +397,11 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 
 void HeatingSystem::checkBoosts() { // Boosts have priority over everything
 	if (heatingBoostActive && ((millis() - startTimeHeatingBoost) >= (boostLengthHeating * 60000))) { // If heating boost is active and boost timer is over, turn off the boost
-		config.writeProperty(buffer, "11");
+		Serial.println("11");
 		boostHeating(false);
 	}
 	else if (waterBoostActive && ((millis() - startTimeWaterBoost) >= (boostLengthWater * 60000))) { // Same as heating but for hot water. If heating boost is on, hot water doesn't need adjusting because it will be on anyway
-		config.writeProperty(buffer, "12");
+		Serial.println("12");
 
 		boostWater(false);
 	}
@@ -432,7 +432,7 @@ void HeatingSystem::changeRelayStates() { // Function checks current system stat
 
 	// lastSystemMode will stop the system trying to enter a state it is already in
 	if ((lastSystemMode != 0) && heatingStatus && waterStatus) { // If the heating and hot water should be on
-		config.writeProperty(buffer, "13");
+		Serial.println("13");
 		// Turn them on
 		setHeatingOn();
 		setWaterOn();
@@ -440,21 +440,21 @@ void HeatingSystem::changeRelayStates() { // Function checks current system stat
 		updateDisplay = true; // Update the display
 	}
 	else if ((lastSystemMode != 1) && heatingStatus && !waterStatus) { // If the heating should be on but not the hot water
-		config.writeProperty(buffer, "14");
+		Serial.println("14");
 
 		setHeatingOn(); // Turn the heating on
 		lastSystemMode = 1;
 		updateDisplay = true; // Update the display
 	}
 	else if ((lastSystemMode != 2) && !heatingStatus && waterStatus) { // If the hot water should be on but bot the heating
-		config.writeProperty(buffer, "15");
+		Serial.println("15");
 
 		setWaterWithoutHeating(); // Turn the hot water components on and disable the unneeded heating components
 		lastSystemMode = 2;
 		updateDisplay = true; // Update the display
 	}
 	else if ((lastSystemMode != 3) && !heatingStatus && !waterStatus) { // If heating and hot water should be off
-		config.writeProperty(buffer, "16");
+		Serial.println("16");
 
 		setHeatingOff(); // Turn the heating off
 		setWaterOff(); // Turn the hot water off
