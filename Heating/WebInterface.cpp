@@ -110,7 +110,7 @@ void WebInterface::processRemoteOutput(bool heatingTimerStatus, bool waterTimerS
 int WebInterface::processRemoteInput(const char* buffer, Config config) {
 	Ethernet.maintain();
 	if (server.available()) { // If a client has a message to send...
-		Serial.println("5");
+		config.writeProperty(buffer, "5");
 		return webServerStack_ProcessMsgIn(buffer, config); // Process it
 	}
 	else { // Otherwise no client message processing needed
@@ -135,7 +135,7 @@ int WebInterface::webServerStack_ProcessMsgIn(const char* buffer, Config config)
 				if (webSocketStack[i].client.connected()) {
 					// Incoming msg
 					if (webSocketStack[i].client.available()) {
-						Serial.println("18");
+						config.writeProperty(buffer, "18");
 						const char *data = webSocketStack[i].webSocketServer.getData();
 						if (isDigit(data[0]) && (strlen(data) == 1 || (strlen(data) == 2 && isDigit(data[1])))) { // If they have sent a valid message
 							
@@ -151,7 +151,7 @@ int WebInterface::webServerStack_ProcessMsgIn(const char* buffer, Config config)
 					}
 				}
 				else { // client may be closed
-					Serial.println("19");
+					config.writeProperty(buffer, "19");
 					webSocketStack[i].client.stop();
 				}
 			}
@@ -179,23 +179,20 @@ int WebInterface::webServerStack_ProcessMsgIn(const char* buffer, Config config)
 			webSocketStack[j].client = server.available();
 			if (webSocketStack[j].client.connected()) {
 				wdt_reset();
-				Serial.println("20");
 				byte request = webSocketStack[j].webSocketServer.handshake(webSocketStack[j].client); // try to handshake. Will return 2 if web files need to be sent
 				
 				if (request == 1) { // If handshake succeeded
 					return 255;
 				}
 				else if (request == 2 && webFilesAvailable) { // If need to send web files and web files are available
-					Serial.println("23");
 					char* requestPath = webSocketStack[j].webSocketServer.getRequestPath(); // Get the requested file path
-					Serial.println("24");
-					if (strlen(requestPath) == 0) { // If client requests an empty path, send them the main page HTML file
-						strcpy(requestPath, "index.htm");
-					}
-					Serial.println("25");
+					//if (strlen(requestPath) == 0) { // If client requests an empty path, send them the main page HTML file
+					//	Serial.println("Changing path");
+					//	strcpy(requestPath, "index.htm");
+					//}
 					if (SD.exists(requestPath)) { // if the file is available
 						// Return the requested file to the current client
-						Serial.println("26");
+						config.writeProperty(buffer, "26");
 
 						webSocketStack[j].client.println(F("HTTP/1.1 200 OK")); // Acknowledge request
 						if (strstr(requestPath, ".jpg") != NULL) { // If sending an image
@@ -216,35 +213,32 @@ int WebInterface::webServerStack_ProcessMsgIn(const char* buffer, Config config)
 						}
 						File webFile = SD.open(requestPath); // Get the file
 						if (webFile) { // Send the file
-							Serial.println("27");
+							config.writeProperty(buffer, "27");
 							int counter = 0;
-							Serial.println(requestPath);
-							float startFileSendTime = millis();
+							float startFileSend = millis();
 							wdt_reset();
-							while (webFile.available() && (millis() - startFileSendTime) <= 3800) {
+							while (webFile.available() && (millis() - startFileSend) <= 3800) {
 								webSocketStack[j].client.write(webFile.read()); // send web page to client
 							}
+							config.writeProperty(buffer, "31");
 							webFile.close();
 						}
 						webSocketStack[j].client.stop(); // Close the connection
-						Serial.println("29");
 						return 0;
 					}
 					else { // Otherwise...
-						Serial.println("30");
 						webSocketStack[j].client.stop(); // Close the connection as it cannot be serverd
 						return 0;
 					}
 				}
 				else { // Otherwise...
-					Serial.println("21");
 					webSocketStack[j].client.stop(); // Close the connection as it cannot be served
 					return 0;
 				}
 			}
 		
 	}
-		Serial.println("22");
+		config.writeProperty(buffer, "22");
 	return 255;
 }
 int WebInterface::webServerStack_ProcessMsgIn() {
