@@ -170,208 +170,214 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	}
 	pinMode(5, OUTPUT);
 	digitalWrite(5, LOW);
-	if (touchOption == 1) { // User requested temperature up one degree
+	switch (touchOption) {
+	case 1: { // User requested temperature up one degree
 		if (requestedTemp < 28) {
 			requestedTemp = requestedTemp + tempChange; // Increase the requested temperature up by one
 			updateDisplay = true; // The display needs updating
 		}
 	}
-	else if (touchOption == 2) { // User requested temperature down one degree
+	case 2: { // User requested temperature down one degree
 		if (requestedTemp > 10) {
 			requestedTemp = requestedTemp - tempChange; // Decrease the requested temperature down by one
 			updateDisplay = true; // The display needs updating
 		}
 	}
-	else if (touchOption == 3 && !heatingBoostActive) { // User wants to turn the heating boost on
-		updateDisplay = true; // Display needs updating
-		boostHeating(true);
-	}
-	else if (touchOption == 3 && heatingBoostActive) { // User wants to turn the heating boost off
-		updateDisplay = true; // Display needs updating
-		boostHeating(false);
-	}
-	else if (touchOption == 4 && !waterBoostActive) { // User wants to turn the water boost on
-		updateDisplay = true; // Display needs updating
-		boostWater(true);
-	}
-	else if (touchOption == 4 && waterBoostActive) { // User wants to turn the water boost off
-		updateDisplay = true; // Display needs updating
-		boostWater(false);
-	}
-	else if (touchOption == 5) { // Go to timer display
-		updateDisplay = true;
-		screen = 1;
-		display->timerDisplay(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
-	}
-	else if (touchOption == 6) { // Go to main display
-		updateDisplay = true;
-		screen = 0;
-		display->mainDisplay(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
-	}
-	else if (touchOption == 7) { // Change heating on morning time 
-		if (timer.setHeatingOnMorning(timer.getHeatingOnMorning() - timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("heatMon", timer.getHeatingOnMorning());
+	case 3:
+		if (!heatingBoostActive) { // User wants to turn the heating boost on
+			updateDisplay = true; // Display needs updating
+			boostHeating(true);
 		}
-	}
-	else if (touchOption == 8) { // Change heating on morning time 
-		if (timer.setHeatingOnMorning(timer.getHeatingOnMorning() + timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("heatMon", timer.getHeatingOnMorning());
+		else if (touchOption == 3 && heatingBoostActive) { // User wants to turn the heating boost off
+			updateDisplay = true; // Display needs updating
+			boostHeating(false);
 		}
-	}
-	else if (touchOption == 9) { // Change heating off morning time 
-		if (timer.setHeatingOffMorning(timer.getHeatingOffMorning() - timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("heatMoff", timer.getHeatingOffMorning());
-		}
-	}
-	else if (touchOption == 10) { // Change heating off morning time
-		if (timer.setHeatingOffMorning(timer.getHeatingOffMorning() + timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("heatMoff", timer.getHeatingOffMorning());
-		}
-	}
-	else if (touchOption == 11) { // Change heating on afternoon time
-		if (timer.setHeatingOnAfternoon(timer.getHeatingOnAfternoon() - timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("heatAon", timer.getHeatingOnAfternoon());
-		}
-	}
-	else if (touchOption == 12) { // Change heating on afternoon time
-		if (timer.setHeatingOnAfternoon(timer.getHeatingOnAfternoon() + timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("heatAon", timer.getHeatingOnAfternoon());
-		}
-	}
-	else if (touchOption == 13) { // Change heating off afternoon time
-		if (timer.setHeatingOffAfternoon(timer.getHeatingOffAfternoon() - timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("heatAoff", timer.getHeatingOffAfternoon());
-		}
-	}
-	else if (touchOption == 14) { // Change heating off afternoon time
-		if (timer.setHeatingOffAfternoon(timer.getHeatingOffAfternoon() + timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("heatAoff", timer.getHeatingOffAfternoon());
-		}
-	}
-	else if (touchOption == 15) { // Change hot water on morning time
-		if (timer.setWaterOnMorning(timer.getWaterOnMorning() - timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("waterMon", timer.getWaterOnMorning());
-		}
-	}
-	else if (touchOption == 16) { // Change hot water on morning time
-		if (timer.setWaterOnMorning(timer.getWaterOnMorning() + timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("waterMon", timer.getWaterOnMorning());
-		}
-	}
-	else if (touchOption == 17) { // Change hot water off morning time
-		if (timer.setWaterOffMorning(timer.getWaterOffMorning() - timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("waterMoff", timer.getWaterOffMorning());
-		}
-	}
-	else if (touchOption == 18) { // Change hot water off morning time
-		if (timer.setWaterOffMorning(timer.getWaterOffMorning() + timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("waterMoff", timer.getWaterOffMorning());
-		}
-	}
-	else if (touchOption == 19) { // Change hot water on afternoon time
-		if (timer.setWaterOnAfternoon(timer.getWaterOnAfternoon() - timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("waterAon", timer.getWaterOnAfternoon());
-		}
-	}
-	else if (touchOption == 20) { // Change hot water on afternoon time
-		if (timer.setWaterOnAfternoon(timer.getWaterOnAfternoon() + timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("waterAon", timer.getWaterOnAfternoon());
-		}
-	}
-	else if (touchOption == 21) { // Change hot water off afternoon time
-		if (timer.setWaterOffAfternoon(timer.getWaterOffAfternoon() - timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("waterAoff", timer.getWaterOffAfternoon());
-		}
-	}
-	else if (touchOption == 22) { // Change hot water off afternoon time
-		if (timer.setWaterOffAfternoon(timer.getWaterOffAfternoon() + timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("waterAoff", timer.getWaterOffAfternoon());
-		}
-	}
-	else if (touchOption == 23) { // Change heating timer state
-		timer.setHeatingTimerState(!timer.getHeatingTimerStatus());
-		updateDisplay = true;
-	}
-	else if (touchOption == 24) { // Change hot water timer state
-		timer.setWaterTimerState(!timer.getWaterTimerStatus());
-		updateDisplay = true;
-	}
-	else if (touchOption == 25) { // Change heating mode
-		heatingMode++;
-		if (heatingMode > 2) {
-			heatingMode = 0;
-		}
-		updateDisplay = true;
-	}
-	else if (touchOption == 26) { // Change hot water mode
-		waterMode++;
-		if (waterMode > 2) {
-			waterMode = 0;
-		}
-		updateDisplay = true;
-	}
-	else if (touchOption == 27) {
-		screen = 2; // Change to edit time screen
-		display->editTime(timer.getTimeInMinutes());
-		updateDisplay = true;
-	}
-	else if (touchOption == 28) {
 
-		if (timer.setSystemHour(timer.getHour() + 10)) { // Increase current time by 10 hours
+	case 4:
+		if (!waterBoostActive) { // User wants to turn the water boost on
+			updateDisplay = true; // Display needs updating
+			boostWater(true);
+		}
+		else if (touchOption == 4 && waterBoostActive) { // User wants to turn the water boost off
+			updateDisplay = true; // Display needs updating
+			boostWater(false);
+		}
+	
+	case 5: { // Go to timer display
+			updateDisplay = true;
+			screen = 1;
+			display->timerDisplay(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
+		}
+	case 6: { // Go to main display
+			updateDisplay = true;
+			screen = 0;
+			display->mainDisplay(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+		}
+	case 7: { // Change heating on morning time 
+			if (timer.setHeatingOnMorning(timer.getHeatingOnMorning() - timerTimeInc)) {
+				updateDisplay = true;
+				saveTimer("heatMon", timer.getHeatingOnMorning());
+			}
+		}
+	case 8: { // Change heating on morning time 
+			if (timer.setHeatingOnMorning(timer.getHeatingOnMorning() + timerTimeInc)) {
+				updateDisplay = true;
+				saveTimer("heatMon", timer.getHeatingOnMorning());
+			}
+		}
+	case 9: { // Change heating off morning time 
+			if (timer.setHeatingOffMorning(timer.getHeatingOffMorning() - timerTimeInc)) {
+				updateDisplay = true;
+				saveTimer("heatMoff", timer.getHeatingOffMorning());
+			}
+		}
+	case 10: { // Change heating off morning time
+			if (timer.setHeatingOffMorning(timer.getHeatingOffMorning() + timerTimeInc)) {
+				updateDisplay = true;
+				saveTimer("heatMoff", timer.getHeatingOffMorning());
+			}
+		}
+	case 11: { // Change heating on afternoon time
+			if (timer.setHeatingOnAfternoon(timer.getHeatingOnAfternoon() - timerTimeInc)) {
+				updateDisplay = true;
+				saveTimer("heatAon", timer.getHeatingOnAfternoon());
+			}
+		}
+	case 12: { // Change heating on afternoon time
+			if (timer.setHeatingOnAfternoon(timer.getHeatingOnAfternoon() + timerTimeInc)) {
+				updateDisplay = true;
+				saveTimer("heatAon", timer.getHeatingOnAfternoon());
+			}
+		}
+	case 13: { // Change heating off afternoon time
+			if (timer.setHeatingOffAfternoon(timer.getHeatingOffAfternoon() - timerTimeInc)) {
+				updateDisplay = true;
+				saveTimer("heatAoff", timer.getHeatingOffAfternoon());
+			}
+		}
+		case 14) { // Change heating off afternoon time
+			if (timer.setHeatingOffAfternoon(timer.getHeatingOffAfternoon() + timerTimeInc)) {
+				updateDisplay = true;
+				saveTimer("heatAoff", timer.getHeatingOffAfternoon());
+			}
+		}
+		case 15) { // Change hot water on morning time
+			if (timer.setWaterOnMorning(timer.getWaterOnMorning() - timerTimeInc)) {
+				updateDisplay = true;
+				saveTimer("waterMon", timer.getWaterOnMorning());
+			}
+		}
+		case 16) { // Change hot water on morning time
+			if (timer.setWaterOnMorning(timer.getWaterOnMorning() + timerTimeInc)) {
+				updateDisplay = true;
+				saveTimer("waterMon", timer.getWaterOnMorning());
+			}
+		}
+		case 17) { // Change hot water off morning time
+			if (timer.setWaterOffMorning(timer.getWaterOffMorning() - timerTimeInc)) {
+				updateDisplay = true;
+				saveTimer("waterMoff", timer.getWaterOffMorning());
+			}
+		}
+		case 18: { // Change hot water off morning time
+			if (timer.setWaterOffMorning(timer.getWaterOffMorning() + timerTimeInc)) {
+				updateDisplay = true;
+				saveTimer("waterMoff", timer.getWaterOffMorning());
+			}
+		}
+		case 19: { // Change hot water on afternoon time
+			if (timer.setWaterOnAfternoon(timer.getWaterOnAfternoon() - timerTimeInc)) {
+				updateDisplay = true;
+				saveTimer("waterAon", timer.getWaterOnAfternoon());
+			}
+		}
+		case 20: { // Change hot water on afternoon time
+			if (timer.setWaterOnAfternoon(timer.getWaterOnAfternoon() + timerTimeInc)) {
+				updateDisplay = true;
+				saveTimer("waterAon", timer.getWaterOnAfternoon());
+			}
+		}
+		case 21: { // Change hot water off afternoon time
+			if (timer.setWaterOffAfternoon(timer.getWaterOffAfternoon() - timerTimeInc)) {
+				updateDisplay = true;
+				saveTimer("waterAoff", timer.getWaterOffAfternoon());
+			}
+		}
+		case 22: { // Change hot water off afternoon time
+			if (timer.setWaterOffAfternoon(timer.getWaterOffAfternoon() + timerTimeInc)) {
+				updateDisplay = true;
+				saveTimer("waterAoff", timer.getWaterOffAfternoon());
+			}
+		}
+		case 23: { // Change heating timer state
+			timer.setHeatingTimerState(!timer.getHeatingTimerStatus());
 			updateDisplay = true;
 		}
-	}
-	else if (touchOption == 29) {
-		if (timer.setSystemHour(timer.getHour() - 10)) { // Decrease current time by 10 hours
+		case 24: { // Change hot water timer state
+			timer.setWaterTimerState(!timer.getWaterTimerStatus());
 			updateDisplay = true;
 		}
-	}
-	else if (touchOption == 30) {
-		if (timer.setSystemHour(timer.getHour() + 1)) { // Increase current time by 1 hour
+		case 25: { // Change heating mode
+			heatingMode++;
+			if (heatingMode > 2) {
+				heatingMode = 0;
+			}
 			updateDisplay = true;
 		}
-	}
-	else if (touchOption == 31) {
-		if (timer.setSystemHour(timer.getHour() - 1)) { // Decrease current time by 1 hour
+		case 26: { // Change hot water mode
+			waterMode++;
+			if (waterMode > 2) {
+				waterMode = 0;
+			}
 			updateDisplay = true;
 		}
-	}
-	else if (touchOption == 32) {
-		if (timer.setSystemMinute(timer.getMinute() + 10)) { // Increase current time by 10 minutes
+		case 27: {
+			screen = 2; // Change to edit time screen
+			display->editTime(timer.getTimeInMinutes());
 			updateDisplay = true;
 		}
-	}
-	else if (touchOption == 33) {
-		if (timer.setSystemMinute(timer.getMinute() - 10)) { // Decrease current time by 10 hours
-			updateDisplay = true;
-		}
-	}
-	else if (touchOption == 34) {
+		case 28: {
 
-		if (timer.setSystemMinute(timer.getMinute() + 1)) { // Increase current time by 1 minute
-			updateDisplay = true;
+			if (timer.setSystemHour(timer.getHour() + 10)) { // Increase current time by 10 hours
+				updateDisplay = true;
+			}
 		}
-	}
-	else if (touchOption == 35) {
+		case 29: {
+			if (timer.setSystemHour(timer.getHour() - 10)) { // Decrease current time by 10 hours
+				updateDisplay = true;
+			}
+		}
+		case 30: {
+			if (timer.setSystemHour(timer.getHour() + 1)) { // Increase current time by 1 hour
+				updateDisplay = true;
+			}
+		}
+		case 31: {
+			if (timer.setSystemHour(timer.getHour() - 1)) { // Decrease current time by 1 hour
+				updateDisplay = true;
+			}
+		}
+		case 32: {
+			if (timer.setSystemMinute(timer.getMinute() + 10)) { // Increase current time by 10 minutes
+				updateDisplay = true;
+			}
+		}
+		case 33: {
+			if (timer.setSystemMinute(timer.getMinute() - 10)) { // Decrease current time by 10 hours
+				updateDisplay = true;
+			}
+		}
+		case 34 :{
 
-		if (timer.setSystemMinute(timer.getMinute() - 1)) { // Decrease current time by 1 minute
-			updateDisplay = true;
+			if (timer.setSystemMinute(timer.getMinute() + 1)) { // Increase current time by 1 minute
+				updateDisplay = true;
+			}
+		}
+		case 35: {
+
+			if (timer.setSystemMinute(timer.getMinute() - 1)) { // Decrease current time by 1 minute
+				updateDisplay = true;
+			}
 		}
 	}
 	pinMode(5, OUTPUT);
