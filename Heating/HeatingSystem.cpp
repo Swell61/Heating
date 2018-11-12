@@ -255,25 +255,25 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 				saveTimer("heatAoff", timer.getHeatingOffAfternoon());
 			}
 		}
-		case 14) { // Change heating off afternoon time
+	case 14: { // Change heating off afternoon time
 			if (timer.setHeatingOffAfternoon(timer.getHeatingOffAfternoon() + timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("heatAoff", timer.getHeatingOffAfternoon());
 			}
 		}
-		case 15) { // Change hot water on morning time
+		case 15: { // Change hot water on morning time
 			if (timer.setWaterOnMorning(timer.getWaterOnMorning() - timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("waterMon", timer.getWaterOnMorning());
 			}
 		}
-		case 16) { // Change hot water on morning time
+		case 16: { // Change hot water on morning time
 			if (timer.setWaterOnMorning(timer.getWaterOnMorning() + timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("waterMon", timer.getWaterOnMorning());
 			}
 		}
-		case 17) { // Change hot water off morning time
+		case 17: { // Change hot water off morning time
 			if (timer.setWaterOffMorning(timer.getWaterOffMorning() - timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("waterMoff", timer.getWaterOffMorning());
