@@ -232,24 +232,28 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 				saveTimer("heatMon", timer.getHeatingOnMorning());
 			}
 		}
+		break;
 	case 9: { // Change heating off morning time 
 			if (timer.setHeatingOffMorning(timer.getHeatingOffMorning() - timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("heatMoff", timer.getHeatingOffMorning());
 			}
 		}
+		break;
 	case 10: { // Change heating off morning time
 			if (timer.setHeatingOffMorning(timer.getHeatingOffMorning() + timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("heatMoff", timer.getHeatingOffMorning());
 			}
 		}
+		break;
 	case 11: { // Change heating on afternoon time
 			if (timer.setHeatingOnAfternoon(timer.getHeatingOnAfternoon() - timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("heatAon", timer.getHeatingOnAfternoon());
 			}
 		}
+		break;
 	case 12: { // Change heating on afternoon time
 			if (timer.setHeatingOnAfternoon(timer.getHeatingOnAfternoon() + timerTimeInc)) {
 				updateDisplay = true;
