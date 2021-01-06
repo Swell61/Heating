@@ -176,12 +176,14 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 			requestedTemp = requestedTemp + tempChange; // Increase the requested temperature up by one
 			updateDisplay = true; // The display needs updating
 		}
+		break;
 	}
 	case 2: { // User requested temperature down one degree
 		if (requestedTemp > 10) {
 			requestedTemp = requestedTemp - tempChange; // Decrease the requested temperature down by one
 			updateDisplay = true; // The display needs updating
 		}
+		break;
 	}
 	case 3:
 		if (!heatingBoostActive) { // User wants to turn the heating boost on
@@ -192,6 +194,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 			updateDisplay = true; // Display needs updating
 			boostHeating(false);
 		}
+		break;
 
 	case 4:
 		if (!waterBoostActive) { // User wants to turn the water boost on
@@ -202,23 +205,27 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 			updateDisplay = true; // Display needs updating
 			boostWater(false);
 		}
+		break;
 	
 	case 5: { // Go to timer display
 			updateDisplay = true;
 			screen = 1;
 			display->timerDisplay(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
 		}
+		break;
 	case 6: { // Go to main display
 			updateDisplay = true;
 			screen = 0;
 			display->mainDisplay(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
 		}
+		break;
 	case 7: { // Change heating on morning time 
 			if (timer.setHeatingOnMorning(timer.getHeatingOnMorning() - timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("heatMon", timer.getHeatingOnMorning());
 			}
 		}
+		break;
 	case 8: { // Change heating on morning time 
 			if (timer.setHeatingOnMorning(timer.getHeatingOnMorning() + timerTimeInc)) {
 				updateDisplay = true;
@@ -249,74 +256,87 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 				saveTimer("heatAon", timer.getHeatingOnAfternoon());
 			}
 		}
+		break;
 	case 13: { // Change heating off afternoon time
 			if (timer.setHeatingOffAfternoon(timer.getHeatingOffAfternoon() - timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("heatAoff", timer.getHeatingOffAfternoon());
 			}
 		}
+		break;
 	case 14: { // Change heating off afternoon time
 			if (timer.setHeatingOffAfternoon(timer.getHeatingOffAfternoon() + timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("heatAoff", timer.getHeatingOffAfternoon());
 			}
 		}
+		break;
 		case 15: { // Change hot water on morning time
 			if (timer.setWaterOnMorning(timer.getWaterOnMorning() - timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("waterMon", timer.getWaterOnMorning());
 			}
 		}
+		break;
 		case 16: { // Change hot water on morning time
 			if (timer.setWaterOnMorning(timer.getWaterOnMorning() + timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("waterMon", timer.getWaterOnMorning());
 			}
 		}
+		break;
 		case 17: { // Change hot water off morning time
 			if (timer.setWaterOffMorning(timer.getWaterOffMorning() - timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("waterMoff", timer.getWaterOffMorning());
 			}
 		}
+		break;
 		case 18: { // Change hot water off morning time
 			if (timer.setWaterOffMorning(timer.getWaterOffMorning() + timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("waterMoff", timer.getWaterOffMorning());
 			}
 		}
+		break;
 		case 19: { // Change hot water on afternoon time
 			if (timer.setWaterOnAfternoon(timer.getWaterOnAfternoon() - timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("waterAon", timer.getWaterOnAfternoon());
 			}
 		}
+		break;
 		case 20: { // Change hot water on afternoon time
 			if (timer.setWaterOnAfternoon(timer.getWaterOnAfternoon() + timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("waterAon", timer.getWaterOnAfternoon());
 			}
 		}
+		break;
 		case 21: { // Change hot water off afternoon time
 			if (timer.setWaterOffAfternoon(timer.getWaterOffAfternoon() - timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("waterAoff", timer.getWaterOffAfternoon());
 			}
 		}
+		break;
 		case 22: { // Change hot water off afternoon time
 			if (timer.setWaterOffAfternoon(timer.getWaterOffAfternoon() + timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("waterAoff", timer.getWaterOffAfternoon());
 			}
 		}
+		break;
 		case 23: { // Change heating timer state
 			timer.setHeatingTimerState(!timer.getHeatingTimerStatus());
 			updateDisplay = true;
 		}
+		break;
 		case 24: { // Change hot water timer state
 			timer.setWaterTimerState(!timer.getWaterTimerStatus());
 			updateDisplay = true;
 		}
+		break;
 		case 25: { // Change heating mode
 			heatingMode++;
 			if (heatingMode > 2) {
@@ -331,54 +351,64 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 			}
 			updateDisplay = true;
 		}
+		break;
 		case 27: {
 			screen = 2; // Change to edit time screen
 			display->editTime(timer.getTimeInMinutes());
 			updateDisplay = true;
 		}
+		break;
 		case 28: {
 
 			if (timer.setSystemHour(timer.getHour() + 10)) { // Increase current time by 10 hours
 				updateDisplay = true;
 			}
 		}
+		break;
 		case 29: {
 			if (timer.setSystemHour(timer.getHour() - 10)) { // Decrease current time by 10 hours
 				updateDisplay = true;
 			}
 		}
+		break;
 		case 30: {
 			if (timer.setSystemHour(timer.getHour() + 1)) { // Increase current time by 1 hour
 				updateDisplay = true;
 			}
 		}
+		break;
 		case 31: {
 			if (timer.setSystemHour(timer.getHour() - 1)) { // Decrease current time by 1 hour
 				updateDisplay = true;
 			}
 		}
+		break;
 		case 32: {
 			if (timer.setSystemMinute(timer.getMinute() + 10)) { // Increase current time by 10 minutes
 				updateDisplay = true;
 			}
 		}
+		break;
 		case 33: {
 			if (timer.setSystemMinute(timer.getMinute() - 10)) { // Decrease current time by 10 hours
 				updateDisplay = true;
 			}
 		}
+		break;
 		case 34 :{
 
 			if (timer.setSystemMinute(timer.getMinute() + 1)) { // Increase current time by 1 minute
 				updateDisplay = true;
 			}
 		}
+		break;
 		case 35: {
 
 			if (timer.setSystemMinute(timer.getMinute() - 1)) { // Decrease current time by 1 minute
 				updateDisplay = true;
 			}
 		}
+		break;
 	}
 	pinMode(5, OUTPUT);
 	digitalWrite(5, HIGH);
