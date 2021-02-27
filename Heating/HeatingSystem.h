@@ -19,21 +19,38 @@
 #include <SD.h>
 #include "Config.h"
 #include <avr/wdt.h>
+#include "HeatingFunction.h"
+#include "ScreenTypes.h"
+#include "ComponentOperatingMode.h"
 
 // This class contains all components of the heating system
 
 class HeatingSystem {
-private:
 
+public:
+	HeatingSystem(int boilerPinNum, int pumpPinNum, int tempSensorPinNum, int intTempSensorPin); // Contructor. Takes boiler pin number, pump pin number and temperature sensor pin number as parameters
+	void monitorSystem(); // Function for monitoring all system states
+	void boostHeating(bool state); // Function for enabling or disabling heating boost
+	void boostWater(bool state); // Function for enabling or disabling hot water boost
+	bool getHeatingStatus(); // Function for getting heating status
+	bool getWaterStatus(); // Function for getting hot water status
+	void disableHeating(); // Function to disable the heating
+	void disableWater(); // Function to disable the hot water
+	void enableHeating(); // Function to enable the heating
+	void enableWater(); // Function to enable the hot water
+	void setTemp(int temp); // Function to set requested temperature
+
+
+private:
 	const byte boostLengthWater = 20; // Length of time in minutes for hot water boost
 	const byte boostLengthHeating = 30; // Length of time in minutes for heating boost
 	const byte timerTimeInc = 5; // Length of time in minutes for the adjustment value for timer
 	const int maxDrift = 1; // Set the maximum number of degrees the temperature can drift before heating is turned on
 	const float tempChange = 0.5;
 	bool updateDisplay = false; // Whether the system needs to update the display or not
-	byte screen = 0; // 0 = Regular screen. 1 = Timer screen. 2 = Time change screen
-	byte heatingMode = 2; // 0 = off, 1 = timer, 2 = on. Defaults to on at 15 degrees
-	byte waterMode = 0; // 0 = off, 1 = timer, 2 = on
+	Screen screen = Screen::Main; // 0 = Regular screen. 1 = Timer screen. 2 = Time change screen
+	Mode heatingMode = Mode::On; // 0 = off, 1 = timer, 2 = on. Defaults to on at 15 degrees
+	Mode waterMode = Mode::Off; // 0 = off, 1 = timer, 2 = on
 	byte lastSystemMode = 3; // 0 = Heating and Water ON, 1 = Heating ON and Water OFF, 2 = Heating OFF and Water ON, 3 = Heating and Water OFF
 	unsigned long lastTimeUpdate = 0; // Variable to store the last state the system was in. Stops the system trying to enter a state it is already in
 	unsigned long lastHourlyUpdate = 0; // Variable to store when the last hourly update was done
@@ -49,8 +66,8 @@ private:
 	bool requestTemp; // Variable to store if we need to collect the temperature
 	unsigned long startTimeHeatingBoost; // Variable to store the time at which the heating boost was turned on
 	unsigned long startTimeWaterBoost; // Variable to store the time at which the hot water boost was turned on
-	byte touchOption; // Variable to store what the current touch option is
-	byte remoteOption; // variable to store what the current option selected by a remote source (web interface, app, etc.)
+	Function touchOption; // Variable to store what the current touch option is
+	Function remoteOption; // variable to store what the current option selected by a remote source (web interface, app, etc.)
 	float currentTemp; // Variable to store the current temperature being displayed
 	float currentInternalTemp; // Variale to store the current internal temperature of the thermostat
 	float lastChangedTemp = 0; // Variable to store the temperature at which the heating system was changed due to temperature difference
@@ -78,24 +95,14 @@ private:
 	void changeRelayStates(); // Function for setting final relay states
 	void loadTimer(); // Function for loading configuration from SD card
 	bool saveTimer(const char* timerCase, int time); // Function for saving timer configuration
+	Mode incrementMode(Mode mode);
 
 	void setupWatchdog(); // Function for initiating the watchdog
 
 	int resetCounter = 0;
 	char buffer[3];
 	
-public:
-	HeatingSystem(int boilerPinNum, int pumpPinNum, int tempSensorPinNum, int intTempSensorPin); // Contructor. Takes boiler pin number, pump pin number and temperature sensor pin number as parameters
-	void monitorSystem(); // Function for monitoring all system states
-	void boostHeating(bool state); // Function for enabling or disabling heating boost
-	void boostWater(bool state); // Function for enabling or disabling hot water boost
-	bool getHeatingStatus(); // Function for getting heating status
-	bool getWaterStatus(); // Function for getting hot water status
-	void disableHeating(); // Function to disable the heating
-	void disableWater(); // Function to disable the hot water
-	void enableHeating(); // Function to enable the heating
-	void enableWater(); // Function to enable the hot water
-	void setTemp(int temp); // Function to set requested temperature
+
 
 };
 

@@ -10,7 +10,7 @@ Display::Display() : ts(TouchScreen(XP, YP, XM, YM, 300)) { // Constructor. Init
 	tft.fillScreen(0x00000); // Fill the screen with black
 };
 
-void Display::mainDisplay(int time, byte heatingMode, byte waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost) { // Main display
+void Display::mainDisplay(int time, Mode heatingMode, Mode waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost) { // Main display
 	
 	// This function sets up the TFT to diplsay the main system properties by creating rectangles and triangles for buttons and filling in descriptive text
 
@@ -26,33 +26,33 @@ void Display::mainDisplay(int time, byte heatingMode, byte waterMode, float temp
 	tft.setCursor(209, 155); // Set the cursor to write text to the TFT
 	tft.println(F("BOOST")); // Write the buttons description
 
-	if (heatingMode == 0) { // If heating mode is set to off...
+	if (heatingMode == Mode::Off) { // If heating mode is set to off...
 		tft.fillRect(100, 70, 80, 35, 0xFF000); // Create a rectangle for the heating mode button and fill in red
 		tft.setCursor(120, 80); // Set the cursor to write text to the TFT
 		tft.println(F("OFF")); // Write the buttons description
 	}
-	else if (heatingMode == 1) { // If heating mode is set to timer...
+	else if (heatingMode == Mode::Timer) { // If heating mode is set to timer...
 		tft.fillRect(100, 70, 80, 35, 0xff951c); // Create a rectangle for the heating mode button and fill in blue
 		tft.setCursor(110, 80); // Set the cursor to write text to the TFT
 		tft.println(F("TIMER")); // Write the buttons description
 	}
-	else if (heatingMode == 2) { // If heating mode is set to on...
+	else if (heatingMode == Mode::On) { // If heating mode is set to on...
 		tft.fillRect(100, 70, 80, 35, 0x7CFC0); // Create a rectangle for the heating mode button and fill in green
 		tft.setCursor(125, 80); // Set the cursor to write text to the TFT
 		tft.println(F("ON")); // Write the buttons description
 	}
 	
-	if (waterMode == 0) { // If hot water mode is set to off...
+	if (waterMode == Mode::Off) { // If hot water mode is set to off...
 		tft.fillRect(100, 145, 80, 35, 0xFF000); // Create a rectangle for the hot water mode button and fill in red
 		tft.setCursor(120, 155); // Set the cursor to write text to the TFT
 		tft.println(F("OFF"));
 	}
-	else if (waterMode == 1) {
+	else if (waterMode == Mode::Timer) {
 		tft.fillRect(100, 145, 80, 35, 0xff951c); // Create a rectangle for the hot water mode button and fill in blue
 		tft.setCursor(110, 155); // Set the cursor to write text to the TFT
 		tft.println(F("TIMER"));
 	}
-	else if (waterMode == 2) {
+	else if (waterMode == Mode::On) {
 		tft.fillRect(100, 145, 80, 35, 0x7CFC0); // Create a rectangle for the hot water mode button and fill in green
 		tft.setCursor(125, 155); // Set the cursor to write text to the TFT
 		tft.println(F("ON")); // Write the buttons description
@@ -100,7 +100,7 @@ void Display::mainDisplay(int time, byte heatingMode, byte waterMode, float temp
 	printTime(hours, minutes);
 	
 }
-void Display::displayUpdate(int time, byte heatingMode, byte waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost) { // Main display update
+void Display::displayUpdate(int time, Mode heatingMode, Mode waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost) { // Main display update
 
 	// Code in this method does the same as main display, overwriting what was originally there with the new status
 
@@ -114,32 +114,32 @@ void Display::displayUpdate(int time, byte heatingMode, byte waterMode, float te
 	tft.setCursor(209, 155);
 	tft.println(F("BOOST"));
 
-	if (heatingMode == 0) {
+	if (heatingMode == Mode::Off) {
 		tft.fillRect(100, 70, 80, 35, 0xFF000);
 		tft.setCursor(120, 80);
 		tft.println(F("OFF"));
 	}
-	else if (heatingMode == 1) {
+	else if (heatingMode == Mode::Timer) {
 		tft.fillRect(100, 70, 80, 35, 0xff951c);
 		tft.setCursor(110, 80);
 		tft.println(F("TIMER"));
 	}
-	else if (heatingMode == 2) {
+	else if (heatingMode == Mode::On) {
 		tft.fillRect(100, 70, 80, 35, 0x7CFC0);
 		tft.setCursor(125, 80);
 		tft.println(F("ON"));
 	}
-	if (waterMode == 0) {
+	if (waterMode == Mode::Off) {
 		tft.fillRect(100, 145, 80, 35, 0xFF000);
 		tft.setCursor(120, 155);
 		tft.println(F("OFF"));
 	}
-	else if (waterMode == 1) {
+	else if (waterMode == Mode::Timer) {
 		tft.fillRect(100, 145, 80, 35, 0xff951c);
 		tft.setCursor(110, 155);
 		tft.println(F("TIMER"));
 	}
-	else if (waterMode == 2) {
+	else if (waterMode == Mode::On) {
 		tft.fillRect(100, 145, 80, 35, 0x7CFC0);
 		tft.setCursor(125, 155);
 		tft.println(F("ON"));
@@ -169,7 +169,7 @@ void Display::displayUpdate(int time, byte heatingMode, byte waterMode, float te
 
 }
 
-byte Display::touchUpdate(byte screen) { // Function for checking the touchscreen
+Function Display::touchUpdate(Screen screen) { // Function for checking the touchscreen
   
 #define MIN_PRESSURE 200 // Define the minimum needed pressure
 #define MAX_PRESSURE 1000 // Define the maximum needed pressure
@@ -177,122 +177,121 @@ TSPoint tp = ts.getPoint(); // Get the point currently being touched
 pinMode(XM, OUTPUT); // Reset pin to output
 pinMode(YP, OUTPUT); // reset pin to output
 if (tp.z > MIN_PRESSURE && tp.z < MAX_PRESSURE) { // If the required pressur ehas been met...
-if (screen == 0) { // If current on main display..
-
+if (screen == Screen::Main) { // If current on main display..
 	
-						if (tp.x >= 560 && tp.x <= 700 && tp.y >= 500 && tp.y <= 700) { // Heating boost button
-						return 3;
+		if (tp.x >= 560 && tp.x <= 700 && tp.y >= 500 && tp.y <= 700) { // Heating boost button
+						return Function::HeatingBoost;
 		}
 		else if (tp.x >= 330 && tp.x <= 480 && tp.y >= 500 && tp.y <= 700) { // Water boost button
-						return 4;
+						return Function::WaterBoost;
 		}
 		else if (tp.x >= 600 && tp.x <= 693 && tp.y >= 700 && tp.y <= 900) { // Up 1 degree
-						return 1;
+						return Function::Up;
 		}
 		else if (tp.x >= 325 && tp.x <= 400 && tp.y >= 700 && tp.y <= 900) { // Down 1 degree
-						return 2;
+						return Function::Down;
 		}
 		else if (tp.x >= 190 && tp.x <= 290 && tp.y >= 680 && tp.y <= 920) { // Timer display button
-						return 5;
+						return Function::TimerDisplay;
 		}
 		else if (tp.x >= 570 && tp.x <= 700 && tp.y >= 320 && tp.y <= 500) {
 			// Mode change
-						return 25; // Change heating mode
+						return Function::HeatingMode; // Change heating mode
 		}
 		else if (tp.x >= 330 && tp.x <= 470 && tp.y >= 320 && tp.y <= 500) {
 			// Mode change
-						return 26; // Change water mode
+						return Function::HotWaterMode; // Change water mode
 		}
 		else if (tp.x >= 190 && tp.x <= 250 && tp.y >= 200 && tp.y <= 350) { // Edit time button
-						return 27;
+						return Function::CurrentTimeDisplay;
 		}
 	}
 }
-else if (screen == 1) { // If current on timer display
+else if (screen == Screen::Timer) { // If current on timer display
 	if (tp.x >= 820 && tp.x <= 890 && tp.y >= 200 && tp.y <= 320) { // Back button
-		return 6;
+		return Function::MainDisplay;
 	}
 	else if (tp.x >= 660 && tp.x <= 775 && tp.y >= 360 && tp.y <= 400) {
-		return 7; // Decrease heating morning on by 5 minutes
+		return Function::ScheduleHeatingMorningOnDown; // Decrease heating morning on by 5 minutes
 	}
 	else if (tp.x >= 660 && tp.x <= 775 && tp.y >= 540 && tp.y <= 620) {
-		return 8; // Increase heating morning on by 5 minutes
+		return Function::ScheduleHeatingMorningOnUp; // Increase heating morning on by 5 minutes
 	}
 	else if (tp.x >= 530 && tp.x <= 610 && tp.y >= 360 && tp.y <= 400) {
-		return 9; // Decrease heating morning off by 5 minutes
+		return Function::ScheduleHeatingMorningOffDown; // Decrease heating morning off by 5 minutes
 	}
 	else if (tp.x >= 530 && tp.x <= 610 && tp.y >= 540 && tp.y <= 620) {
-		return 10; // Increase heating morning off by 5 minutes
+		return Function::ScheduleHeatingMorningOffUp; // Increase heating morning off by 5 minutes
 	}
 	else if (tp.x >= 375 && tp.x <= 470 && tp.y >= 360 && tp.y <= 400) {
-		return 11; // Decrease heating afternoon on by 5 minutes
+		return Function::ScheduleHeatingAfternoonOnDown; // Decrease heating afternoon on by 5 minutes
 	}
 	else if (tp.x >= 375 && tp.x <= 470 && tp.y >= 540 && tp.y <= 620) {
-				return 12; // Increase heating afternoon on by 5 minutes
+		return Function::ScheduleHeatingAfternoonOnUp; // Increase heating afternoon on by 5 minutes
 	}
 	else if (tp.x >= 215 && tp.x <= 310 && tp.y >= 360 && tp.y <= 400) {
-				return 13; // Decrease heating afternoon off by 5 minutes
+		return Function::ScheduleHeatingAfternoonOffDown; // Decrease heating afternoon off by 5 minutes
 	}
 	else if (tp.x >= 215 && tp.x <= 310 && tp.y >= 540 && tp.y <= 620) {
-		return 14; // Increase heating afternoon off by 5 minutes
+		return Function::ScheduleHeatingAfternoonOffUp; // Increase heating afternoon off by 5 minutes
 	}
 
 	else if (tp.x >= 685 && tp.x <= 778 && tp.y >= 650 && tp.y <= 730) {
-		return 15; // Decrease water morning on by 5 minutes
+		return Function::ScheduleHotWaterMorningOnDown; // Decrease water morning on by 5 minutes
 	}
 	else if (tp.x >= 685 && tp.x <= 778 && tp.y >= 850 && tp.y <= 910) {
-		return 16; // Increase water morning on by 5 minutes
+		return Function::ScheduleHotWaterMorningOnUp; // Increase water morning on by 5 minutes
 	}
 	else if (tp.x >= 515 && tp.x <= 620 && tp.y >= 650 && tp.y <= 730) {
-		return 17; // Decrease water morning off by 5 minutes
+		return Function::ScheduleHotWaterMorningOffDown; // Decrease water morning off by 5 minutes
 	}
 	else if (tp.x >= 515 && tp.x <= 620 && tp.y >= 850 && tp.y <= 910) {
-		return 18; // Increase water morning off by 5 minutes
+		return Function::ScheduleHotWaterMorningOffUp; // Increase water morning off by 5 minutes
 	}
 	else if (tp.x >= 375 && tp.x <= 470 && tp.y >= 650 && tp.y <= 730) {
-		return 19; // Decrease water afternoon on by 5 minutes
+		return Function::ScheduleHotWaterAfternoonOnDown; // Decrease water afternoon on by 5 minutes
 	}
 	else if (tp.x >= 375 && tp.x <= 470 && tp.y >= 850 && tp.y <= 910) {
-		return 20; // Increase water afternoon on by 5 minutes
+		return Function::ScheduleHotWaterAfternoonOnUp; // Increase water afternoon on by 5 minutes
 	}
 	else if (tp.x >= 215 && tp.x <= 310 && tp.y >= 650 && tp.y <= 730) {
-		return 21; // Decrease water afternoon off by 5 minutes
+		return Function::ScheduleHotWaterAfternoonOffDown; // Decrease water afternoon off by 5 minutes
 	}
 	else if (tp.x >= 215 && tp.x <= 310 && tp.y >= 850 && tp.y <= 910) {
-		return 22; // Increase water afternoon off by 5 minutes
+		return Function::ScheduleHotWaterAfternoonOffUp; // Increase water afternoon off by 5 minutes
 	}
 	
 }
-else if (screen == 2) { // If currently on time edit button
+else if (screen == Screen::AlterTime) { // If currently on time edit button
 	if (tp.x >= 820 && tp.x <= 890 && tp.y >= 200 && tp.y <= 320) { // Back button
-		return 6;
+		return Function::MainDisplay;
 	}
 	if (tp.x >= 715 && tp.x <= 800 && tp.y >= 320 && tp.y <= 380) {
-		return 28; // Increase 10 hours
+		return Function::IncreaseTensHours; // Increase 10 hours
 	}
 	if (tp.x >= 240 && tp.x <= 340 && tp.y >= 320 && tp.y <= 380) {
-		return 29; // Decrease 10 hours
+		return Function::DecreaseTensHours; // Decrease 10 hours
 	}
 	if (tp.x >= 715 && tp.x <= 800 && tp.y >= 400 && tp.y <= 480) {
-		return 30; // Increase 1 hour
+		return Function::IncreaseHours; // Increase 1 hour
 	}
 	if (tp.x >= 240 && tp.x <= 340 && tp.y >= 400 && tp.y <= 480) {
-		return 31; // Decrease 1 hour
+		return Function::DecreaseHours; // Decrease 1 hour
 	}
 	if (tp.x >= 715 && tp.x <= 800 && tp.y >= 570 && tp.y <= 645) {
-		return 32; // Increase 10 minutes
+		return Function::IncreaseTensMinutes; // Increase 10 minutes
 	}
 	if (tp.x >= 240 && tp.x <= 340 && tp.y >= 570 && tp.y <= 645) {
-		return 33; // Decrease 10 minutes
+		return Function::DecreaseTensMinutes; // Decrease 10 minutes
 	}
 	if (tp.x >= 715 && tp.x <= 800 && tp.y >= 665 && tp.y <= 735) {
-		return 34; // Increase 1 minute
+		return Function::IncreaseMinutes; // Increase 1 minute
 	}
 	if (tp.x >= 240 && tp.x <= 340 && tp.y >= 665 && tp.y <= 735) {
-		return 35; // Decrease 1 minute
+		return Function::DecreaseMinutes; // Decrease 1 minute
 	}
 }
-return 0; // else if no touch registered (pressure requirements not met), return 0
+return Function::None; // else if no touch registered (pressure requirements not met), return 0
 }
 
 void Display::timerDisplay(bool heatingTimerStatus, bool waterTimerStatus, int heatingOnMorning, int heatingOffMorning, int heatingOnAfternoon, int heatingOffAfternoon, int waterOnMorning, int waterOffMorning, int waterOnAfternoon, int waterOffAfternoon) { // Timer display

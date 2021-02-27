@@ -11,7 +11,7 @@ WebInterface::WebInterface(bool SDAvailable) : webFilesAvailable(SDAvailable) {
 	server.begin();
 }
 
-void WebInterface::processRemoteOutput(int time, byte heatingMode, byte waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost, float internalTemp) {
+void WebInterface::processRemoteOutput(int time, Mode heatingMode, Mode waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost, float internalTemp) {
 	// Send a string containing the status of the main display
 	
 	char buffer[8];
@@ -21,11 +21,11 @@ void WebInterface::processRemoteOutput(int time, byte heatingMode, byte waterMod
 
 	strcat(output, ":");
 
-	itoa(heatingMode, buffer, 10);
+	itoa(static_cast<unsigned short>(heatingMode), buffer, 10);
 	strcat(output, buffer);
 	strcat(output, ":");
 
-	itoa(waterMode, buffer, 10);
+	itoa(static_cast<unsigned short>(waterMode), buffer, 10);
 	strcat(output, buffer);
 	strcat(output, ":");
 
@@ -107,26 +107,26 @@ void WebInterface::processRemoteOutput(bool heatingTimerStatus, bool waterTimerS
 	
 	webServerStack_ProcessMsgOut(output);
 }
-int WebInterface::processRemoteInput(const char* buffer, Config config) {
+Function WebInterface::processRemoteInput(const char* buffer, Config config) {
 	Ethernet.maintain();
 	if (server.available()) { // If a client has a message to send...
 		config.writeProperty(buffer, "5");
 		return webServerStack_ProcessMsgIn(buffer, config); // Process it
 	}
 	else { // Otherwise no client message processing needed
-		return 0;
+		return Function::None;
 	}
 }
-int WebInterface::processRemoteInput() { // Process a client
+Function WebInterface::processRemoteInput() { // Process a client
 	Ethernet.maintain();
 	if (server.available()) { // If a client has a message to send...
 		return webServerStack_ProcessMsgIn(); // Process it
 	}
 	else { // Otherwise no client message processing needed
-		return 0;
+		return Function::None;
 	}
 }
-int WebInterface::webServerStack_ProcessMsgIn(const char* buffer, Config config) {
+Function WebInterface::webServerStack_ProcessMsgIn(const char* buffer, Config config) {
 	bool inMsgPassed = false;
 		// Process for connected client
 		for (int i = 0; i < MAX_CLIENT_NUM; i++) {
@@ -138,16 +138,14 @@ int WebInterface::webServerStack_ProcessMsgIn(const char* buffer, Config config)
 						config.writeProperty(buffer, "18");
 						const char *data = webSocketStack[i].webSocketServer.getData();
 						if (isDigit(data[0]) && (strlen(data) == 1 || (strlen(data) == 2 && isDigit(data[1])))) { // If they have sent a valid message
-							
-							
-							return atoi(data); // Return it
+							return commandToFunction(data);	
 						}
 						else {
 							webSocketStack[i].client.stop(); // IE and Edge send rubbish through websocket when refreshing or closing. Kick the client if non-valid data sent
 						}
 						
 						inMsgPassed = true;
-						return 0;
+						return Function::None;
 					}
 				}
 				else { // client may be closed
@@ -161,7 +159,7 @@ int WebInterface::webServerStack_ProcessMsgIn(const char* buffer, Config config)
 
 		// incomming data has been passed thru client ==> no data for new client! ==> Bug found, kakaka...
 		// Return now :)
-		if (inMsgPassed) return 0;
+		if (inMsgPassed) return Function::None;
 
 		// Data here is still available and not yet processed ==> pass to new client!
 		
@@ -182,7 +180,7 @@ int WebInterface::webServerStack_ProcessMsgIn(const char* buffer, Config config)
 				byte request = webSocketStack[j].webSocketServer.handshake(webSocketStack[j].client); // try to handshake. Will return 2 if web files need to be sent
 				
 				if (request == 1) { // If handshake succeeded
-					return 255;
+					return Function::NewClient;
 				}
 				else if (request == 2 && webFilesAvailable) { // If need to send web files and web files are available
 					char* requestPath = webSocketStack[j].webSocketServer.getRequestPath(); // Get the requested file path
@@ -224,24 +222,24 @@ int WebInterface::webServerStack_ProcessMsgIn(const char* buffer, Config config)
 							webFile.close();
 						}
 						webSocketStack[j].client.stop(); // Close the connection
-						return 0;
+						return Function::None;
 					}
 					else { // Otherwise...
 						webSocketStack[j].client.stop(); // Close the connection as it cannot be serverd
-						return 0;
+						return Function::None;
 					}
 				}
 				else { // Otherwise...
 					webSocketStack[j].client.stop(); // Close the connection as it cannot be served
-					return 0;
+					return Function::None;
 				}
 			}
 		
 	}
 		config.writeProperty(buffer, "22");
-	return 255;
+	return Function::NewClient;
 }
-int WebInterface::webServerStack_ProcessMsgIn() {
+Function WebInterface::webServerStack_ProcessMsgIn() {
 	bool inMsgPassed = false;
 	// Process for connected client
 	for (int i = 0; i < MAX_CLIENT_NUM; i++) {
@@ -253,15 +251,14 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 					const char *data = webSocketStack[i].webSocketServer.getData();
 					if (isDigit(data[0]) && (strlen(data) == 1 || (strlen(data) == 2 && isDigit(data[1])))) { // If they have sent a valid message
 
-
-						return atoi(data); // Return it
+						return commandToFunction(data); // Return it
 					}
 					else {
 						webSocketStack[i].client.stop(); // IE and Edge send rubbish through websocket when refreshing or closing. Kick the client if non-valid data sent
 					}
 
 					inMsgPassed = true;
-					return 0;
+					return Function::None;
 				}
 			}
 			else { // client may be closed
@@ -275,7 +272,7 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 
 	// incomming data has been passed thru client ==> no data for new client! ==> Bug found, kakaka...
 	// Return now :)
-	if (inMsgPassed) return 0;
+	if (inMsgPassed) return Function::None;
 
 	// Data here is still available and not yet processed ==> pass to new client!
 
@@ -296,7 +293,7 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 			byte request = webSocketStack[j].webSocketServer.handshake(webSocketStack[j].client); // try to handshake. Will return 2 if web files need to be sent
 
 			if (request == 1) { // If handshake succeeded
-				return 255;
+				return Function::NewClient;
 			}
 			else if (request == 2 && webFilesAvailable) { // If need to send web files and web files are available
 				char* requestPath = webSocketStack[j].webSocketServer.getRequestPath(); // Get the requested file path
@@ -334,23 +331,30 @@ int WebInterface::webServerStack_ProcessMsgIn() {
 					}
 					webSocketStack[j].client.stop(); // Close the connection
 
-					return 0;
+					return Function::None;
 				}
 				else { // Otherwise...
 					webSocketStack[j].client.stop(); // Close the connection as it cannot be serverd
-					return 0;
+					return Function::None;
 				}
 			}
 			else { // Otherwise...
 
 				webSocketStack[j].client.stop(); // Close the connection as it cannot be served
-				return 0;
+				return Function::None;
 			}
 		}
 
 	}
-	return 255;
+	return Function::NewClient;
 }
+
+Function WebInterface::commandToFunction(const char* data) {
+	int command = atoi(data); // Return it
+	return (command < static_cast<int>(Function::END) && command <= 0) ? static_cast<Function>(command) : Function::None;
+						
+}
+
 void WebInterface::webServerStack_ProcessMsgOut(const char *output) {
 	
 	for (int i = 0; i < MAX_CLIENT_NUM; i++) { // Loop through each client connected

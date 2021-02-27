@@ -98,29 +98,29 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 
 	if (updateDisplay) { // If the screen needs updating
 
-		if (screen == 0) { // If on main display
+		if (screen == Screen::Main) { // If on main display
 			display->displayUpdate(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive); // Show the main display
 																																																	   // Update any connected clients with the current status
 			pinMode(12, OUTPUT);
 			digitalWrite(12, LOW);
 			remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive, currentInternalTemp);
-			remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
+			remote.processRemoteOutput(heatingMode == Mode::Timer ? true : false, waterMode == Mode::Timer ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
 			pinMode(12, OUTPUT);
 			digitalWrite(12, HIGH);
 		}
-		else if (screen == 1) { // If on the timer display
+		else if (screen == Screen::Timer) { // If on the timer display
 			config.writeProperty(buffer, "2");
 
-			display->timerUpdate(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon()); // Show the timer display
+			display->timerUpdate(heatingMode == Mode::Timer ? true : false, waterMode == Mode::Timer ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon()); // Show the timer display
 																																																																																			  // Update any connected clients with the current status
 			pinMode(12, OUTPUT);
 			digitalWrite(12, LOW);
-			remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
+			remote.processRemoteOutput(heatingMode == Mode::Timer ? true : false, waterMode == Mode::Timer ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
 			remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive, currentInternalTemp);
 			pinMode(12, OUTPUT);
 			digitalWrite(12, HIGH);
 		}
-		else if (screen == 2) { // If on the time edit display
+		else if (screen == Screen::AlterTime) { // If on the time edit display
 			config.writeProperty(buffer, "3");
 
 			display->updateEditTime(timer.getTimeInMinutes()); // Show the time edit display
@@ -146,267 +146,241 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 
 	
 
-	if (remoteOption == 255) { // If a new client has just joined
+	if (remoteOption == Function::NewClient) { // If a new client has just joined
 		config.writeProperty(buffer, "6");
 							   // Send current system status
 		pinMode(12, OUTPUT);
 		digitalWrite(12, LOW);
 		remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive, currentInternalTemp);
-		remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
+		remote.processRemoteOutput(heatingMode == Mode::Timer ? true : false, waterMode == Mode::Timer ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
 		pinMode(12, OUTPUT);
 		digitalWrite(12, HIGH);
 	}
-	else if (touchOption == 0) { // Touschreen takes priority. If no touch option, check remote requests
+	else if (touchOption == Function::None) { // Touschreen takes priority. If no touch option, check remote requests
 		touchOption = remoteOption;
 	}
 	wdt_reset(); // Reset the timer
-	if (remoteOption >= 1 && remoteOption <= 6) {
-	}
-	else if (remoteOption >= 7 && remoteOption <= 22) {
-	}
-	else if (remoteOption >= 23 && remoteOption <= 27) {
-	}
-	else if (remoteOption >= 28 && remoteOption <= 35) {
-	}
 	pinMode(5, OUTPUT);
 	digitalWrite(5, LOW);
 	switch (touchOption) {
-	case 1: { // User requested temperature up one degree
-		if (requestedTemp < 28) {
-			requestedTemp = requestedTemp + tempChange; // Increase the requested temperature up by one
-			updateDisplay = true; // The display needs updating
+		case Function::Up : { // User requested temperature up one degree
+			if (requestedTemp < 28) {
+				requestedTemp = requestedTemp + tempChange; // Increase the requested temperature up by one
+				updateDisplay = true; // The display needs updating
+			}
+			break;
 		}
-		break;
-	}
-	case 2: { // User requested temperature down one degree
-		if (requestedTemp > 10) {
-			requestedTemp = requestedTemp - tempChange; // Decrease the requested temperature down by one
-			updateDisplay = true; // The display needs updating
+		case Function::Down : { // User requested temperature down one degree
+			if (requestedTemp > 10) {
+				requestedTemp = requestedTemp - tempChange; // Decrease the requested temperature down by one
+				updateDisplay = true; // The display needs updating
+			}
+			break;
 		}
-		break;
-	}
-	case 3:
-		if (!heatingBoostActive) { // User wants to turn the heating boost on
-			updateDisplay = true; // Display needs updating
-			boostHeating(true);
-		}
-		else if (touchOption == 3 && heatingBoostActive) { // User wants to turn the heating boost off
-			updateDisplay = true; // Display needs updating
-			boostHeating(false);
-		}
-		break;
+		case Function::HeatingBoost :
+			updateDisplay = true;
+			boostHeating(!heatingBoostActive);
+			break;
 
-	case 4:
-		if (!waterBoostActive) { // User wants to turn the water boost on
-			updateDisplay = true; // Display needs updating
-			boostWater(true);
-		}
-		else if (touchOption == 4 && waterBoostActive) { // User wants to turn the water boost off
-			updateDisplay = true; // Display needs updating
-			boostWater(false);
-		}
-		break;
-	
-	case 5: { // Go to timer display
+		case Function::WaterBoost :
 			updateDisplay = true;
-			screen = 1;
-			display->timerDisplay(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
-		}
-		break;
-	case 6: { // Go to main display
-			updateDisplay = true;
-			screen = 0;
-			display->mainDisplay(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
-		}
-		break;
-	case 7: { // Change heating on morning time 
-			if (timer.setHeatingOnMorning(timer.getHeatingOnMorning() - timerTimeInc)) {
+			boostWater(!waterBoostActive);
+			break;
+		
+		case Function::TimerDisplay : { // Go to timer display
 				updateDisplay = true;
-				saveTimer("heatMon", timer.getHeatingOnMorning());
+				screen = Screen::Timer;
+				display->timerDisplay(heatingMode == Mode::Timer ? true : false, waterMode == Mode::Timer ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
 			}
-		}
-		break;
-	case 8: { // Change heating on morning time 
-			if (timer.setHeatingOnMorning(timer.getHeatingOnMorning() + timerTimeInc)) {
+			break;
+		case Function::MainDisplay : { // Go to main display
 				updateDisplay = true;
-				saveTimer("heatMon", timer.getHeatingOnMorning());
+				screen = Screen::Main;
+				display->mainDisplay(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
 			}
-		}
-		break;
-	case 9: { // Change heating off morning time 
-			if (timer.setHeatingOffMorning(timer.getHeatingOffMorning() - timerTimeInc)) {
-				updateDisplay = true;
-				saveTimer("heatMoff", timer.getHeatingOffMorning());
+			break;
+		case Function::ScheduleHeatingMorningOnDown : { // Change heating on morning time 
+				if (timer.setHeatingOnMorning(timer.getHeatingOnMorning() - timerTimeInc)) {
+					updateDisplay = true;
+					saveTimer("heatMon", timer.getHeatingOnMorning());
+				}
 			}
-		}
-		break;
-	case 10: { // Change heating off morning time
-			if (timer.setHeatingOffMorning(timer.getHeatingOffMorning() + timerTimeInc)) {
-				updateDisplay = true;
-				saveTimer("heatMoff", timer.getHeatingOffMorning());
+			break;
+		case Function::ScheduleHeatingMorningOnUp : { // Change heating on morning time 
+				if (timer.setHeatingOnMorning(timer.getHeatingOnMorning() + timerTimeInc)) {
+					updateDisplay = true;
+					saveTimer("heatMon", timer.getHeatingOnMorning());
+				}
 			}
-		}
-		break;
-	case 11: { // Change heating on afternoon time
-			if (timer.setHeatingOnAfternoon(timer.getHeatingOnAfternoon() - timerTimeInc)) {
-				updateDisplay = true;
-				saveTimer("heatAon", timer.getHeatingOnAfternoon());
+			break;
+		case Function::ScheduleHeatingMorningOffDown : { // Change heating off morning time 
+				if (timer.setHeatingOffMorning(timer.getHeatingOffMorning() - timerTimeInc)) {
+					updateDisplay = true;
+					saveTimer("heatMoff", timer.getHeatingOffMorning());
+				}
 			}
-		}
-		break;
-	case 12: { // Change heating on afternoon time
-			if (timer.setHeatingOnAfternoon(timer.getHeatingOnAfternoon() + timerTimeInc)) {
-				updateDisplay = true;
-				saveTimer("heatAon", timer.getHeatingOnAfternoon());
+			break;
+		case Function::ScheduleHeatingMorningOffUp : { // Change heating off morning time
+				if (timer.setHeatingOffMorning(timer.getHeatingOffMorning() + timerTimeInc)) {
+					updateDisplay = true;
+					saveTimer("heatMoff", timer.getHeatingOffMorning());
+				}
 			}
-		}
-		break;
-	case 13: { // Change heating off afternoon time
-			if (timer.setHeatingOffAfternoon(timer.getHeatingOffAfternoon() - timerTimeInc)) {
-				updateDisplay = true;
-				saveTimer("heatAoff", timer.getHeatingOffAfternoon());
+			break;
+		case Function::ScheduleHeatingAfternoonOnDown : { // Change heating on afternoon time
+				if (timer.setHeatingOnAfternoon(timer.getHeatingOnAfternoon() - timerTimeInc)) {
+					updateDisplay = true;
+					saveTimer("heatAon", timer.getHeatingOnAfternoon());
+				}
 			}
-		}
-		break;
-	case 14: { // Change heating off afternoon time
-			if (timer.setHeatingOffAfternoon(timer.getHeatingOffAfternoon() + timerTimeInc)) {
-				updateDisplay = true;
-				saveTimer("heatAoff", timer.getHeatingOffAfternoon());
+			break;
+		case Function::ScheduleHeatingAfternoonOnUp : { // Change heating on afternoon time
+				if (timer.setHeatingOnAfternoon(timer.getHeatingOnAfternoon() + timerTimeInc)) {
+					updateDisplay = true;
+					saveTimer("heatAon", timer.getHeatingOnAfternoon());
+				}
 			}
-		}
-		break;
-		case 15: { // Change hot water on morning time
+			break;
+		case Function::ScheduleHeatingAfternoonOffDown : { // Change heating off afternoon time
+				if (timer.setHeatingOffAfternoon(timer.getHeatingOffAfternoon() - timerTimeInc)) {
+					updateDisplay = true;
+					saveTimer("heatAoff", timer.getHeatingOffAfternoon());
+				}
+			}
+			break;
+		case Function::ScheduleHeatingAfternoonOffUp : { // Change heating off afternoon time
+				if (timer.setHeatingOffAfternoon(timer.getHeatingOffAfternoon() + timerTimeInc)) {
+					updateDisplay = true;
+					saveTimer("heatAoff", timer.getHeatingOffAfternoon());
+				}
+			}
+			break;
+		case Function::ScheduleHotWaterMorningOnDown : { // Change hot water on morning time
 			if (timer.setWaterOnMorning(timer.getWaterOnMorning() - timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("waterMon", timer.getWaterOnMorning());
 			}
 		}
-		break;
-		case 16: { // Change hot water on morning time
+			break;
+		case Function::ScheduleHotWaterMorningOnUp : { // Change hot water on morning time
 			if (timer.setWaterOnMorning(timer.getWaterOnMorning() + timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("waterMon", timer.getWaterOnMorning());
 			}
 		}
-		break;
-		case 17: { // Change hot water off morning time
+			break;
+		case Function::ScheduleHotWaterMorningOffDown : { // Change hot water off morning time
 			if (timer.setWaterOffMorning(timer.getWaterOffMorning() - timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("waterMoff", timer.getWaterOffMorning());
 			}
 		}
-		break;
-		case 18: { // Change hot water off morning time
+			break;
+		case Function::ScheduleHotWaterMorningOffUp : { // Change hot water off morning time
 			if (timer.setWaterOffMorning(timer.getWaterOffMorning() + timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("waterMoff", timer.getWaterOffMorning());
 			}
 		}
-		break;
-		case 19: { // Change hot water on afternoon time
+			break;
+		case Function::ScheduleHotWaterAfternoonOnDown : { // Change hot water on afternoon time
 			if (timer.setWaterOnAfternoon(timer.getWaterOnAfternoon() - timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("waterAon", timer.getWaterOnAfternoon());
 			}
 		}
-		break;
-		case 20: { // Change hot water on afternoon time
+			break;
+		case Function::ScheduleHotWaterAfternoonOnUp : { // Change hot water on afternoon time
 			if (timer.setWaterOnAfternoon(timer.getWaterOnAfternoon() + timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("waterAon", timer.getWaterOnAfternoon());
 			}
 		}
-		break;
-		case 21: { // Change hot water off afternoon time
+			break;
+		case Function::ScheduleHotWaterAfternoonOffDown : { // Change hot water off afternoon time
 			if (timer.setWaterOffAfternoon(timer.getWaterOffAfternoon() - timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("waterAoff", timer.getWaterOffAfternoon());
 			}
 		}
-		break;
-		case 22: { // Change hot water off afternoon time
+			break;
+		case Function::ScheduleHotWaterAfternoonOffUp : { // Change hot water off afternoon time
 			if (timer.setWaterOffAfternoon(timer.getWaterOffAfternoon() + timerTimeInc)) {
 				updateDisplay = true;
 				saveTimer("waterAoff", timer.getWaterOffAfternoon());
 			}
 		}
-		break;
-		case 23: { // Change heating timer state
+			break;
+		case Function::HeatingTimerState : { // Change heating timer state
 			timer.setHeatingTimerState(!timer.getHeatingTimerStatus());
 			updateDisplay = true;
 		}
-		break;
-		case 24: { // Change hot water timer state
+			break;
+		case Function::HotWaterTimerState : { // Change hot water timer state
 			timer.setWaterTimerState(!timer.getWaterTimerStatus());
 			updateDisplay = true;
 		}
-		break;
-		case 25: { // Change heating mode
-			heatingMode++;
-			if (heatingMode > 2) {
-				heatingMode = 0;
-			}
+			break;
+		case Function::HeatingMode : { // Change heating mode
+			heatingMode = incrementMode(heatingMode);
 			updateDisplay = true;
 		}
-		case 26: { // Change hot water mode
-			waterMode++;
-			if (waterMode > 2) {
-				waterMode = 0;
-			}
+			break;
+		case Function::HotWaterMode : { // Change hot water mode
+			waterMode = incrementMode(heatingMode);
 			updateDisplay = true;
 		}
-		break;
-		case 27: {
-			screen = 2; // Change to edit time screen
+			break;
+		case Function::CurrentTimeDisplay : {
+			screen = Screen::AlterTime; // Change to edit time screen
 			display->editTime(timer.getTimeInMinutes());
 			updateDisplay = true;
 		}
-		break;
-		case 28: {
+			break;
+		case Function::IncreaseTensHours : {
 
 			if (timer.setSystemHour(timer.getHour() + 10)) { // Increase current time by 10 hours
 				updateDisplay = true;
 			}
 		}
-		break;
-		case 29: {
+			break;
+		case Function::DecreaseTensHours : {
 			if (timer.setSystemHour(timer.getHour() - 10)) { // Decrease current time by 10 hours
 				updateDisplay = true;
 			}
 		}
 		break;
-		case 30: {
+		case Function::IncreaseHours : {
 			if (timer.setSystemHour(timer.getHour() + 1)) { // Increase current time by 1 hour
 				updateDisplay = true;
 			}
 		}
 		break;
-		case 31: {
+		case Function::DecreaseHours : {
 			if (timer.setSystemHour(timer.getHour() - 1)) { // Decrease current time by 1 hour
 				updateDisplay = true;
 			}
 		}
 		break;
-		case 32: {
+		case Function::IncreaseTensMinutes : {
 			if (timer.setSystemMinute(timer.getMinute() + 10)) { // Increase current time by 10 minutes
 				updateDisplay = true;
 			}
 		}
 		break;
-		case 33: {
+		case Function::DecreaseTensMinutes: {
 			if (timer.setSystemMinute(timer.getMinute() - 10)) { // Decrease current time by 10 hours
 				updateDisplay = true;
 			}
 		}
 		break;
-		case 34 :{
-
+		case Function::IncreaseMinutes :{
 			if (timer.setSystemMinute(timer.getMinute() + 1)) { // Increase current time by 1 minute
 				updateDisplay = true;
 			}
 		}
 		break;
-		case 35: {
+		case Function::DecreaseMinutes : {
 
 			if (timer.setSystemMinute(timer.getMinute() - 1)) { // Decrease current time by 1 minute
 				updateDisplay = true;
@@ -428,6 +402,14 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	wdt_reset(); // Reset timer
 };
 
+Mode HeatingSystem::incrementMode(Mode mode) {
+	switch (mode) {
+		case Mode::Off: return Mode::Timer;
+		case Mode::Timer: return Mode::On;
+		case Mode::On: return Mode::Off;
+	}
+}
+
 void HeatingSystem::checkBoosts() { // Boosts have priority over everything
 	if (heatingBoostActive && ((millis() - startTimeHeatingBoost) >= (boostLengthHeating * 60000))) { // If heating boost is active and boost timer is over, turn off the boost
 		boostHeating(false);
@@ -440,11 +422,11 @@ void HeatingSystem::checkBoosts() { // Boosts have priority over everything
 void HeatingSystem::changeRelayStates() { // Function checks current system status and decides whether the heating and hot water need to be on or not
 
 										  // Heating settings
-	if (temperatureCheck() == 1 && (heatingBoostActive || heatingMode == 2 || (heatingMode == 1 && timer.getHeatingTimerStatus()))) { // if ((Heating is ON OR (Heating Timer is ON and ACTIVE)) AND temperature is too low)
+	if (temperatureCheck() == 1 && (heatingBoostActive || heatingMode == Mode::On || (heatingMode == Mode::Timer && timer.getHeatingTimerStatus()))) { // if ((Heating is ON OR (Heating Timer is ON and ACTIVE)) AND temperature is too low)
 
 		enableHeating();
 	}
-	else if (heatingMode == 0 || (temperatureCheck() == 0 && (heatingBoostActive || heatingMode == 2 || (heatingMode == 1 && timer.getHeatingTimerStatus()))) || (heatingMode == 1 && !timer.getHeatingTimerStatus())) {
+	else if (heatingMode == Mode::Off || (temperatureCheck() == 0 && (heatingBoostActive || heatingMode == Mode::On || (heatingMode == Mode::Timer && timer.getHeatingTimerStatus()))) || (heatingMode == Mode::Timer && !timer.getHeatingTimerStatus())) {
 
 		disableHeating();
 	}
@@ -453,7 +435,7 @@ void HeatingSystem::changeRelayStates() { // Function checks current system stat
 	if (waterBoostActive) { // If water boost is active...
 		enableWater(); // ...turn the water on
 	}
-	else if (waterMode == 2 || (waterMode == 1 && timer.getWaterTimerStatus())) { // if (Heating is ON OR (Water Timer is ON and ACTIVE))
+	else if (waterMode == Mode::On || (waterMode == Mode::Timer && timer.getWaterTimerStatus())) { // if (Heating is ON OR (Water Timer is ON and ACTIVE))
 		enableWater();
 	}
 	else {
