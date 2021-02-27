@@ -9,7 +9,6 @@
 	#include "WProgram.h"
 #endif
 #include <UIPEthernet.h>
-#include <Time.h>
 #include <DS3232RTC.h> 
 // This class stores the properties of the timer
 
