@@ -29,23 +29,23 @@ class HeatingSystem {
 
 public:
 	HeatingSystem(int boilerPinNum, int pumpPinNum, int tempSensorPinNum, int intTempSensorPin); // Contructor. Takes boiler pin number, pump pin number and temperature sensor pin number as parameters
-	void monitorSystem(); // Function for monitoring all system states
-	void boostHeating(bool state); // Function for enabling or disabling heating boost
-	void boostWater(bool state); // Function for enabling or disabling hot water boost
-	bool getHeatingStatus(); // Function for getting heating status
-	bool getWaterStatus(); // Function for getting hot water status
-	void disableHeating(); // Function to disable the heating
-	void disableWater(); // Function to disable the hot water
-	void enableHeating(); // Function to enable the heating
-	void enableWater(); // Function to enable the hot water
-	void setTemp(int temp); // Function to set requested temperature
+	void monitorSystem();
+	void boostHeating(bool state);
+	void boostWater(bool state);
+	bool getHeatingStatus();
+	bool getWaterStatus();
+	void disableHeating();
+	void disableWater();
+	void enableHeating();
+	void enableWater();
+	void setTemp(int temp);
 
 
 private:
 	const byte boostLengthWater = 20; // Length of time in minutes for hot water boost
 	const byte boostLengthHeating = 30; // Length of time in minutes for heating boost
 	const byte timerTimeInc = 5; // Length of time in minutes for the adjustment value for timer
-	const int maxDrift = 1; // Set the maximum number of degrees the temperature can drift before heating is turned on
+	const char maxDrift = 1; // Set the maximum number of degrees the temperature can drift before heating is turned on
 	const float tempChange = 0.5;
 	const float minTempDifference = 0.5; // Variable to store the minimum temperature difference neded to warrat any heating system change
 	bool incorrectTemp = false; // Variable to store whether the requested temperature is currently being met
@@ -82,7 +82,7 @@ private:
 	Boiler boiler; // Boiler component
 	TempSensor tempSensor; // Temperature sensor component
 	TempSensor internalTempSensor; // Temperature sensor inside the thermostat
-	Display* display; // Display component
+	Display display; // Display component
 	Timer timer; // Timer component
 	WebInterface remote; // Web interface component
 	Config config; // Configuration
@@ -104,8 +104,6 @@ private:
 	int resetCounter = 0;
 	char buffer[3];
 	
-
-
 };
 
 #endif

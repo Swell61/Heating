@@ -4,7 +4,7 @@
 
 #include "HeatingSystem.h"
 
-HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin, int intTempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), timer(Timer()), display(new Display()), remote(WebInterface(SD.begin(5))), config(Config("config.txt")) { // Constructor. Initialises the componenets of the heating system
+HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin, int intTempSensorPin) : pump(Pump(pumpPin)), boiler(Boiler(boilerPin)), timer(Timer()), display(Display()), remote(WebInterface(SD.begin(5))), config(Config("config.txt")) { // Constructor. Initialises the componenets of the heating system
 	TempSensor::begin(tempSensorPin);
 	tempSensor = TempSensor();
 	uint8_t internalTempSensorAddress[8] = { 0x28, 0xFF, 0x68, 0x08, 0xA2, 0x17, 0x04, 0x21 };
@@ -21,7 +21,7 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin, int 
 	unsigned long time = 0; // Variable to store the time from the NTP server
 	while (NTPTryCount < 5) { // Tries 5 times to get the time
 		
-		display->loadingScreen(SDAvailable, NTPTryCount + 1); // Shows the loading screen
+		display.loadingScreen(SDAvailable, NTPTryCount + 1); // Shows the loading screen
 		time = timer.getNTPTime(udp); // Tries to get the time
 		if (time != 0) { // If the time is not zero (very unlikely it will be zero and if it is, it will run another check if it has 1+ remaining)
 			timer.setSystemTime(time);
@@ -38,7 +38,7 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin, int 
 	itoa(resetCounter, buffer, 10);
 	config.writeProperty("reset", buffer);
 
-	display->mainDisplay(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive); // Show the main display
+	display.mainDisplay(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive); // Show the main display
 	pinMode(12, OUTPUT);
 	digitalWrite(12, HIGH);
 	pinMode(5, OUTPUT);
@@ -99,7 +99,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	if (updateDisplay) { // If the screen needs updating
 
 		if (screen == Screen::Main) { // If on main display
-			display->displayUpdate(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive); // Show the main display
+			display.displayUpdate(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive); // Show the main display
 																																																	   // Update any connected clients with the current status
 			pinMode(12, OUTPUT);
 			digitalWrite(12, LOW);
@@ -111,7 +111,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 		else if (screen == Screen::Timer) { // If on the timer display
 			config.writeProperty(buffer, "2");
 
-			display->timerUpdate(heatingMode, waterMode, timer); // Show the timer display
+			display.timerUpdate(heatingMode, waterMode, timer); // Show the timer display
 																																																																																			  // Update any connected clients with the current status
 			pinMode(12, OUTPUT);
 			digitalWrite(12, LOW);
@@ -123,7 +123,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 		else if (screen == Screen::AlterTime) { // If on the time edit display
 			config.writeProperty(buffer, "3");
 
-			display->updateEditTime(timer.getTimeInMinutes()); // Show the time edit display
+			display.updateEditTime(timer.getTimeInMinutes()); // Show the time edit display
 		}
 		updateDisplay = false; // Updating screen has completed
 	}
@@ -142,7 +142,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	remoteOption = remote.processRemoteInput(buffer, config); // Process any clients
 	pinMode(12, OUTPUT);
 	digitalWrite(12, HIGH);
-	touchOption = display->touchUpdate(screen); // Get the current requested touchscreen option
+	touchOption = display.touchUpdate(screen); // Get the current requested touchscreen option
 
 	
 
@@ -190,13 +190,13 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 		case Function::TimerDisplay : { // Go to timer display
 				updateDisplay = true;
 				screen = Screen::Timer;
-				display->timerDisplay(heatingMode, waterMode, timer);
+				display.timerDisplay(heatingMode, waterMode, timer);
 			}
 			break;
 		case Function::MainDisplay : { // Go to main display
 				updateDisplay = true;
 				screen = Screen::Main;
-				display->mainDisplay(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+				display.mainDisplay(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
 			}
 			break;
 		case Function::ScheduleHeatingMorningOnDown : { // Change heating on morning time 
@@ -333,7 +333,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 			break;
 		case Function::CurrentTimeDisplay : {
 			screen = Screen::AlterTime; // Change to edit time screen
-			display->editTime(timer.getTimeInMinutes());
+			display.editTime(timer.getTimeInMinutes());
 			updateDisplay = true;
 		}
 			break;
