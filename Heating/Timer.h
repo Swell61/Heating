@@ -53,14 +53,14 @@ public:
 	unsigned long getNTPTime(UIPUDP &udp); // Function for getting current time using NTP server
 
 	// Function for getting timer times
-	int getHeatingOnMorning();
-	int getHeatingOffMorning();
-	int getHeatingOnAfternoon();
-	int getHeatingOffAfternoon();
-	int getWaterOnMorning();
-	int getWaterOffMorning();
-	int getWaterOnAfternoon();
-	int getWaterOffAfternoon();
+	int getHeatingOnMorning() const;
+	int getHeatingOffMorning() const;
+	int getHeatingOnAfternoon() const;
+	int getHeatingOffAfternoon() const;
+	int getWaterOnMorning() const;
+	int getWaterOffMorning() const;
+	int getWaterOnAfternoon() const;
+	int getWaterOffAfternoon() const;
 
 	// Function for setting timer times
 	bool setHeatingOnMorning(int state);

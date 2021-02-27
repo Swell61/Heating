@@ -16,7 +16,7 @@
 #include "Config.h"
 #include <avr/wdt.h>
 #include "ComponentOperatingMode.h"
-
+#include "Timer.h"
 
 // Class for web and remote interface interraction
 
@@ -46,7 +46,7 @@ public:
 	WebInterface(bool webFilesAvailabe); // Constructor which takes parameter for whether web server files are available or not
 
 	void processRemoteOutput(int time, Mode heatingMode, Mode waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost, float internalTemp); // Function for sending main display status to clients
-	void processRemoteOutput(bool heatingTimerStatus, bool waterTimerStatus, int heatingOnMorning, int heatingOffMorning, int heatingOnAfternoon, int heatingOffAfternoon, int waterOnMorning, int waterOffMorning, int waterOnAfternoon, int waterOffAfternoon); // Function for sending timer status to clients
+	void processRemoteOutput(Mode heatingMode, Mode waterMode, const Timer& timer); // Function for sending timer status to clients
 
 	Function processRemoteInput(); // Function for processing client messages
 	Function processRemoteInput(const char* buffer, Config config);

@@ -294,9 +294,7 @@ else if (screen == Screen::AlterTime) { // If currently on time edit button
 return Function::None; // else if no touch registered (pressure requirements not met), return 0
 }
 
-void Display::timerDisplay(bool heatingTimerStatus, bool waterTimerStatus, int heatingOnMorning, int heatingOffMorning, int heatingOnAfternoon, int heatingOffAfternoon, int waterOnMorning, int waterOffMorning, int waterOnAfternoon, int waterOffAfternoon) { // Timer display
-	int minutes; // Create variable for storing calculated mintues
-	int hours; // Create variable for storing calculated hours
+void Display::timerDisplay(Mode heatingMode, Mode waterMode, const Timer& timer) { // Timer display
 	
 	tft.fillScreen(0x00000); // Fill the screen with black
 	tft.setTextSize(3); // Increase text size to 3
@@ -306,63 +304,7 @@ void Display::timerDisplay(bool heatingTimerStatus, bool waterTimerStatus, int h
 	tft.setCursor(5, 0); // Set the cursor to write text to the TFT
 	tft.println(F("BACK")); // Print the button label
 
-	tft.fillRect(145, 5, 56, 25, heatingTimerStatus ? 0x7CFC0 : 0xFF000); // Create rectangle for heating timer status. If heating timer is on, fill green, otherwise fill red
-	tft.fillRect(295, 5, 68, 25, waterTimerStatus ? 0x7CFC0 : 0xFF000); // Create rectangle for hot water timer status. If hot water timer is on, fill green, otherwise fill red
-	tft.setTextSize(2); // Decrease text size to 2
-	tft.setTextColor(0xFFFFF); // Set text colour to white
-	tft.setCursor(150, 10); // Set the cursor to write text to the TFT
-	tft.println(F("HEAT")); // Print label
-	tft.setCursor(300, 10); // Set the cursor to write text to the TFT
-	tft.println(F("WATER")); // Print label
-
-	// Print morning on for heating
-	tft.setCursor(145, 50);
-	hours = (heatingOnMorning / 60);
-	minutes = (heatingOnMorning % 60);
-	printTime(hours, minutes);
-
-
-	// Print morning off for heating
-	tft.setCursor(145, 100);
-	hours = (heatingOffMorning / 60);
-	minutes = (heatingOffMorning % 60);
-	printTime(hours, minutes);
-
-	// Print afternoon on for heating
-	tft.setCursor(145, 150);
-	hours = (heatingOnAfternoon / 60);
-	minutes = (heatingOnAfternoon % 60);
-	printTime(hours, minutes);
-
-	// Print afternoon off for heating
-	tft.setCursor(145, 200);
-	hours = (heatingOffAfternoon / 60);
-	minutes = (heatingOffAfternoon % 60);
-	printTime(hours, minutes);
-
-	// Print morning on for water
-	tft.setCursor(300, 50);
-	hours = (waterOnMorning / 60);
-	minutes = (waterOnMorning % 60);
-	printTime(hours, minutes);
-
-	// Print morning off for water
-	tft.setCursor(300, 100);
-	hours = (waterOffMorning / 60);
-	minutes = (waterOffMorning % 60);
-	printTime(hours, minutes);
-
-	// Print afternoon on for water
-	tft.setCursor(300, 150);
-	hours = (waterOnAfternoon / 60);
-	minutes = (waterOnAfternoon % 60);
-	printTime(hours, minutes);
-
-	// Print afternoon off for water
-	tft.setCursor(300, 200);
-	hours = (waterOffAfternoon / 60);
-	minutes = (waterOffAfternoon % 60);
-	printTime(hours, minutes);
+	
 
 	// Print the plus and minus buttons for heating
 	int y = 50;
@@ -394,19 +336,18 @@ void Display::timerDisplay(bool heatingTimerStatus, bool waterTimerStatus, int h
 	tft.println(F("Afternoon on:"));
 	tft.setCursor(0, 200);
 	tft.println(F("Afternoon off:"));
+
+	timerUpdate(heatingMode, waterMode, timer);
 }
 
-void Display::timerUpdate(bool heatingTimerStatus, bool waterTimerStatus, int heatingOnMorning, int heatingOffMorning, int heatingOnAfternoon, int heatingOffAfternoon, int waterOnMorning, int waterOffMorning, int waterOnAfternoon, int waterOffAfternoon) { // Function for updating the timer screen
+void Display::timerUpdate(Mode heatingMode, Mode waterMode, const Timer& timer) { // Function for updating the timer screen
 
 	// The code in this function does what timerDisplay does, but it overwrites with the new status
 
-	int minutes;
-	int hours;
-
 	tft.setTextSize(3);
 
-	tft.fillRect(145, 5, 56, 25, heatingTimerStatus ? 0x7CFC0 : 0xFF000);
-	tft.fillRect(295, 5, 68, 25, waterTimerStatus ? 0x7CFC0 : 0xFF000);
+	tft.fillRect(145, 5, 56, 25, heatingMode == Mode::Timer ? 0x7CFC0 : 0xFF000);
+	tft.fillRect(295, 5, 68, 25, waterMode == Mode::Timer ? 0x7CFC0 : 0xFF000);
 	tft.setTextSize(2);
 	tft.setTextColor(0xFFFFF);
 	tft.setCursor(150, 10);
@@ -416,54 +357,64 @@ void Display::timerUpdate(bool heatingTimerStatus, bool waterTimerStatus, int he
 
 	tft.setTextSize(2);
 	tft.setTextColor(0xFFFFF, 0x00000);
+	
+	updateTimerValues(timer);
+
+}
+
+void Display::updateTimerValues(const Timer& timer) {
+
+	int minutes; 
+	int hours; 
+
 	// Print morning on for heating
 	tft.setCursor(145, 50);
-	hours = (heatingOnMorning / 60);
-	minutes = (heatingOnMorning % 60);	
+	hours = (timer.getHeatingOnMorning() / 60);
+	minutes = (timer.getHeatingOnMorning() % 60);
 	printTime(hours, minutes);
-	
+
+
 	// Print morning off for heating
 	tft.setCursor(145, 100);
-	hours = (heatingOffMorning / 60);
-	minutes = (heatingOffMorning % 60);
+	hours = (timer.getHeatingOffMorning() / 60);
+	minutes = (timer.getHeatingOffMorning() % 60);
 	printTime(hours, minutes);
 
 	// Print afternoon on for heating
 	tft.setCursor(145, 150);
-	hours = (heatingOnAfternoon / 60);
-	minutes = (heatingOnAfternoon % 60);
+	hours = (timer.getHeatingOnAfternoon() / 60);
+	minutes = (timer.getHeatingOnAfternoon() % 60);
 	printTime(hours, minutes);
 
 	// Print afternoon off for heating
 	tft.setCursor(145, 200);
-	hours = (heatingOffAfternoon / 60);
-	minutes = (heatingOffAfternoon % 60);
+	hours = (timer.getHeatingOffAfternoon() / 60);
+	minutes = (timer.getHeatingOffAfternoon() % 60);
 	printTime(hours, minutes);
 
 	// Print morning on for water
 	tft.setCursor(300, 50);
-	hours = (waterOnMorning / 60);
-	minutes = (waterOnMorning % 60);
+	hours = (timer.getWaterOnMorning() / 60);
+	minutes = (timer.getWaterOnMorning() % 60);
 	printTime(hours, minutes);
 
 	// Print morning off for water
 	tft.setCursor(300, 100);
-	hours = (waterOffMorning / 60);
-	minutes = (waterOffMorning % 60);
+	hours = (timer.getWaterOffMorning() / 60);
+	minutes = (timer.getWaterOffMorning() % 60);
 	printTime(hours, minutes);
 
 	// Print afternoon on for water
 	tft.setCursor(300, 150);
-	hours = (waterOnAfternoon / 60);
-	minutes = (waterOnAfternoon % 60);
+	hours = (timer.getWaterOnAfternoon() / 60);
+	minutes = (timer.getWaterOnAfternoon() % 60);
 	printTime(hours, minutes);
 
 	// Print afternoon off for water
 	tft.setCursor(300, 200);
-	hours = (waterOffAfternoon / 60);
-	minutes = (waterOffAfternoon % 60);
+	hours = (timer.getWaterOffAfternoon() / 60);
+	minutes = (timer.getWaterOffAfternoon() % 60);
 	printTime(hours, minutes);
-
 }
 
 void Display::editTime(int time) { // Function for displaying the time update screen

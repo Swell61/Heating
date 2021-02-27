@@ -21,11 +21,11 @@ void WebInterface::processRemoteOutput(int time, Mode heatingMode, Mode waterMod
 
 	strcat(output, ":");
 
-	itoa(static_cast<unsigned short>(heatingMode), buffer, 10);
+	itoa(static_cast<unsigned char>(heatingMode), buffer, 10);
 	strcat(output, buffer);
 	strcat(output, ":");
 
-	itoa(static_cast<unsigned short>(waterMode), buffer, 10);
+	itoa(static_cast<unsigned char>(waterMode), buffer, 10);
 	strcat(output, buffer);
 	strcat(output, ":");
 
@@ -58,48 +58,48 @@ void WebInterface::processRemoteOutput(int time, Mode heatingMode, Mode waterMod
 	webServerStack_ProcessMsgOut(output);
 	
 }
-void WebInterface::processRemoteOutput(bool heatingTimerStatus, bool waterTimerStatus, int heatingOnMorning, int heatingOffMorning, int heatingOnAfternoon, int heatingOffAfternoon, int waterOnMorning, int waterOffMorning, int waterOnAfternoon, int waterOffAfternoon) {
+void WebInterface::processRemoteOutput(Mode heatingMode, Mode waterMode, const Timer& timer) {
 	// Send a string containing the status of the timer
 	//String output = "1:" + (String)heatingTimerStatus + ":" + (String)waterTimerStatus + ":" + (String)heatingOnMorning + ":" + (String)heatingOffMorning + ":" + (String)heatingOnAfternoon + ":" + (String)heatingOffAfternoon + ":" + (String)waterOnMorning + ":" + (String)waterOffMorning + ":" + (String)waterOnAfternoon + ":" + (String)waterOffAfternoon;
 	
 	char buffer[6];
 	char output[72] = "1:";
 	
-	strcat(output, heatingTimerStatus ? "1" : "0");
+	strcat(output, heatingMode == Mode::Timer ? "1" : "0");
 	strcat(output, ":");
 
-	strcat(output, waterTimerStatus ? "1" : "0");
+	strcat(output, waterMode == Mode::Timer ? "1" : "0");
 	strcat(output, ":");
 
-	itoa(heatingOnMorning, buffer, 10);
+	itoa(timer.getHeatingOnMorning(), buffer, 10);
 	strcat(output, buffer);
 	strcat(output, ":");
 
-	itoa(heatingOffMorning, buffer, 10);
+	itoa(timer.getHeatingOffMorning(), buffer, 10);
 	strcat(output, buffer);
 	strcat(output, ":");
 
-	itoa(heatingOnAfternoon, buffer, 10);
+	itoa(timer.getHeatingOnAfternoon(), buffer, 10);
 	strcat(output, buffer);
 	strcat(output, ":");
 
-	itoa(heatingOffAfternoon, buffer, 10);
+	itoa(timer.getHeatingOffAfternoon(), buffer, 10);
 	strcat(output, buffer);
 	strcat(output, ":");
 
-	itoa(waterOnMorning, buffer, 10);
+	itoa(timer.getWaterOnMorning(), buffer, 10);
 	strcat(output, buffer);
 	strcat(output, ":");
 
-	itoa(waterOffMorning, buffer, 10);
+	itoa(timer.getWaterOffMorning(), buffer, 10);
 	strcat(output, buffer);
 	strcat(output, ":");
 
-	itoa(waterOnAfternoon, buffer, 10);
+	itoa(timer.getWaterOnAfternoon(), buffer, 10);
 	strcat(output, buffer);
 	strcat(output, ":");
 
-	itoa(waterOffAfternoon, buffer, 10);
+	itoa(timer.getWaterOffAfternoon(), buffer, 10);
 	strcat(output, buffer);
 	strcat(output, "\0");
 	strcat(buffer, "\0");

@@ -104,18 +104,18 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 			pinMode(12, OUTPUT);
 			digitalWrite(12, LOW);
 			remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive, currentInternalTemp);
-			remote.processRemoteOutput(heatingMode == Mode::Timer ? true : false, waterMode == Mode::Timer ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
+			remote.processRemoteOutput(heatingMode, waterMode, timer);
 			pinMode(12, OUTPUT);
 			digitalWrite(12, HIGH);
 		}
 		else if (screen == Screen::Timer) { // If on the timer display
 			config.writeProperty(buffer, "2");
 
-			display->timerUpdate(heatingMode == Mode::Timer ? true : false, waterMode == Mode::Timer ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon()); // Show the timer display
+			display->timerUpdate(heatingMode, waterMode, timer); // Show the timer display
 																																																																																			  // Update any connected clients with the current status
 			pinMode(12, OUTPUT);
 			digitalWrite(12, LOW);
-			remote.processRemoteOutput(heatingMode == Mode::Timer ? true : false, waterMode == Mode::Timer ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
+			remote.processRemoteOutput(heatingMode, waterMode, timer);
 			remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive, currentInternalTemp);
 			pinMode(12, OUTPUT);
 			digitalWrite(12, HIGH);
@@ -152,7 +152,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 		pinMode(12, OUTPUT);
 		digitalWrite(12, LOW);
 		remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive, currentInternalTemp);
-		remote.processRemoteOutput(heatingMode == Mode::Timer ? true : false, waterMode == Mode::Timer ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
+		remote.processRemoteOutput(heatingMode, waterMode, timer);
 		pinMode(12, OUTPUT);
 		digitalWrite(12, HIGH);
 	}
@@ -190,7 +190,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 		case Function::TimerDisplay : { // Go to timer display
 				updateDisplay = true;
 				screen = Screen::Timer;
-				display->timerDisplay(heatingMode == Mode::Timer ? true : false, waterMode == Mode::Timer ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
+				display->timerDisplay(heatingMode, waterMode, timer);
 			}
 			break;
 		case Function::MainDisplay : { // Go to main display

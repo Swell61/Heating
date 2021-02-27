@@ -90,28 +90,28 @@ unsigned long Timer::getNTPTime(UIPUDP &udp) {
 	return ntpUnixTime(udp);
 }
 
-int Timer::getHeatingOnMorning() {
+int Timer::getHeatingOnMorning() const {
 	return heatingOnMorning;
 }
-int Timer::getHeatingOffMorning() {
+int Timer::getHeatingOffMorning() const {
 	return heatingOffMorning;
 }
-int Timer::getHeatingOnAfternoon() {
+int Timer::getHeatingOnAfternoon() const {
 	return heatingOnAfternoon;
 }
-int Timer::getHeatingOffAfternoon() {
+int Timer::getHeatingOffAfternoon() const {
 	return heatingOffAfternoon;
 }
-int Timer::getWaterOnMorning() {
+int Timer::getWaterOnMorning() const {
 	return waterOnMorning;
 }
-int Timer::getWaterOffMorning() {
+int Timer::getWaterOffMorning() const {
 	return waterOffMorning;
 }
-int Timer::getWaterOnAfternoon() {
+int Timer::getWaterOnAfternoon() const {
 	return waterOnAfternoon;
 }
-int Timer::getWaterOffAfternoon() {
+int Timer::getWaterOffAfternoon() const {
 	return waterOffAfternoon;
 }
 
@@ -179,7 +179,7 @@ void Timer::setWaterTimerState(bool state) {
 	waterTimerState = state;
 }
 
-unsigned long inline Timer::ntpUnixTime(UIPUDP &udp)
+unsigned long Timer::ntpUnixTime(UIPUDP &udp)
 {
 	static int udpInited = udp.begin(123); // open socket on arbitrary port
 
