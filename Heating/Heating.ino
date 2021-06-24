@@ -13,9 +13,9 @@
 #include "HeatingSystem.h"
 HeatingSystem* ashanti;
 void setup() {
-	Serial.begin(9600);
+	Serial.begin(115200);
 	ashanti = new HeatingSystem(3, 2, A4, A4); // Pump pin, boiler pin, thermometer pin
-	
+	Serial.println("Done");
 }
 void loop() {
 	ashanti->monitorSystem();

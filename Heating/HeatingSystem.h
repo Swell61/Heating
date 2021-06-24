@@ -15,7 +15,6 @@
 #include "Display.h"
 #include "Timer.h"
 #include <TimeLib.h>
-#include <Time.h>
 #include <SD.h>
 #include "Config.h"
 #include <avr/wdt.h>
@@ -63,7 +62,7 @@ private:
 	Boiler boiler; // Boiler component
 	TempSensor tempSensor; // Temperature sensor component
 	TempSensor internalTempSensor; // Temperature sensor inside the thermostat
-	Display* display; // Display component
+	//Display* display; // Display component
 	Timer timer; // Timer component
 	WebInterface remote; // Web interface component
 	Config config; // Configuration
