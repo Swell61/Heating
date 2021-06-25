@@ -55,32 +55,32 @@ void HeatingSystem::setupWatchdog() {
 
 void HeatingSystem::loadTimer() {
 	// Load timer
-	int time;
-	if ((time = atoi(config.readProperty("heatMon"))) != 0) {
-		timer.setHeatingOnMorning(time);
-	}
-	if ((time = atoi(config.readProperty("heatMoff"))) != 0) {
-		timer.setHeatingOffMorning(time);
-	}
-	if ((time = atoi(config.readProperty("heatAon"))) != 0) {
-		timer.setHeatingOnAfternoon(time);
-	}
-	if ((time = atoi(config.readProperty("heatAoff"))) != 0) {
-		timer.setHeatingOffAfternoon(time);
-	}
+	// int time;
+	// if ((time = atoi(config.readProperty("heatMon"))) != 0) {
+	// 	timer.setHeatingOnMorning(time);
+	// }
+	// if ((time = atoi(config.readProperty("heatMoff"))) != 0) {
+	// 	timer.setHeatingOffMorning(time);
+	// }
+	// if ((time = atoi(config.readProperty("heatAon"))) != 0) {
+	// 	timer.setHeatingOnAfternoon(time);
+	// }
+	// if ((time = atoi(config.readProperty("heatAoff"))) != 0) {
+	// 	timer.setHeatingOffAfternoon(time);
+	// }
 
-	if ((time = atoi(config.readProperty("waterMon"))) != 0) {
-		timer.setWaterOnMorning(time);
-	}
-	if ((time = atoi(config.readProperty("waterMoff"))) != 0) {
-		timer.setWaterOffMorning(time);
-	}
-	if ((time = atoi(config.readProperty("waterAon"))) != 0) {
-		timer.setWaterOnAfternoon(time);
-	}
-	if ((time = atoi(config.readProperty("waterAoff"))) != 0) {
-		timer.setWaterOffAfternoon(time);
-	}
+	// if ((time = atoi(config.readProperty("waterMon"))) != 0) {
+	// 	timer.setWaterOnMorning(time);
+	// }
+	// if ((time = atoi(config.readProperty("waterMoff"))) != 0) {
+	// 	timer.setWaterOffMorning(time);
+	// }
+	// if ((time = atoi(config.readProperty("waterAon"))) != 0) {
+	// 	timer.setWaterOnAfternoon(time);
+	// }
+	// if ((time = atoi(config.readProperty("waterAoff"))) != 0) {
+	// 	timer.setWaterOffAfternoon(time);
+	// }
 }
 
 bool HeatingSystem::saveTimer(const char* timerCase, int time) {
@@ -107,7 +107,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 			Serial.print("Update: ");
 			Serial.println(requestedTemp);
 			remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive, currentInternalTemp);
-			remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
+			remote.processRemoteOutput(heatingMode == 1, waterMode == 1, timer);
 			Serial.println("Done update");
 			pinMode(12, OUTPUT);
 			digitalWrite(12, HIGH);
@@ -119,7 +119,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 																																																																																			  // Update any connected clients with the current status
 			pinMode(12, OUTPUT);
 			digitalWrite(12, LOW);
-			remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
+			remote.processRemoteOutput(heatingMode == 1, waterMode == 1, timer);
 			remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive, currentInternalTemp);
 			pinMode(12, OUTPUT);
 			digitalWrite(12, HIGH);
@@ -158,7 +158,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 			Serial.print("New client: ");
 			Serial.println(requestedTemp);
 		remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive, currentInternalTemp);
-		remote.processRemoteOutput(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
+		remote.processRemoteOutput(heatingMode == 1, waterMode == 1, timer);
 		pinMode(12, OUTPUT);
 		digitalWrite(12, HIGH);
 	}
@@ -174,251 +174,99 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	}
 	else if (remoteOption >= 28 && remoteOption <= 35) {
 	}
+	SystemFunction option = SystemFunction::NONE;
 	pinMode(5, OUTPUT);
 	digitalWrite(5, LOW);
-	switch (touchOption):
-	case 1: { // User requested temperature up one degree
-		if (requestedTemp < 28) {
-			requestedTemp = requestedTemp + tempChange; // Increase the requested temperature up by one
-			Serial.print("Main case: ");
-			Serial.println(requestedTemp);
-			updateDisplay = true; // The display needs updating
+	switch (option) {
+		case SystemFunction::INCREASE_REQ_TEMP: { // User requested temperature up one degree
+			if (requestedTemp < 28) {
+				requestedTemp = requestedTemp + tempChange; // Increase the requested temperature up by one
+				Serial.print("Main case: ");
+				Serial.println(requestedTemp);
+				updateDisplay = true; // The display needs updating
+			}
+			break;
 		}
-		break;
-	}
-	case 2: { // User requested temperature down one degree
-		if (requestedTemp > 10) {
-			requestedTemp = requestedTemp - tempChange; // Decrease the requested temperature down by one
-			updateDisplay = true; // The display needs updating
+		case SystemFunction::DECREASE_REQ_TEMP: { // User requested temperature down one degree
+			if (requestedTemp > 10) {
+				requestedTemp = requestedTemp - tempChange; // Decrease the requested temperature down by one
+				updateDisplay = true; // The display needs updating
+			}
+			break;
 		}
-		break;
-	}
-	case 3: {
-		if (!heatingBoostActive) { // User wants to turn the heating boost on
-			updateDisplay = true; // Display needs updating
-			boostHeating(true);
+		case SystemFunction::HEATING_BOOST: {
+			if (!heatingBoostActive) { // User wants to turn the heating boost on
+				updateDisplay = true; // Display needs updating
+				boostHeating(true);
+			}
+			else if (heatingBoostActive) { // User wants to turn the heating boost off
+				updateDisplay = true; // Display needs updating
+				boostHeating(false);
+			}
+			break;
 		}
-		else if (heatingBoostActive) { // User wants to turn the heating boost off
-			updateDisplay = true; // Display needs updating
-			boostHeating(false);
+		case SystemFunction::WATER_BOOST: { 
+			if (!waterBoostActive) { // User wants to turn the water boost on
+				updateDisplay = true; // Display needs updating
+				boostWater(true);
+			}
+			else if (waterBoostActive) { // User wants to turn the water boost off
+				updateDisplay = true; // Display needs updating
+				boostWater(false);
+			}
+			break;
 		}
-		break;
-	}
-	case 4: { 
-		if (!waterBoostActive) { // User wants to turn the water boost on
-			updateDisplay = true; // Display needs updating
-			boostWater(true);
-		}
-		else if (waterBoostActive) { // User wants to turn the water boost off
-			updateDisplay = true; // Display needs updating
-			boostWater(false);
-		}
-		break;
-	}
-	case 5: { // Go to timer display
-		updateDisplay = true;
-		screen = 1;
-		//display->timerDisplay(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
-		break;
-	}
-	case 6: { // Go to main display
-		updateDisplay = true;
-		screen = 0;
-		//display->mainDisplay(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
-		break;
-	}
-	case 7: { // Change heating on morning time 
-		if (timer.setHeatingOnMorning(timer.getHeatingOnMorning() - timerTimeInc)) {
+		case SystemFunction::TIMER_DISPLAY: { // Go to timer display
 			updateDisplay = true;
-			saveTimer("heatMon", timer.getHeatingOnMorning());
+			screen = 1;
+			//display->timerDisplay(heatingMode == 1 ? true : false, waterMode == 1 ? true : false, timer.getHeatingOnMorning(), timer.getHeatingOffMorning(), timer.getHeatingOnAfternoon(), timer.getHeatingOffAfternoon(), timer.getWaterOnMorning(), timer.getWaterOffMorning(), timer.getWaterOnAfternoon(), timer.getWaterOffAfternoon());
+			break;
 		}
-		break;
-	}
-	case 8: { // Change heating on morning time 
-		if (timer.setHeatingOnMorning(timer.getHeatingOnMorning() + timerTimeInc)) {
+		case SystemFunction::MAIN_DISPLAY: { // Go to main display
 			updateDisplay = true;
-			saveTimer("heatMon", timer.getHeatingOnMorning());
+			screen = 0;
+			//display->mainDisplay(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive);
+			break;
 		}
-		break;
-	}
-	case 9: { // Change heating off morning time 
-		if (timer.setHeatingOffMorning(timer.getHeatingOffMorning() - timerTimeInc)) {
+		
+		// case 23: { // Change heating timer state
+		// 	timer.setHeatingTimerState(!timer.getHeatingTimerStatus());
+		// 	updateDisplay = true;
+		// 	break;
+		// }
+		// case 24: { // Change hot water timer state
+		// 	timer.setWaterTimerState(!timer.getWaterTimerStatus());
+		// 	updateDisplay = true;
+		// 	break;
+		// }
+		case SystemFunction::TIMER_ADJUST: {
+			break;
+		}
+		case SystemFunction::HEATING_MODE: { // Change heating mode
+			heatingMode++;
+			if (heatingMode > 2) {
+				heatingMode = 0;
+			}
 			updateDisplay = true;
-			saveTimer("heatMoff", timer.getHeatingOffMorning());
+			break;
 		}
-		break;
-	}
-	case 10: { // Change heating off morning time
-		if (timer.setHeatingOffMorning(timer.getHeatingOffMorning() + timerTimeInc)) {
+		case SystemFunction::WATER_MODE: { // Change hot water mode
+			waterMode++;
+			if (waterMode > 2) {
+				waterMode = 0;
+			}
 			updateDisplay = true;
-			saveTimer("heatMoff", timer.getHeatingOffMorning());
+			break;
 		}
-		break;
-	}
-	case 11: { // Change heating on afternoon time
-		if (timer.setHeatingOnAfternoon(timer.getHeatingOnAfternoon() - timerTimeInc)) {
+		case SystemFunction::TIME_DISPLAY: {
+			screen = 2; // Change to edit time screen
+			//display->editTime(timer.getTimeInMinutes());
 			updateDisplay = true;
-			saveTimer("heatAon", timer.getHeatingOnAfternoon());
+			break;
 		}
-		break;
-	}
-	case 12: { // Change heating on afternoon time
-		if (timer.setHeatingOnAfternoon(timer.getHeatingOnAfternoon() + timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("heatAon", timer.getHeatingOnAfternoon());
+		case SystemFunction::TIME_ADJUST: {
+			break;
 		}
-		break;
-
-	}
-	case 13: { // Change heating off afternoon time
-		if (timer.setHeatingOffAfternoon(timer.getHeatingOffAfternoon() - timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("heatAoff", timer.getHeatingOffAfternoon());
-		}
-		break;
-	}
-	case 14: { // Change heating off afternoon time
-		if (timer.setHeatingOffAfternoon(timer.getHeatingOffAfternoon() + timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("heatAoff", timer.getHeatingOffAfternoon());
-		}
-		break;
-	}
-	case 15: { // Change hot water on morning time
-		if (timer.setWaterOnMorning(timer.getWaterOnMorning() - timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("waterMon", timer.getWaterOnMorning());
-		}
-		break;
-	}
-	case 16: { // Change hot water on morning time
-		if (timer.setWaterOnMorning(timer.getWaterOnMorning() + timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("waterMon", timer.getWaterOnMorning());
-		}
-		break;
-	}
-	case 17: { // Change hot water off morning time
-		if (timer.setWaterOffMorning(timer.getWaterOffMorning() - timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("waterMoff", timer.getWaterOffMorning());
-		}
-		break:
-	}
-	case 18: { // Change hot water off morning time
-		if (timer.setWaterOffMorning(timer.getWaterOffMorning() + timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("waterMoff", timer.getWaterOffMorning());
-		}
-		break;
-	}
-	case 19: { // Change hot water on afternoon time
-		if (timer.setWaterOnAfternoon(timer.getWaterOnAfternoon() - timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("waterAon", timer.getWaterOnAfternoon());
-		}
-		break;
-	}
-	case 20: { // Change hot water on afternoon time
-		if (timer.setWaterOnAfternoon(timer.getWaterOnAfternoon() + timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("waterAon", timer.getWaterOnAfternoon());
-		}
-		break;
-	}
-	case 21: { // Change hot water off afternoon time
-		if (timer.setWaterOffAfternoon(timer.getWaterOffAfternoon() - timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("waterAoff", timer.getWaterOffAfternoon());
-		}
-		break;
-	}
-	case 22: { // Change hot water off afternoon time
-		if (timer.setWaterOffAfternoon(timer.getWaterOffAfternoon() + timerTimeInc)) {
-			updateDisplay = true;
-			saveTimer("waterAoff", timer.getWaterOffAfternoon());
-		}
-		break;
-	}
-	case 23: { // Change heating timer state
-		timer.setHeatingTimerState(!timer.getHeatingTimerStatus());
-		updateDisplay = true;
-		break;
-	}
-	case 24: { // Change hot water timer state
-		timer.setWaterTimerState(!timer.getWaterTimerStatus());
-		updateDisplay = true;
-		break;
-	}
-	case 25: { // Change heating mode
-		heatingMode++;
-		if (heatingMode > 2) {
-			heatingMode = 0;
-		}
-		updateDisplay = true;
-		break;
-	}
-	case 26: { // Change hot water mode
-		waterMode++;
-		if (waterMode > 2) {
-			waterMode = 0;
-		}
-		updateDisplay = true;
-		break;
-	}
-	case 27: {
-		screen = 2; // Change to edit time screen
-		//display->editTime(timer.getTimeInMinutes());
-		updateDisplay = true;
-		break;
-	}
-	case 28: {
-		if (timer.setSystemHour(timer.getHour() + 10)) { // Increase current time by 10 hours
-			updateDisplay = true;
-		}
-		break;
-	}
-	case 29: {
-		if (timer.setSystemHour(timer.getHour() - 10)) { // Decrease current time by 10 hours
-			updateDisplay = true;
-		}
-		break;
-	}
-	case 30: {
-		if (timer.setSystemHour(timer.getHour() + 1)) { // Increase current time by 1 hour
-			updateDisplay = true;
-		}
-		break;
-	}
-	case 31: {
-		if (timer.setSystemHour(timer.getHour() - 1)) { // Decrease current time by 1 hour
-			updateDisplay = true;
-		}
-		break;
-	}
-	case 32: {
-		if (timer.setSystemMinute(timer.getMinute() + 10)) { // Increase current time by 10 minutes
-			updateDisplay = true;
-		}
-		break;
-	}
-	case 33: {
-		if (timer.setSystemMinute(timer.getMinute() - 10)) { // Decrease current time by 10 hours
-			updateDisplay = true;
-		}
-		break;
-	}
-	case 34: {
-		if (timer.setSystemMinute(timer.getMinute() + 1)) { // Increase current time by 1 minute
-			updateDisplay = true;
-		}
-		break;
-	}
-	case 35: {
-		if (timer.setSystemMinute(timer.getMinute() - 1)) { // Decrease current time by 1 minute
-			updateDisplay = true;
-		}
-		break;
 	}
 	pinMode(5, OUTPUT);
 	digitalWrite(5, HIGH);
@@ -433,6 +281,8 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 
 	wdt_reset(); // Reset timer
 };
+
+
 
 void HeatingSystem::checkBoosts() { // Boosts have priority over everything
 	if (heatingBoostActive && ((millis() - startTimeHeatingBoost) >= (boostLengthHeating * 60000))) { // If heating boost is active and boost timer is over, turn off the boost

@@ -3,11 +3,7 @@
 #ifndef _DISPLAY_h
 #define _DISPLAY_h
 
-#if defined(ARDUINO) && ARDUINO >= 100
-	#include "arduino.h"
-#else
-	#include "WProgram.h"
-#endif
+#include "Arduino.h"
 #include <TouchScreen.h>
 #include <Adafruit_GFX.h>
 #include <MCUFRIEND_kbv.h>

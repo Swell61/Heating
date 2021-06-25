@@ -3,21 +3,21 @@
 #ifndef _HEATINGSYSTEM_h
 #define _HEATINGSYSTEM_h
 
-#if defined(ARDUINO) && ARDUINO >= 100
-	#include "arduino.h"
-#else
-	#include "WProgram.h"
-#endif
-#include "WebInterface.h"
+
+#include "Arduino.h"
+
 #include "Pump.h"
 #include "Boiler.h"
 #include "TempSensor.h"
 #include "Display.h"
-#include "Timer.h"
+#include "Time/Timer.h"
 #include <TimeLib.h>
 #include <SD.h>
 #include "Config.h"
-#include <avr/wdt.h>
+#include "Enums/SystemFunction.h"
+#include "Enums/TimeComponent.h"
+#include "Enums/ValueAdjustment.h"
+#include "WebInterface.h"
 
 // This class contains all components of the heating system
 

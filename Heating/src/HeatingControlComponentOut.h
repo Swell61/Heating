@@ -3,11 +3,7 @@
 #ifndef HeatingControlComponentOut_h
 #define HeatingControlComponentOut_h
 
-#if defined(ARDUINO) && ARDUINO >= 100
-	#include "arduino.h"
-#else
-	#include "WProgram.h"
-#endif
+#include "Arduino.h"
 
 // This is an abstract class for heating components since many components such as the pump and boiler share functions
 

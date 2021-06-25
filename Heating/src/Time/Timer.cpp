@@ -23,7 +23,7 @@ bool Timer::setSystemTime(unsigned long time) { // Function for setting the RTC 
 	setTime(t); // Set the Time library to the current time (instead of waiting for library to sync to RTC)
 }
 
-bool Timer::setSystemHour(int newHour) {
+bool Timer::setSystemHour(unsigned short int newHour) {
 	if (newHour >= 23) { // If trying to go past 23 hours...
 		newHour = 0; // Loop back to 0
 	}
@@ -35,7 +35,7 @@ bool Timer::setSystemHour(int newHour) {
 	return true;
 }
 
-bool Timer::setSystemMinute(int newMinute) {
+bool Timer::setSystemMinute(unsigned short int newMinute) {
 	if (newMinute >= 59) { // If trying to go past 59 minutes...
 		newMinute = 0; // Loop back to 0
 	}
@@ -55,121 +55,24 @@ int Timer::getMinute() {
 	return minute(); // Return the current system minutes
 }
 
-bool Timer::getHeatingTimerStatus() { // Function for getting the status of the heating
-	// If the heating should be on based on the timer, return true. Otherwise return false
-	int time = getTimeInMinutes();
-	if ((time > heatingOnMorning) && (time < heatingOffMorning)) { // If within morning on period...
-		return true;
-	}
-	
-	else if ((time > heatingOnAfternoon) && (time < heatingOffAfternoon)) { // If within afternoon on period...
-		return true;
-	}
-	else { // If not in either...
-		return false;
-	}
+const ComponentTimer& Timer::getHeatingTimer() const {
+	return heating;
 }
 
-bool Timer::getWaterTimerStatus() { // Function for getting the status of the hot water
-// If the hot water should be on based on the timer, return true. Otherwise return false
-	int time = getTimeInMinutes() + 1;
-	if ((time > waterOnMorning) && (time < waterOffMorning)) { // If within morning on period...
-		return true;
-	}
-	
-	else if (((time) > waterOnAfternoon) && (time < waterOffAfternoon)) { // If within afternoon on period...
-		return true;
+const ComponentTimer& Timer::getWaterTimer() const {
+	return water;
+}
 
-	}
-	else { // If not in either...
-		return false;
-	}
+bool Timer::getHeatingTimerStatus() {
+	return heating.timerStatus(getTimeInMinutes());
+}
+
+bool Timer::getWaterTimerStatus() {
+	return water.timerStatus(getTimeInMinutes());
 }
 
 unsigned long Timer::getNTPTime(UIPUDP &udp) {
 	return ntpUnixTime(udp);
-}
-
-int Timer::getHeatingOnMorning() {
-	return heatingOnMorning;
-}
-int Timer::getHeatingOffMorning() {
-	return heatingOffMorning;
-}
-int Timer::getHeatingOnAfternoon() {
-	return heatingOnAfternoon;
-}
-int Timer::getHeatingOffAfternoon() {
-	return heatingOffAfternoon;
-}
-int Timer::getWaterOnMorning() {
-	return waterOnMorning;
-}
-int Timer::getWaterOffMorning() {
-	return waterOffMorning;
-}
-int Timer::getWaterOnAfternoon() {
-	return waterOnAfternoon;
-}
-int Timer::getWaterOffAfternoon() {
-	return waterOffAfternoon;
-}
-
-bool Timer::setHeatingOnMorning(int time) {
-	if (time < heatingOffMorning && time > 0) {
-		heatingOnMorning = time;
-		return true;
-	}
-	return false;
-}
-bool Timer::setHeatingOffMorning(int time) {
-	if (time < 720 && time > heatingOnMorning) {
-		heatingOffMorning = time;
-		return true;
-	}
-	return false;
-}
-bool Timer::setHeatingOnAfternoon(int time) {
-	if (time < heatingOffAfternoon && time > 720) {
-		heatingOnAfternoon = time;
-		return true;
-	}
-	return false;
-}
-bool Timer::setHeatingOffAfternoon(int time) {
-	if (time < 1440 && time > heatingOnAfternoon) {
-		heatingOffAfternoon = time;
-		return true;
-	}
-	return false;
-}
-bool Timer::setWaterOnMorning(int time) {
-	if (time < waterOffMorning && time > 0) {
-		waterOnMorning = time;
-		return true;
-	}
-	return false;
-}
-bool Timer::setWaterOffMorning(int time) {
-	if (time < 720 && time > waterOnMorning) {
-		waterOffMorning = time;
-		return true;
-	}
-	return false;
-}
-bool Timer::setWaterOnAfternoon(int time) {
-	if (time < waterOffAfternoon && time > 720) {
-		waterOnAfternoon = time;
-		return true;
-	}
-	return false;
-}
-bool Timer::setWaterOffAfternoon(int time) {
-	if (time < 1440 && time > waterOnAfternoon) {
-		waterOffAfternoon = time;
-		return true;
-	}
-	return false;
 }
 
 void Timer::setHeatingTimerState(bool state) {
@@ -179,7 +82,48 @@ void Timer::setWaterTimerState(bool state) {
 	waterTimerState = state;
 }
 
-unsigned long inline Timer::ntpUnixTime(UIPUDP &udp)
+bool Timer::adjustTime(TimeComponent timeComponent, ValueAdjustment adjustment) {
+	switch (timeComponent) {
+		case TimeComponent::HOURS_TENS: {
+			return this->adjustTime(&setSystemHour, getHour(), adjustment, 10);
+		}
+		case TimeComponent::HOURS_ONES: {
+			return adjustTime(&setSystemHour, getHour(), adjustment, 1);
+		}
+		case TimeComponent::MINUTES_TENS: {
+			return adjustTime(&setSystemMinute, getMinute(), adjustment, 10);
+		}
+		case TimeComponent::MINUTES_ONES: {
+			return adjustTime(&setSystemMinute, getMinute(), adjustment, 1);
+		}
+	}
+	return false;
+}
+
+bool Timer::adjustTime(bool (Timer::*updateFunction)(unsigned short int), int currentValue, ValueAdjustment adjustmentDirection, int adjustmentValue) {
+	switch (adjustmentDirection) {
+		case ValueAdjustment::UP: {
+			return (this->*updateFunction)(currentValue + adjustmentValue);
+		}
+		case ValueAdjustment::DOWN: {
+			return (this->*updateFunction)(currentValue - adjustmentValue);
+		}
+	}
+	return false;
+}
+
+bool Timer::adjustTimer(SystemComponent component, TimerPeriod period, State state,  ValueAdjustment adjustment) {
+	switch (component) {
+		case SystemComponent::HEATING: {
+			return heating.adjustTimer(period, state, adjustment);
+		}
+		case SystemComponent::WATER: {
+			return water.adjustTimer(period, state, adjustment);
+		}
+	}
+}
+
+unsigned long Timer::ntpUnixTime(UIPUDP &udp)
 {
 	static int udpInited = udp.begin(123); // open socket on arbitrary port
 

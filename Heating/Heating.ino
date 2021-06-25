@@ -6,11 +6,7 @@
 
 // the setup function runs once when you press reset or power the board
 
-
-
-#include <Base64.h>
-#include <SPI.h>
-#include "HeatingSystem.h"
+#include "src/HeatingSystem.h"
 HeatingSystem* ashanti;
 void setup() {
 	Serial.begin(115200);

@@ -3,18 +3,15 @@
 #ifndef _WEBINTERFACE_h
 #define _WEBINTERFACE_h
 
-#if defined(ARDUINO) && ARDUINO >= 100
-	#include "arduino.h"
-#else
-	#include "WProgram.h"
-#endif
+#include "Arduino.h"
+
 #include <WebSocketServer.h>
 #include <SPI.h>
 #include "UIPEthernet.h"
 #include <SD.h>
 #include "Config.h"
 #include <avr/wdt.h>
-
+#include "Time/Timer.h"
 
 // Class for web and remote interface interraction
 
@@ -42,7 +39,7 @@ public:
 	WebInterface(bool webFilesAvailabe); // Constructor which takes parameter for whether web server files are available or not
 
 	void processRemoteOutput(int time, byte heatingMode, byte waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost, float internalTemp); // Function for sending main display status to clients
-	void processRemoteOutput(bool heatingTimerStatus, bool waterTimerStatus, int heatingOnMorning, int heatingOffMorning, int heatingOnAfternoon, int heatingOffAfternoon, int waterOnMorning, int waterOffMorning, int waterOnAfternoon, int waterOffAfternoon); // Function for sending timer status to clients
+	void processRemoteOutput(bool heatingTimerStatus, bool waterTimerStatus, const Timer&); // Function for sending timer status to clients
 
 	int processRemoteInput(); // Function for processing client messages
 	int processRemoteInput(const char* buffer, Config config);
