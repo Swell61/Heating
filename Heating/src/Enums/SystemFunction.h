@@ -14,7 +14,8 @@ enum class SystemFunction : unsigned char {
     WATER_MODE = 26,
     TIME_DISPLAY = 27,
     TIME_ADJUST = 28,
-    NONE
+    NEW_CLIENT,
+    NONE,
 };
 
 #endif

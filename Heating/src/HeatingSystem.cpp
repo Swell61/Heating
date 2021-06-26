@@ -165,15 +165,8 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 		touchOption = remoteOption;
 	}
 	wdt_reset(); // Reset the timer
-	if (remoteOption >= 1 && remoteOption <= 6) {
-	}
-	else if (remoteOption >= 7 && remoteOption <= 22) {
-	}
-	else if (remoteOption >= 23 && remoteOption <= 27) {
-	}
-	else if (remoteOption >= 28 && remoteOption <= 35) {
-	}
-	SystemFunction option = SystemFunction::NONE;
+
+	SystemFunction option = convertCommand(remoteOption);
 	pinMode(5, OUTPUT);
 	digitalWrite(5, LOW);
 	switch (option) {
@@ -281,7 +274,16 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 	wdt_reset(); // Reset timer
 };
 
-
+SystemFunction HeatingSystem::convertCommand(unsigned short int command) {
+	if (command <= 8 || (command >= 25 && command <= 28)) {
+		return static_cast<SystemFunction>(command);
+	}
+	else if (command >= 8 && command <= 24) {
+		// do nothing at the moment
+	}
+	return SystemFunction::NONE;
+	
+}
 
 void HeatingSystem::checkBoosts() { // Boosts have priority over everything
 	if (heatingBoostActive && ((millis() - startTimeHeatingBoost) >= (boostLengthHeating * 60000))) { // If heating boost is active and boost timer is over, turn off the boost

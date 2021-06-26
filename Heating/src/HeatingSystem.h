@@ -79,7 +79,7 @@ private:
 	bool saveTimer(const char* timerCase, int time); // Function for saving timer configuration
 
 	void setupWatchdog(); // Function for initiating the watchdog
-
+	SystemFunction convertCommand(unsigned short int command);
 	int resetCounter = 0;
 	char buffer[3];
 	
