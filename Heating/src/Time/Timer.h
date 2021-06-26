@@ -4,8 +4,7 @@
 #define _TIMER_h
 
 #include "Arduino.h"
-#include <UIPEthernet.h>
-#include <DS3232RTC.h> 
+#include "Clock.h"
 #include "../Enums/SystemFunction.h"
 #include "../Enums/TimeComponent.h"
 #include "../Enums/ValueAdjustment.h"
@@ -27,9 +26,7 @@ private:
 	ComponentTimer heating;
 	ComponentTimer water;
 
-	bool adjustTime(bool (Timer::*updateFunction)(unsigned short int), int currentValue, ValueAdjustment adjustmentDirection, int adjustmentValue);
-	int dstOffset(unsigned long time); // Function for calculating the correct daylight savings offset for the time. Takes the current time as a parameter
-	unsigned long inline ntpUnixTime(UIPUDP &udp); // Function for getting the time from and NTP server
+	Clock clock;
 
 public:
 	Timer();
@@ -39,18 +36,12 @@ public:
 
 	const ComponentTimer& getHeatingTimer() const;
 	const ComponentTimer& getWaterTimer() const;
-	bool getHeatingTimerStatus(); // Should be const but Time library is not const correct
-	bool getWaterTimerStatus(); // Should be const but Time library is not const correct
-
-	bool setSystemTime(unsigned long time);
-	bool setSystemHour(unsigned short int);
-	bool setSystemMinute(unsigned short int newMinute);
-	int getHour(); 
-	int getMinute();
-	int getTimeInMinutes(); // Function to get current time
-	bool adjustTime(TimeComponent timeComponent, ValueAdjustment adjustment);
+	bool getHeatingTimerStatus(); // Should be in ComponentTimer but Time library is not const correct
+	bool getWaterTimerStatus(); // Should be in Component but Time library is not const correct
 	bool adjustTimer(SystemComponent component, TimerPeriod period, State state,  ValueAdjustment adjustment);
-	unsigned long getNTPTime(UIPUDP &udp); // Function for getting current time using NTP server
+
+	Clock& getClock();
+	unsigned short int getTimeInMinutes(); // Should be in clock but Time library is not const correct
 };
 
 #endif

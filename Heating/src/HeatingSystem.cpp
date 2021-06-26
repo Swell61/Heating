@@ -22,9 +22,8 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin, int 
 	while (NTPTryCount < 5) { // Tries 5 times to get the time
 		Serial.println("NTP");
 		//display->loadingScreen(SDAvailable, NTPTryCount + 1); // Shows the loading screen
-		time = timer.getNTPTime(udp); // Tries to get the time
-		if (time != 0) { // If the time is not zero (very unlikely it will be zero and if it is, it will run another check if it has 1+ remaining)
-			timer.setSystemTime(time);
+		bool success = timer.getClock().synchroniseWithNtp(udp);
+		if (success) { // If the time is not zero (very unlikely it will be zero and if it is, it will run another check if it has 1+ remaining)
 			NTPTryCount = 5; // Exceeds the max tries so the loop will break
 		}
 		else { // If failed to get time...
@@ -106,7 +105,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 
 			Serial.print("Update: ");
 			Serial.println(requestedTemp);
-			remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive, currentInternalTemp);
+			remote.processRemoteOutput(timer.getClock().getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive, currentInternalTemp);
 			remote.processRemoteOutput(heatingMode == 1, waterMode == 1, timer);
 			Serial.println("Done update");
 			pinMode(12, OUTPUT);
@@ -120,7 +119,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 			pinMode(12, OUTPUT);
 			digitalWrite(12, LOW);
 			remote.processRemoteOutput(heatingMode == 1, waterMode == 1, timer);
-			remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive, currentInternalTemp);
+			remote.processRemoteOutput(timer.getClock().getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive, currentInternalTemp);
 			pinMode(12, OUTPUT);
 			digitalWrite(12, HIGH);
 		}
@@ -157,7 +156,7 @@ void HeatingSystem::monitorSystem() { // This function runs through the process 
 		digitalWrite(12, LOW);
 			Serial.print("New client: ");
 			Serial.println(requestedTemp);
-		remote.processRemoteOutput(timer.getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive, currentInternalTemp);
+		remote.processRemoteOutput(timer.getClock().getTimeInMinutes(), heatingMode, waterMode, tempSensor.getTemp(), getHeatingStatus(), getWaterStatus(), requestedTemp, heatingBoostActive, waterBoostActive, currentInternalTemp);
 		remote.processRemoteOutput(heatingMode == 1, waterMode == 1, timer);
 		pinMode(12, OUTPUT);
 		digitalWrite(12, HIGH);
