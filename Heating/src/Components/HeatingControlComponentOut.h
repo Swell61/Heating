@@ -10,14 +10,14 @@
 class HeatingControlComponentOut {
 private:
 	unsigned char pinNum;
-	bool state;
+	State state;
 	void changeRelayState();
 protected:
 	HeatingControlComponentOut(unsigned char pinNum);
 public:
 	void enable();
 	void disable();
-	bool getState();
+	State getState();
 	
 };
 

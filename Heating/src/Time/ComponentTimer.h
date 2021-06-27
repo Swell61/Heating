@@ -7,6 +7,7 @@
 #include "../Enums/TimerPeriod.h"
 #include "../Enums/ValueAdjustment.h"
 
+#define MINUTES_IN_A_DAY 1440
 // All values in minutes from midnight
 #define DEFAULT_MORNING_ON 420
 #define DEFAULT_MORNING_OFF 640
@@ -28,8 +29,8 @@ class ComponentTimer {
 
         bool adjustTimer(TimerPeriod period, State state, ValueAdjustment adjustment);
 
-        const OnOffTimer& getMorningTimer() const;
-        const OnOffTimer& getAfternoonTimer() const;
+        OnOffTimer& getMorningTimer();
+        OnOffTimer& getAfternoonTimer();
         bool timerStatus(unsigned short int time) const;
 };
 

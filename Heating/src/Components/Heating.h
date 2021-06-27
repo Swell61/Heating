@@ -6,7 +6,8 @@
 
 class Heating : public Component {
     private:
-        float requestedTemperature; 
+        const float INCREMENT;
+        float requestedTemperature;
 
     public:
         Heating(Mode initialState);
@@ -14,8 +15,9 @@ class Heating : public Component {
 
         float getRequestedTemp() const;
         void setRequestedTemp(float requestedTemp);
+        void adjustRequestedTemp(ValueAdjustment);
 
-        bool required(Clock& clock, float currentTemp) const override; 
+        bool required(Clock& clock, float currentTemp) const; 
 };
 
 #endif

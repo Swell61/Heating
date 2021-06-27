@@ -6,14 +6,8 @@
 
 // the setup function runs once when you press reset or power the board
 
-#include "src/HeatingSystem.h"
-HeatingSystem* ashanti;
 void setup() {
-	Serial.begin(115200);
-	ashanti = new HeatingSystem(3, 2, A4, A4); // Pump pin, boiler pin, thermometer pin
-	Serial.println("Done");
 }
 void loop() {
-	ashanti->monitorSystem();
 };
 

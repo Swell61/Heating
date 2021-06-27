@@ -1,6 +1,6 @@
 #include "Component.h"
 
-Component::Component(Mode initialMode) : mode(initialMode) { }
+Component::Component(Mode initialMode) : mode(initialMode), boost(Boost(30)) { }
 
 Component::Component() : Component(Mode::OFF) {}
 

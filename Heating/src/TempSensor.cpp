@@ -3,33 +3,21 @@
 // 
 
 #include "TempSensor.h"
-OneWire TempSensor::oneWire = NULL;
-DallasTemperature TempSensor::sensor;
-TempSensor::TempSensor() { // Constructor that sets up the temperature sensor
-	initialiseTempSensor();
-};
-TempSensor::TempSensor(uint8_t newAddress[8]) {
-	for (byte i = 0; i <= 7; i++) {
-		address[i] = newAddress[i];
-	}
-	initialiseTempSensor();
-}
-void TempSensor::begin(int pinNum) {
-	oneWire = OneWire(pinNum);
+TempSensor::TempSensor(unsigned char pinNum, const unsigned char addrB1, const unsigned char addrB2, const unsigned char addrB3, const unsigned char addrB4,
+	 const unsigned char addrB5, const unsigned char addrB6, const unsigned char addrB7, const unsigned char addrB8) : oneWire(OneWire(pinNum)), 
+	 ADDRESS{addrB1, addrB2, addrB3, addrB4, addrB5, addrB6, addrB7, addrB8} { // Constructor that sets up the temperature sensor
 	sensor = DallasTemperature(&oneWire);
 	sensor.begin();
 	sensor.setWaitForConversion(false);
-
-}
-void TempSensor::initialiseTempSensor() {
-	sensor.setResolution(address, 10);
-	sensor.requestTemperaturesByAddress(address);
+	sensor.setResolution(ADDRESS, 10);
+	sensor.requestTemperaturesByAddress(ADDRESS);
 	lastRequest = millis();
-}
+};
+
 float TempSensor::getTemp(){ // Returns the current temperature from the sensor
 	if ((millis() - lastRequest) >= 190) { // If the last request has been fulfilled
-		lastTemp = sensor.getTempC(address); // New temperature will be ready
-		sensor.requestTemperaturesByAddress(address); // Request again
+		lastTemp = sensor.getTempC(ADDRESS); // New temperature will be ready
+		sensor.requestTemperaturesByAddress(ADDRESS); // Request again
 		lastRequest = millis();
 	}
 	// If new temp is not yet ready, return the previous temp

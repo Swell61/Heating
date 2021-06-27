@@ -6,6 +6,6 @@ enum class SystemMode {
     WATER,
     OFF
 
-}
+};
 
 #endif

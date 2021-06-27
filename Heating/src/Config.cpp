@@ -4,18 +4,25 @@
 
 #include "Config.h"
 
-Config::Config(const char* fn) : fileName(fn) {
+Config::Config(const char* FILE_NAME, const unsigned char sdChipSelectPin) : Config(FILE_NAME, sdChipSelectPin, '=') { }
+
+Config::Config(const char* FILE_NAME, const unsigned char sdChipSelectPin, const char SEPARATOR) : FILE_NAME(FILE_NAME), SD_CHIP_SELECT_PIN(sdChipSelectPin), SEPARATOR(SEPARATOR) {
+	SD.begin(sdChipSelectPin);
 }
 
-Config::Config(const char* fn, char separator) : fileName(fn), separator(separator) {
+bool Config::available() const {
+	return SD.begin(SD_CHIP_SELECT_PIN) && SD.exists(FILE_NAME);
 }
 
 bool Config::writeProperty(const char* property, const char* value) {
-	byte valueLength = strlen(value);
+	if (!available()) {
+		return false;
+	}
 
+	byte valueLength = strlen(value);
 	if ((strlen(property) > MAX_PROPERTY_LENGTH) || (valueLength > MAX_VALUE_LENGTH))
 		return 0; // Failed to write value
-	File file = SD.open(fileName, O_READ | O_WRITE | O_CREAT);
+	File file = SD.open(FILE_NAME, O_READ | O_WRITE | O_CREAT);
 
 	file.seek(0); // Go to start of file (FILE_WRITE defaults to end of file)
 	char currentChar;
@@ -23,9 +30,9 @@ bool Config::writeProperty(const char* property, const char* value) {
 	currentProperty[0] = '\0';
 	currentValue[0] = '\0'; // Reset the current value, ready for new search
 	while ((currentChar = file.read()) > -1) {
-		if (currentChar == separator) { // If at end of current property, check against requested property
+		if (currentChar == SEPARATOR) { // If at end of current property, check against requested property
 			if (strncmp(currentProperty, property, strlen(currentProperty)) == 0) { // Compare current property and the requested property
-				// Pointer will currently be after the separator
+				// Pointer will currently be after the SEPARATOR
 				writeValue(file, value);
 				file.close();
 				return 1; // Value has been written
@@ -43,16 +50,16 @@ bool Config::writeProperty(const char* property, const char* value) {
 	}
 	// If program gets to here, property does not currently exist and pointer is at bottom of file
 	file.close();
-	file = SD.open(fileName, FILE_WRITE);
+	file = SD.open(FILE_NAME, FILE_WRITE);
 	file.print(property); // Write the property
-	file.print(separator); // Write the separator
+	file.print(SEPARATOR); // Write the SEPARATOR
 	writeValue(file, value); // Write the value
 	file.close();
 	return 1; // Property write succeeded
 
 	// Search for the current property in the file
-	// If it exists, find the index of the separator (cursor should automatically be set to the position after. Remove all the value characters and print the new ones
-	// If not, go the the end of the file and print the new name, separator and value
+	// If it exists, find the index of the SEPARATOR (cursor should automatically be set to the position after. Remove all the value characters and print the new ones
+	// If not, go the the end of the file and print the new name, SEPARATOR and value
 }
 void Config::writeValue(File &file, const char* value) {
 	file.print(value);
@@ -61,12 +68,12 @@ void Config::writeValue(File &file, const char* value) {
 	}
 	file.print("\n"); // Add newline to end of line
 }
-char* Config::readProperty(const char* property) {
+const char* Config::readProperty(const char* property) {
 	currentValue[0] = '\0'; // Reset the current value, ready for new search
-	if (!SD.exists(fileName)) {
+	if (!SD.exists(FILE_NAME)) {
 		return currentValue;
 	}
-	File file = SD.open(fileName);
+	File file = SD.open(FILE_NAME);
 	char currentChar;
 	char currentProperty[MAX_PROPERTY_LENGTH + 1];
 	currentProperty[0] = '\0';
@@ -76,7 +83,7 @@ char* Config::readProperty(const char* property) {
 	}
 	
 	while ((currentChar = file.read()) > -1) {
-		if (currentChar == separator) { // If at end of current property, check against requested property
+		if (currentChar == SEPARATOR) { // If at end of current property, check against requested property
 			if (strncmp(currentProperty, property, strlen(currentProperty)) == 0) { // Compare current property and the requested property
 				while ((currentChar = file.read()) != '\n') {
 					byte len = strlen(currentValue);
@@ -113,5 +120,5 @@ char* Config::readProperty(const char* property) {
 }
 
 File Config::openFile() {
-	return SD.open(fileName);
+	return SD.open(FILE_NAME);
 }

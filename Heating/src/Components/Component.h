@@ -21,6 +21,7 @@ class Component {
         Boost& getBoost();
         ComponentTimer& getTimer();
         Mode getMode(Clock& clock) const;
+        void toggleMode();
 };
 
 #endif

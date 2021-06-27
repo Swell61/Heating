@@ -14,6 +14,7 @@ class Boost {
         Boost(unsigned short int boostLength);
         void turnOn(Clock& clock);
         void turnOff();
+        void toggle();
         State checkState(Clock& clock) const; // Should be const but Time library is not const correct
 };
 
