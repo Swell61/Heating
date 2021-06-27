@@ -6,8 +6,6 @@
 
 #include "Arduino.h"
 
-#include "Pump.h"
-#include "Boiler.h"
 #include "TempSensor.h"
 #include "Display.h"
 #include "Time/Timer.h"
@@ -29,8 +27,6 @@ private:
 	const byte timerTimeInc = 5; // Length of time in minutes for the adjustment value for timer
 	const int maxDrift = 1; // Set the maximum number of degrees the temperature can drift before heating is turned on
 	const float tempChange = 0.5;
-	bool updateDisplay = false; // Whether the system needs to update the display or not
-	byte screen = 0; // 0 = Regular screen. 1 = Timer screen. 2 = Time change screen
 	byte heatingMode = 2; // 0 = off, 1 = timer, 2 = on. Defaults to on at 15 degrees
 	byte waterMode = 0; // 0 = off, 1 = timer, 2 = on
 	byte lastSystemMode = 3; // 0 = Heating and Water ON, 1 = Heating ON and Water OFF, 2 = Heating OFF and Water ON, 3 = Heating and Water OFF
@@ -38,7 +34,7 @@ private:
 	unsigned long lastHourlyUpdate = 0; // Variable to store when the last hourly update was done
 
 	float requestedTemp = 11.5; // Variable to store requested temperature. Default is 11.5 degrees
-
+	bool udpateDisplay = false;
 	bool heatingStatus = false; // Variable to store the required status of the heating
 	bool waterStatus = false; // Variable to store the required status of the hot water
 	bool heatingMaster = true; // Variable to store the heating master value. Defaults to on. This is to disable automated temperature checks when the heating is in the off mode
@@ -56,21 +52,9 @@ private:
 	const float minTempDifference = 0.5; // Variable to store the minimum temperature difference neded to warrat any heating system change
 
 	bool SDAvailable = false; // Variable to store whether the SD card containing some required files is available
-
-	EthernetUDP udp; // UDP client to request time form NTP server
-	Pump pump; // Pump component
-	Boiler boiler; // Boiler component
 	TempSensor tempSensor; // Temperature sensor component
 	TempSensor internalTempSensor; // Temperature sensor inside the thermostat
-	//Display* display; // Display component
-	Timer timer; // Timer component
-	WebInterface remote; // Web interface component
-	Config config; // Configuration
-	void setHeatingOff(); // Function for setting the state of heating components to off
-	void setWaterOff(); // Function for setting state of hot water components to off
-	void setHeatingOn(); // Function for setting the state of heating components to on
-	void setWaterOn(); // Function for setting state of hot water components to on
-	void setWaterWithoutHeating(); // Function for setting the state of the hot water when the heating is not on
+	 // Function for setting the state of the hot water when the heating is not on
 	void checkBoosts(); // Function for checking whether heating and hot water need to be on or off depending on active boosts
 	byte temperatureCheck(); // Function for checking the temperature against requested temperature
 	bool needToChangeTemp(); // Function for checking whether temperature has moved enough to warrant changing the state of the heating

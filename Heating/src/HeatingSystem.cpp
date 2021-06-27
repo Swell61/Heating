@@ -11,25 +11,13 @@ HeatingSystem::HeatingSystem(int pumpPin, int boilerPin, int tempSensorPin, int 
 	internalTempSensor = TempSensor(internalTempSensorAddress);
 	currentTemp = tempSensor.getTemp(); // Gets the current temperature to display
 	currentInternalTemp = internalTempSensor.getTemp();
-	setHeatingOff(); // Disables the heating
-	setWaterOff(); // Disables the ho twater
 	Serial.println((SDAvailable = SD.begin(5)) ? "SD UP" : "SD DOWN"); // Checks whether the SD card is available or not
 	if (SDAvailable) {
 		loadTimer();
 	}
 	int NTPTryCount = 0; // Variable to store the number of tries to get the time from the NTP server
 	unsigned long time = 0; // Variable to store the time from the NTP server
-	while (NTPTryCount < 5) { // Tries 5 times to get the time
-		Serial.println("NTP");
-		//display->loadingScreen(SDAvailable, NTPTryCount + 1); // Shows the loading screen
-		bool success = timer.getClock().synchroniseWithNtp(udp);
-		if (success) { // If the time is not zero (very unlikely it will be zero and if it is, it will run another check if it has 1+ remaining)
-			NTPTryCount = 5; // Exceeds the max tries so the loop will break
-		}
-		else { // If failed to get time...
-			NTPTryCount++; // ...increase the try count and loop round again if 1+ tries left
-		}
-	}
+
 	setupWatchdog();
 
 	//resetCounter = atoi(config.readProperty("reset"));
@@ -285,78 +273,7 @@ SystemFunction HeatingSystem::convertCommand(unsigned short int command) {
 	
 }
 
-void HeatingSystem::checkBoosts() { // Boosts have priority over everything
-	if (heatingBoostActive && ((millis() - startTimeHeatingBoost) >= (boostLengthHeating * 60000))) { // If heating boost is active and boost timer is over, turn off the boost
-		boostHeating(false);
-	}
-	else if (waterBoostActive && ((millis() - startTimeWaterBoost) >= (boostLengthWater * 60000))) { // Same as heating but for hot water. If heating boost is on, hot water doesn't need adjusting because it will be on anyway
-		boostWater(false);
-	}
-};
 
-void HeatingSystem::changeRelayStates() { // Function checks current system status and decides whether the heating and hot water need to be on or not
-
-										  // Heating settings
-	if (temperatureCheck() == 1 && (heatingBoostActive || heatingMode == 2 || (heatingMode == 1 && timer.getHeatingTimerStatus()))) { // if ((Heating is ON OR (Heating Timer is ON and ACTIVE)) AND temperature is too low)
-
-		enableHeating();
-	}
-	else if (heatingMode == 0 || (temperatureCheck() == 0 && (heatingBoostActive || heatingMode == 2 || (heatingMode == 1 && timer.getHeatingTimerStatus()))) || (heatingMode == 1 && !timer.getHeatingTimerStatus())) {
-
-		disableHeating();
-	}
-
-	// Water settings
-	if (waterBoostActive) { // If water boost is active...
-		enableWater(); // ...turn the water on
-	}
-	else if (waterMode == 2 || (waterMode == 1 && timer.getWaterTimerStatus())) { // if (Heating is ON OR (Water Timer is ON and ACTIVE))
-		enableWater();
-	}
-	else {
-		disableWater();
-	}
-
-	// lastSystemMode will stop the system trying to enter a state it is already in
-	if ((lastSystemMode != 0) && heatingStatus && waterStatus) { // If the heating and hot water should be on
-		// Turn them on
-		setHeatingOn();
-		setWaterOn();
-		lastSystemMode = 0;
-		updateDisplay = true; // Update the display
-	}
-	else if ((lastSystemMode != 1) && heatingStatus && !waterStatus) { // If the heating should be on but not the hot water
-
-		setHeatingOn(); // Turn the heating on
-		lastSystemMode = 1;
-		updateDisplay = true; // Update the display
-	}
-	else if ((lastSystemMode != 2) && !heatingStatus && waterStatus) { // If the hot water should be on but bot the heating
-
-		setWaterWithoutHeating(); // Turn the hot water components on and disable the unneeded heating components
-		lastSystemMode = 2;
-		updateDisplay = true; // Update the display
-	}
-	else if ((lastSystemMode != 3) && !heatingStatus && !waterStatus) { // If heating and hot water should be off
-
-		setHeatingOff(); // Turn the heating off
-		setWaterOff(); // Turn the hot water off
-		lastSystemMode = 3;
-		updateDisplay = true; // Update the display
-	}
-
-}
-
-
-byte HeatingSystem::temperatureCheck() { // Function for checking the temperature
-	if (tempSensor.getTemp() <= (requestedTemp - maxDrift)) { // If the temperature of the zone has gone below the required temperature...
-		return 1;
-	}
-	else if (tempSensor.getTemp() >= requestedTemp) { // If the temperature of the zone has reached the requried temperature...
-		return 0;
-	}
-	return 2;
-}
 
 bool HeatingSystem::needToChangeTemp() {
 	if (abs(lastChangedTemp - tempSensor.getTemp()) >= minTempDifference) { // If the difference between the current temperature and the last temperature is greater than min diff
@@ -366,72 +283,3 @@ bool HeatingSystem::needToChangeTemp() {
 	return false; // Heating system won't need to be changed
 }
 
-void HeatingSystem::setHeatingOn() { // Function for turning on the heating
-	boiler.enable(); // Turn the boiler on
-	pump.enable(); // Turn the pump on
-};
-void HeatingSystem::setHeatingOff() { // Function for turning off the heating
-	boiler.disable(); // Turn the boiler off
-	pump.disable(); // TUrn the pump off
-};
-
-void HeatingSystem::setWaterOn() { // Function for turning the hot water on
-	boiler.enable(); // Turn the boiler on
-}
-void HeatingSystem::setWaterOff() { // Function for turning the hot water off
-	boiler.disable(); // Turn the boiler off
-};
-void HeatingSystem::setWaterWithoutHeating() { // Function for turning hot water on without the unneeded heating components
-	boiler.enable();
-	pump.disable();
-}
-void HeatingSystem::enableHeating() {
-	heatingStatus = true;
-}
-void HeatingSystem::disableHeating() {
-	heatingStatus = false;
-}
-void HeatingSystem::enableWater() {
-	waterStatus = true;
-}
-void HeatingSystem::disableWater() {
-	waterStatus = false;
-}
-
-
-void HeatingSystem::boostHeating(bool state) { // Function for the heating boost
-	if (state == true) { // If boost is being turned on...
-		enableHeating(); // ...turn the heating on
-		heatingBoostActive = true;
-		startTimeHeatingBoost = millis();
-	}
-	else if (state == false) { // Else if the boost is being turned off...
-		disableHeating();
-		heatingBoostActive = false;
-		updateDisplay = true;
-	}
-};
-
-void HeatingSystem::boostWater(bool state) { // Function sets the state of the system when the hot water boost is changed
-	if (state == true) { // If boost has been turned on...
-		enableWater(); // turn hot water on
-		waterBoostActive = true; // Set waterBoostActive to on
-		startTimeWaterBoost = millis(); // Store the time at which the boost was turned on for the timer
-	}
-	else if (state == false) { // If the boos thas been turned off...
-		disableWater(); // Disable the water
-		waterBoostActive = false; // Set waterBoostActive to off
-		updateDisplay = true; // Update the display
-	}
-};
-
-bool HeatingSystem::getHeatingStatus() { // Get the status of the heating
-	return (pump.getStatus() && boiler.getStatus()); // If pump and boiler are on, heating is on
-};
-bool HeatingSystem::getWaterStatus() { // Function for getting the status of the hot waterg
-	return boiler.getStatus(); // In our system, if the heating is on then the hot water is also on
-};
-
-void HeatingSystem::setTemp(int temp) { // Function for setting the requested temperature
-	requestedTemp = temp; // Set requested temperature to the value passed
-}

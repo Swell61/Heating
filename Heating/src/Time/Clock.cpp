@@ -146,3 +146,22 @@ bool Clock::adjustTime(bool (Clock::*updateFunction)(unsigned char), int current
 	}
 	return false;
 }
+
+unsigned short int Clock::timeDifferenceFromNowInMinutes(unsigned short int startMinutes) {
+	return absoluteTimeDifferenceInMinutes(startMinutes, getTimeInMinutes());
+}
+
+unsigned short int Clock::absoluteTimeDifferenceInMinutes(unsigned short int startMinutes, unsigned short int endMinutes) {
+	unsigned short int result = endMinutes - startMinutes;
+	if (result > MINUTES_IN_A_DAY) {
+		/* If start minutes is before tick over to 0 (before midnight) and end minutes is after tick over to 0 (after midnight)
+		 * result will underflow. Adding MINUTES_IN_A_DAY will overflow result to the difference between startMinutes and 
+		 * endMinutes.
+		 * E.g. with unsigned short ints: startMinutes = 1400 minutes, endMinutes = 80 minutes
+		 * 								  endMinutes - startMinutes = 64,216
+		 * 								  64,216 + MINUTES_IN_A_DAY = 120
+		*/
+		result += MINUTES_IN_A_DAY;
+	}
+	return result;
+}

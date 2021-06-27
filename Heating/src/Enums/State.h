@@ -3,7 +3,7 @@
 
 enum class State : unsigned char {
     ON,
-    OFF
+    OFF,
 };
 
 #endif

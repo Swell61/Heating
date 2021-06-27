@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include "OnOffTimer.h"
+#include "Clock.h"
 #include "../Enums/TimerPeriod.h"
 #include "../Enums/ValueAdjustment.h"
 
@@ -13,9 +14,9 @@
 #define DEFAULT_AFTERNOON_OFF 1320
 
 #define MIN_MORNING 0 // Midnight
-#define MAX_MORNING 720 // Midday
-#define MIN_AFTERNOON 720 // Midday
-#define MAX_AFTERNOON 1440 // Midnight
+#define MAX_MORNING MINUTES_IN_A_DAY/2 // Midday
+#define MIN_AFTERNOON MINUTES_IN_A_DAY/2 // Midday
+#define MAX_AFTERNOON MINUTES_IN_A_DAY // Midnight
 
 class ComponentTimer {
     private:

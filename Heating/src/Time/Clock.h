@@ -16,10 +16,15 @@ class Clock {
         unsigned short int dstOffset(unsigned long time);
         unsigned long inline ntpUnixTime(UIPUDP &udp);
     public:
+        const static unsigned short MINUTES_IN_A_DAY = 1440;
+
         Clock();
         bool adjustTime(TimeComponent timeComponent, ValueAdjustment adjustment);
         unsigned short int getTimeInMinutes();
         bool synchroniseWithNtp(UIPUDP& udp);
+
+        unsigned short int timeDifferenceFromNowInMinutes(unsigned short int startMinutes); // Should be const but Time library is not const correct
+        static unsigned short int absoluteTimeDifferenceInMinutes(unsigned short int startMinutes, unsigned short int endMinutes);
 };
 
 #endif
