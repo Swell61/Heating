@@ -35,7 +35,7 @@ bool Clock::setSystemTime(unsigned long time) { // Function for setting the RTC 
 
 bool Clock::synchroniseWithNtp(UIPUDP& udp) {
     unsigned long currentNtpTime = ntpUnixTime(udp);
-
+	Serial.println(currentNtpTime);
     if (currentNtpTime != 0) {
         return setSystemTime(currentNtpTime);
     }
@@ -52,16 +52,21 @@ unsigned long Clock::ntpUnixTime(UIPUDP &udp)
 											   // appropriately, the rest can be whatever.
 	const long ntpFirstFourBytes = 0xEC0600E3; // NTP request header
 
-	if (!udpInited)
+	if (!udpInited) {
+		Serial.println("UDP not inited");
 		return 0;
+	}
 	// Clear received data from possible stray received packets
 	udp.flush();
 
 	// Send an NTP request
 	if (!(udp.beginPacket(timeServer, 123) // 123 is the NTP port
 		&& udp.write((byte *)&ntpFirstFourBytes, 48) == 48
-		&& udp.endPacket()))
+		&& udp.endPacket())) {
+			Serial.println("Sending req fail");
 		return 0;				// sending request failed
+
+		}
 								// Wait for response; check every pollIntv ms up to maxPoll times
 	const int pollIntv = 150;		// poll every this many ms
 	const byte maxPoll = 15;		// poll up to this many times
@@ -71,8 +76,10 @@ unsigned long Clock::ntpUnixTime(UIPUDP &udp)
 			break;
 		delay(pollIntv);
 	}
-	if (pktLen != 48)
+	if (pktLen != 48) {
+		Serial.println("No correct packet received");
 		return 0;				// no correct packet received
+	}
 
 								// Read and discard the first useless bytes
 								// Set useless to 32 for speed; set to 40 for accuracy.

@@ -3,10 +3,9 @@
 
 
 enum class Mode : unsigned char {
-    ON,
-    OFF,
-    TIMER,
-    BOOST
+    OFF = 0,
+    TIMER = 1,
+    ON = 2
 };
 
 #endif

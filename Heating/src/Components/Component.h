@@ -20,7 +20,7 @@ class Component {
 
         Boost& getBoost();
         ComponentTimer& getTimer();
-        Mode getMode(Clock& clock) const;
+        Mode getMode() const;
         void toggleMode();
 };
 

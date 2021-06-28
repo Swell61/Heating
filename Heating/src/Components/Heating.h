@@ -7,15 +7,15 @@
 class Heating : public Component {
     private:
         const float INCREMENT;
-        float requestedTemperature;
+        float requestedTemperature = 11.5f;
 
     public:
-        Heating(Mode initialState);
-        Heating();
+        Heating(Mode initialState, float increment);
+        Heating(float increment);
 
         float getRequestedTemp() const;
         void setRequestedTemp(float requestedTemp);
-        void adjustRequestedTemp(ValueAdjustment);
+        void adjustRequestedTemp(ValueAdjustment adjustment);
 
         bool required(Clock& clock, float currentTemp) const; 
 };

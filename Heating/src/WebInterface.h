@@ -12,7 +12,9 @@
 #include "Config.h"
 #include <avr/wdt.h>
 #include "Time/Timer.h"
+#include "Enums/SystemFunction.h"
 
+class Controller;
 // Class for web and remote interface interraction
 
 class WebInterface {
@@ -25,25 +27,29 @@ typedef struct { // Structure for web socket stack
 } WebSocketStack_T;
 
 private:
-	EthernetServer server = EthernetServer(80); // Ethernet server
-	IPAddress ip = IPAddress(192, 168, 1, 201); // IP address of Arduino
-	byte mac[6] = { 0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02 }; // MAC address of network interface
+	EthernetServer server{80}; // Ethernet server
+	
 	WebSocketStack_T webSocketStack[MAX_CLIENT_NUM]; // Stack to store each connection
-	int webServerStack_ProcessMsgIn(); // Function for processing a message from a client
-	int webServerStack_ProcessMsgIn(const char* buffer, Config config); // Function for processing a message from a client
+	unsigned char webServerStack_ProcessMsgIn(); // Function for processing a message from a client
+	unsigned char webServerStack_ProcessMsgIn(const char* buffer, Config config); // Function for processing a message from a client
 
 	void webServerStack_ProcessMsgOut(const char *output); // Function for sending status to clients
 	void sendClientData(int client, const char *output); // Function to send data to a client
 	bool webFilesAvailable = false; // Variable to store whether web server files are available or not
 public:
 	WebInterface(bool webFilesAvailabe); // Constructor which takes parameter for whether web server files are available or not
+	WebInterface();
 
-	void processRemoteOutput(int time, byte heatingMode, byte waterMode, float temp, bool heatingStatus, bool waterStatus, float requestedTemp, bool heatingBoost, bool waterBoost, float internalTemp); // Function for sending main display status to clients
+	void processRemoteOutput(Controller& controller); // Function for sending main display status to clients
 	void processRemoteOutput(bool heatingTimerStatus, bool waterTimerStatus, const Timer&); // Function for sending timer status to clients
 
-	int processRemoteInput(); // Function for processing client messages
-	int processRemoteInput(const char* buffer, Config config);
+	unsigned char processRemoteInput(); // Function for processing client messages
+	unsigned char processRemoteInput(const char* buffer, Config config);
+
+	void begin();
 };
+
+#include "Controller.h"
 
 #endif
 

@@ -1,6 +1,6 @@
 #include "ComponentControl.h"
 
-ComponentControl::ComponentControl(unsigned char boilerPin, unsigned char pumpPin) : boiler(boilerPin), pump(pumpPin) { }
+ComponentControl::ComponentControl(unsigned char boilerPin, unsigned char pumpPin) : boiler(boilerPin), pump(pumpPin), heating(Heating(0.5)) { }
 
 bool ComponentControl::update(float currentTemp, Clock& clock) {
     if (heating.required(clock, currentTemp)) { // Enabling heating also enables hot water in our system
@@ -39,7 +39,7 @@ bool ComponentControl::setWaterWithoutHeating() {
 	boiler.enable();
 	pump.disable();
 
-    mode = SystemMode::OFF;
+    mode = SystemMode::WATER;
     return true;
 }
 

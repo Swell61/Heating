@@ -5,9 +5,14 @@
 */
 
 // the setup function runs once when you press reset or power the board
-
+#include "src/Controller.h"
+Controller* ashanti;
 void setup() {
+    Serial.begin(115200);
+    ashanti = new Controller(2,3,A4);
+    Serial.println("Init");
 }
 void loop() {
+    ashanti->loop();
 };
 

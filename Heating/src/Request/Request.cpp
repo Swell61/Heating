@@ -2,10 +2,6 @@
 
 Request::Request() {}
 
-bool Request::updateMode(unsigned char command, ComponentControl& controller) {
-    
-}
-
 bool Request::execute(SystemFunction function, Controller& controller) {
     switch (function) {
         case SystemFunction::UP:
@@ -16,10 +12,12 @@ bool Request::execute(SystemFunction function, Controller& controller) {
             return true;
         
         case SystemFunction::HEATING_BOOST:
-            controller.getComponentControl().getHeating().getBoost().toggle();
+            controller.getComponentControl().getHeating().getBoost().toggle(controller.getClock());
+            Serial.println("Heat boost");
             return true;
         case SystemFunction::WATER_BOOST:
-            controller.getComponentControl().getWater().getBoost().toggle();
+            controller.getComponentControl().getWater().getBoost().toggle(controller.getClock());
+            Serial.println("Water boost");
             return true;
 
         case SystemFunction::HEATING_MODE:
@@ -92,11 +90,15 @@ bool Request::execute(SystemFunction function, Controller& controller) {
             return controller.getClock().adjustTime(TimeComponent::MINUTES_ONES, ValueAdjustment::UP);
         case SystemFunction::DECREASE_MINUTES:
             return controller.getClock().adjustTime(TimeComponent::MINUTES_ONES, ValueAdjustment::DOWN);
+
+        case SystemFunction::NEW_CLIENT: {
+            return true;
+        }
     };
+    return false;
 }
 
-SystemFunction Request::v1CommandToFunction(const char* data) {
-	unsigned char command = atoi(data); // Return it
+SystemFunction Request::v1CommandToFunction(unsigned char command) {
 	return (command < static_cast<unsigned char>(SystemFunction::END) && command >= 0) ? static_cast<SystemFunction>(command) : SystemFunction::NONE;
 						
 }

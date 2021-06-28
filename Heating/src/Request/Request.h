@@ -2,23 +2,24 @@
 #define _REQUEST_h
 
 #include "../Components/ComponentControl.h"
-#include "../Controller.h"
+#include "../Components/Heating.h"
+#include "../Components/Water.h"
+#include "../Boost/Boost.h"
+#include "../Components/Component.h"
+#include "../Display.h"
+#include "../Time/Clock.h"
 
+class Controller;
 class Request {
-    private:
-        bool updateMode(unsigned char command, ComponentControl& controller);
-        bool updateRequestedTemp(unsigned char command, Heating& heating);
-        bool updateHeaterTimer(unsigned char command, Heating& heating);
-        bool updateWaterTimer(unsigned char command, Water& water);
-        bool updateBoost(unsigned char command, ComponentControl& controller);
-        bool updateDisplayMode(unsigned char command, Display& display);
-        bool updateTime(unsigned char command, Clock& clock);
-
+    
     public:
         Request();
+        
         bool execute(SystemFunction function, Controller& controller);
         
-        static SystemFunction v1CommandToFunction(const char* data);
+        static SystemFunction v1CommandToFunction(unsigned char command);
 };
+
+#include "../Controller.h" // Circular dependency problem. Not too happy with this solution but it works for now
 
 #endif

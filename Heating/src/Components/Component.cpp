@@ -12,13 +12,24 @@ ComponentTimer& Component::getTimer() {
     return timer;
 }
 
-Mode Component::getMode(Clock& clock) const {
-    if (mode == Mode::ON) {
-        return Mode::ON;
+void Component::toggleMode() {
+    switch (mode) {
+        case Mode::ON: {
+            mode = Mode::OFF;
+            break;
+        }
+        case Mode::OFF: {
+            mode = Mode::TIMER;
+            break;
+        }
+        case Mode::TIMER: {
+            mode = Mode::ON;
+            break;
+        }
     }
-    else if (boost.checkState(clock) == State::ON) {
-        return Mode::BOOST;
-    }
+}
+
+Mode Component::getMode() const {
     return mode;
 }
 
