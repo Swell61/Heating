@@ -4,14 +4,9 @@ Controller::Controller(unsigned char boilerPin, unsigned char pumpPin, unsigned 
     componentController(ComponentControl(boilerPin, pumpPin)), localTempSensor(TempSensor(A4, 0x28, 0xFF, 0x60, 0x9A, 0xA1, 0x17, 0x5, 0x43))
     , websocketConnection(WebInterface(config.available())) 
    {
-        IPAddress ip{192, 168, 1, 201}; // IP address of Arduino
-	    byte mac[6] = { 0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02 }; // MAC address of network interface
         Ethernet.begin(mac, ip);
 	    Serial.println("Ethernet");
-	    ip = Ethernet.localIP();
-	    // start listening for clients
-	    
-        
+
         for (unsigned char ntpTryCount = 0; ntpTryCount < 3; ++ntpTryCount) {
             Serial.println("NTP");
             if (clock.synchroniseWithNtp(udpInterface)) {
@@ -22,6 +17,23 @@ Controller::Controller(unsigned char boilerPin, unsigned char pumpPin, unsigned 
         websocketConnection.begin();
 }
 
+bool Controller::periodicUpdate() {
+    bool updateOccurred = false;
+    
+    if (systemCheckIntervalMet()) {
+        updateOccurred |= componentController.update(localTempSensor.getTemp(), clock);
+    }
+
+    if (networkStatusIntervalMet()) {
+        if (Ethernet.linkStatus() == LinkOFF || Ethernet.linkStatus() == Unknown) { // If ethernet becomes disconnected
+			Ethernet.begin(mac, ip);
+		}
+        else {
+            Ethernet.maintain();
+        }
+    }
+}
+
 void Controller::loop() {
     SystemFunction currentRequest = getRequest();
     bool updateOccurred = false;
@@ -29,7 +41,7 @@ void Controller::loop() {
         updateOccurred |= request.execute(currentRequest, *this);
     }
 
-    if (intervalMet()) {
+    if (systemCheckIntervalMet()) {
         updateOccurred |= componentController.update(localTempSensor.getTemp(), clock);
     }
 
@@ -51,9 +63,17 @@ TempSensor& Controller::getTempSensor() {
     return localTempSensor;
 }
 
-bool Controller::intervalMet() {
+bool Controller::systemCheckIntervalMet() {
+    return intervalMet(lastSystemUpdateCheck, ONE_SECOND_IN_MILLISECONDS);
+}
+
+bool Controller::networkStatusIntervalMet() {
+    return intervalMet(lastNetworkStatusCheck, TEN_SECONDS_IN_MILLISECONDS);
+}
+
+bool Controller::intervalMet(unsigned long& lastCheck, unsigned short int intervalLength) {
     unsigned long currentMillis = millis();
-    if (currentMillis - lastCheck > ONE_SECOND_IN_MILLISECONDS) {
+    if (currentMillis - lastCheck > intervalLength) {
         lastCheck = currentMillis;
         return true;
     }

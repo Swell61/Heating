@@ -14,6 +14,9 @@
  **/
 class Controller {
     private:
+        IPAddress ip{192, 168, 1, 201}; // IP address of Arduino
+	    byte mac[6] = { 0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02 }; // MAC address of network interface
+
         WebInterface websocketConnection;
         Config config; // MUST BE INITIALISED BEFORE websocketConnection
         EthernetUDP udpInterface;
@@ -22,12 +25,17 @@ class Controller {
         TempSensor localTempSensor;
         Request request;
         //Display display;
-        unsigned long lastCheck = 0;
-        bool intervalMet();
-        
+        unsigned long lastSystemUpdateCheck = 0;
+        unsigned long lastNetworkStatusCheck = 0;
+        bool systemCheckIntervalMet();
+        bool networkStatusIntervalMet();
+        bool intervalMet(unsigned long& lastCheck, unsigned short int intervalLength);
+        bool periodicUpdate();
+
         SystemFunction getRequest();
 
         static const unsigned short int ONE_SECOND_IN_MILLISECONDS = 1000;
+        static const unsigned short int TEN_SECONDS_IN_MILLISECONDS = 10000;
 
     public:
         Controller(unsigned char boilerPin, unsigned char pumpPin, unsigned char oneWirePin);
