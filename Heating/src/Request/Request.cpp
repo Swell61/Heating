@@ -5,27 +5,20 @@ Request::Request() {}
 bool Request::execute(SystemFunction function, Controller& controller) {
     switch (function) {
         case SystemFunction::UP:
-            controller.getComponentControl().getHeating().adjustRequestedTemp(ValueAdjustment::UP);
-            return true;
+            return controller.getComponentControl().getHeating().adjustRequestedTemp(ValueAdjustment::UP);
         case SystemFunction::DOWN:
-            controller.getComponentControl().getHeating().adjustRequestedTemp(ValueAdjustment::DOWN);
-            return true;
+            return controller.getComponentControl().getHeating().adjustRequestedTemp(ValueAdjustment::DOWN);
         
         case SystemFunction::HEATING_BOOST:
-            controller.getComponentControl().getHeating().getBoost().toggle(controller.getClock());
-            Serial.println("Heat boost");
+            return controller.getComponentControl().getHeating().getBoost().toggle(controller.getClock());
             return true;
         case SystemFunction::WATER_BOOST:
-            controller.getComponentControl().getWater().getBoost().toggle(controller.getClock());
-            Serial.println("Water boost");
-            return true;
+            return controller.getComponentControl().getWater().getBoost().toggle(controller.getClock());
 
         case SystemFunction::HEATING_MODE:
-            controller.getComponentControl().getHeating().toggleMode();
-            return true;
+            return controller.getComponentControl().getHeating().toggleMode();
         case SystemFunction::HOT_WATER_MODE:
-            controller.getComponentControl().getWater().toggleMode();
-            return true;
+            return controller.getComponentControl().getWater().toggleMode();
         
         case SystemFunction::MAIN_DISPLAY:
         case SystemFunction::TIMER_DISPLAY:

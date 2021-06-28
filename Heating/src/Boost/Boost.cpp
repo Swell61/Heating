@@ -2,27 +2,28 @@
 
 Boost::Boost(unsigned short int boostLengthMinutes) : BOOST_LENGTH_MINUTES(boostLengthMinutes) { }
 
-void Boost::turnOn(Clock& clock) {
+bool Boost::turnOn(Clock& clock) {
     Serial.println("Boost on");
     boostStartTime = clock.getTimeInMinutes();
     boostState = State::ON;
+    return true;
 }
 
-void Boost::turnOff() {
+bool Boost::turnOff() {
     boostState = State::OFF;
+    return true;
 }
 
-void Boost::toggle(Clock& clock) {
+bool Boost::toggle(Clock& clock) {
     switch (boostState) {
         case State::ON: {
-            turnOff();
-            break;
+            return turnOff();
         }
         case State::OFF: {
-            turnOn(clock);
-            break;
+            return turnOn(clock);
         }
     }
+    return false;
 }
 
 State Boost::checkState(Clock& clock) const {

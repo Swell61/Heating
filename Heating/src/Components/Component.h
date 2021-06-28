@@ -21,7 +21,7 @@ class Component {
         Boost& getBoost();
         ComponentTimer& getTimer();
         Mode getMode() const;
-        void toggleMode();
+        bool toggleMode();
 };
 
 #endif

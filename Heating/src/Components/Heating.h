@@ -7,17 +7,20 @@
 class Heating : public Component {
     private:
         const float INCREMENT;
-        float requestedTemperature = 11.5f;
+        const float MIN_TEMP;
+        const float MAX_TEMP;
+        float requestedTemp = 11.5f;
 
     public:
-        Heating(Mode initialState, float increment);
+        Heating(Mode initialState, float minTemp, float maxTemp, float increment);
+        Heating(float minTemp, float maxTemp, float increment);
         Heating(float increment);
 
         float getRequestedTemp() const;
-        void setRequestedTemp(float requestedTemp);
-        void adjustRequestedTemp(ValueAdjustment adjustment);
+        bool setRequestedTemp(float requestedTemp);
+        bool adjustRequestedTemp(ValueAdjustment adjustment);
 
-        bool required(Clock& clock, float currentTemp) const; 
+        bool required(Clock& clock, float currentTemp); 
 };
 
 #endif

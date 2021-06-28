@@ -12,9 +12,9 @@ class Boost {
 
     public:
         Boost(unsigned short int boostLength);
-        void turnOn(Clock& clock);
-        void turnOff();
-        void toggle(Clock& clock);
+        bool turnOn(Clock& clock);
+        bool turnOff();
+        bool toggle(Clock& clock);
         State checkState(Clock& clock) const; // Should be const but Time library is not const correct
 };
 

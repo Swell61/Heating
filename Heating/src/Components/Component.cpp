@@ -12,19 +12,19 @@ ComponentTimer& Component::getTimer() {
     return timer;
 }
 
-void Component::toggleMode() {
+bool Component::toggleMode() {
     switch (mode) {
         case Mode::ON: {
             mode = Mode::OFF;
-            break;
+            return true;
         }
         case Mode::OFF: {
             mode = Mode::TIMER;
-            break;
+            return true;
         }
         case Mode::TIMER: {
             mode = Mode::ON;
-            break;
+            return true;
         }
     }
 }
