@@ -14,15 +14,6 @@ const ComponentTimer& Timer::getWaterTimer() const {
 	return water;
 }
 
-bool Timer::getHeatingTimerStatus() {
-	return heating.timerStatus(clock.getTimeInMinutes());
-}
-
-bool Timer::getWaterTimerStatus() {
-	return water.timerStatus(clock.getTimeInMinutes());
-}
-
-
 void Timer::setHeatingTimerState(bool state) {
 	heatingTimerState = state;
 }

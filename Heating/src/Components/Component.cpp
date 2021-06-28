@@ -33,6 +33,6 @@ Mode Component::getMode() const {
     return mode;
 }
 
-bool Component::required(Clock& clock) const {
-    return mode == Mode::ON || boost.checkState(clock) == State::ON || (mode == Mode::TIMER && timer.timerStatus(clock.getTimeInMinutes()));
+bool Component::required(Clock& clock) {
+    return mode == Mode::ON || boost.checkState(clock) == State::ON || (mode == Mode::TIMER && timer.timerStatus(clock));
 }

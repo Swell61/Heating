@@ -23,6 +23,6 @@ OnOffTimer& ComponentTimer::getAfternoonTimer() {
     return afternoon;
 }
 
-bool ComponentTimer::timerStatus(unsigned short int time) const {
-    return morning.timerStatus(time) || afternoon.timerStatus(time);
+bool ComponentTimer::timerStatus(Clock& clock) {
+    return morning.timerStatus(clock.getTimeInMinutes()) || afternoon.timerStatus(clock.getTimeInMinutes());
 }

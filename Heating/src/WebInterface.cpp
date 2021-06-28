@@ -10,7 +10,12 @@ void WebInterface::begin() {
 }
 
 void WebInterface::processRemoteOutput(Controller& controller) {
-	// Send a string containing the status of the main display
+	sendMainData(controller);
+	sendTimerData(controller.getComponentControl().getHeating().getTimer(), controller.getComponentControl().getWater().getTimer(), controller.getClock());
+}
+
+void WebInterface::sendMainData(Controller& controller) {
+// Send a string containing the status of the main display
 	Serial.println("Sending output");
 	char buffer[8];
 	itoa(controller.getClock().getTimeInMinutes(), buffer, 10);
@@ -54,56 +59,46 @@ void WebInterface::processRemoteOutput(Controller& controller) {
 	strcat(buffer, "\0");
 
 	webServerStack_ProcessMsgOut(output);
-	
 }
-void WebInterface::processRemoteOutput(bool heatingTimerStatus, bool waterTimerStatus, const Timer& timer) {
+
+void WebInterface::sendTimerData(ComponentTimer& heatingTimer, ComponentTimer& waterTimer, Clock& clock) {
 	// Send a string containing the status of the timer
 	//String output = "1:" + (String)heatingTimerStatus + ":" + (String)waterTimerStatus + ":" + (String)heatingOnMorning + ":" + (String)heatingOffMorning + ":" + (String)heatingOnAfternoon + ":" + (String)heatingOffAfternoon + ":" + (String)waterOnMorning + ":" + (String)waterOffMorning + ":" + (String)waterOnAfternoon + ":" + (String)waterOffAfternoon;
 	
-	char buffer[6];
 	char output[72] = "1:";
 	
-	strcat(output, heatingTimerStatus ? "1" : "0");
+	strcat(output, heatingTimer.timerStatus(clock) ? "1" : "0");
 	strcat(output, ":");
 
-	strcat(output, waterTimerStatus ? "1" : "0");
+	strcat(output, waterTimer.timerStatus(clock) ? "1" : "0");
 	strcat(output, ":");
 
-	itoa(timer.getHeatingTimer().getMorningTimer().getOnTime(), buffer, 10);
-	strcat(output, buffer);
-	strcat(output, ":");
+	addTimerDataToOutput(output, heatingTimer);
+	addTimerDataToOutput(output, waterTimer);
 
-	itoa(timer.getHeatingTimer().getMorningTimer().getOffTime(), buffer, 10);
-	strcat(output, buffer);
-	strcat(output, ":");
-
-	itoa(timer.getHeatingTimer().getAfternoonTimer().getOnTime(), buffer, 10);
-	strcat(output, buffer);
-	strcat(output, ":");
-
-	itoa(timer.getHeatingTimer().getAfternoonTimer().getOffTime(), buffer, 10);
-	strcat(output, buffer);
-	strcat(output, ":");
-
-	itoa(timer.getWaterTimer().getMorningTimer().getOnTime(), buffer, 10);
-	strcat(output, buffer);
-	strcat(output, ":");
-
-	itoa(timer.getWaterTimer().getMorningTimer().getOffTime(), buffer, 10);
-	strcat(output, buffer);
-	strcat(output, ":");
-
-	itoa(timer.getWaterTimer().getAfternoonTimer().getOnTime(), buffer, 10);
-	strcat(output, buffer);
-	strcat(output, ":");
-
-	itoa(timer.getWaterTimer().getAfternoonTimer().getOffTime(), buffer, 10);
-	strcat(output, buffer);
 	strcat(output, "\0");
-	strcat(buffer, "\0");
 	
 	
 	webServerStack_ProcessMsgOut(output);
+}
+
+void WebInterface::addTimerDataToOutput(char* output, ComponentTimer& timer) {
+	char buffer[6];
+	itoa(timer.getMorningTimer().getOnTime(), buffer, 10);
+	strcat(output, buffer);
+	strcat(output, ":");
+
+	itoa(timer.getMorningTimer().getOffTime(), buffer, 10);
+	strcat(output, buffer);
+	strcat(output, ":");
+
+	itoa(timer.getAfternoonTimer().getOnTime(), buffer, 10);
+	strcat(output, buffer);
+	strcat(output, ":");
+
+	itoa(timer.getAfternoonTimer().getOffTime(), buffer, 10);
+	strcat(output, buffer);
+	strcat(output, ":");
 }
 
 unsigned char WebInterface::processRemoteInput() { // Process a client

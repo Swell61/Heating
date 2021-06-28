@@ -31,7 +31,7 @@ class ComponentTimer {
 
         OnOffTimer& getMorningTimer();
         OnOffTimer& getAfternoonTimer();
-        bool timerStatus(unsigned short int time) const;
+        bool timerStatus(Clock& clock);
 };
 
 #endif

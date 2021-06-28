@@ -2,7 +2,7 @@
 
 Heating::Heating(Mode initialMode, float increment) : Component(initialMode), INCREMENT(increment) { }
 
-Heating::Heating(float increment) : Heating(Mode::OFF, increment) { }
+Heating::Heating(float increment) : Heating(Mode::ON, increment) { }
 
 bool Heating::required(Clock& clock, float currentTemp) const {
     return Component::required(clock) && currentTemp < requestedTemperature;

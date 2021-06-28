@@ -12,7 +12,7 @@ class Component {
     protected:
         Boost boost;
         ComponentTimer timer;
-        virtual bool required(Clock& clock) const;
+        virtual bool required(Clock& clock);
 
     public:
         Component(Mode initialMode);

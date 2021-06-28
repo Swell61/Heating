@@ -13,6 +13,7 @@
 #include <avr/wdt.h>
 #include "Time/Timer.h"
 #include "Enums/SystemFunction.h"
+#include "Time/ComponentTimer.h"
 
 class Controller;
 // Class for web and remote interface interraction
@@ -32,7 +33,9 @@ private:
 	WebSocketStack_T webSocketStack[MAX_CLIENT_NUM]; // Stack to store each connection
 	unsigned char webServerStack_ProcessMsgIn(); // Function for processing a message from a client
 	unsigned char webServerStack_ProcessMsgIn(const char* buffer, Config config); // Function for processing a message from a client
-
+	void sendTimerData(ComponentTimer& heatingTimer, ComponentTimer& waterTimer, Clock& clock); // Function for sending timer status to clients
+	void addTimerDataToOutput(char* output, ComponentTimer& timer);
+	void sendMainData(Controller& controller);
 	void webServerStack_ProcessMsgOut(const char *output); // Function for sending status to clients
 	void sendClientData(int client, const char *output); // Function to send data to a client
 	bool webFilesAvailable = false; // Variable to store whether web server files are available or not
@@ -41,7 +44,6 @@ public:
 	WebInterface();
 
 	void processRemoteOutput(Controller& controller); // Function for sending main display status to clients
-	void processRemoteOutput(bool heatingTimerStatus, bool waterTimerStatus, const Timer&); // Function for sending timer status to clients
 
 	unsigned char processRemoteInput(); // Function for processing client messages
 	unsigned char processRemoteInput(const char* buffer, Config config);
