@@ -1,7 +1,10 @@
 #include "ComponentTimer.h"
 
-ComponentTimer::ComponentTimer() : morning(OnOffTimer(MIN_MORNING, MAX_AFTERNOON, DEFAULT_MORNING_ON, DEFAULT_MORNING_OFF)),
-    afternoon(OnOffTimer(MIN_AFTERNOON, MAX_AFTERNOON, DEFAULT_AFTERNOON_ON, DEFAULT_AFTERNOON_OFF)) { }
+// ComponentTimer::ComponentTimer() : morning(OnOffTimer(MIN_MORNING, MAX_AFTERNOON, DEFAULT_MORNING_ON, DEFAULT_MORNING_OFF)),
+//     afternoon(OnOffTimer(MIN_AFTERNOON, MAX_AFTERNOON, DEFAULT_AFTERNOON_ON, DEFAULT_AFTERNOON_OFF)) { }
+
+ComponentTimer::ComponentTimer(ComponentTimerConfig config) : config(config), morning(OnOffTimer(MIN_MORNING, MAX_MORNING, OnOffTimerConfig(config, TimerPeriod::MORNING))),
+    afternoon(OnOffTimer(MIN_AFTERNOON, MAX_AFTERNOON, OnOffTimerConfig(config, TimerPeriod::AFTERNOON))) { }
 
 bool ComponentTimer::adjustTimer(TimerPeriod period, State state, ValueAdjustment adjustment) {
     switch (period) {

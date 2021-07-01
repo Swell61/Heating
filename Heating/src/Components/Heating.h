@@ -3,6 +3,7 @@
 
 #include "../Enums/State.h"
 #include "Component.h"
+#include "../Config/ComponentTimerConfig.h"
 
 class Heating : public Component {
     private:
@@ -12,9 +13,9 @@ class Heating : public Component {
         float requestedTemp = 11.5f;
 
     public:
-        Heating(Mode initialState, float minTemp, float maxTemp, float increment);
-        Heating(float minTemp, float maxTemp, float increment);
-        Heating(float increment);
+        Heating(const ComponentTimerConfig& config, Mode initialState, float minTemp, float maxTemp, float increment);
+        Heating(const ComponentTimerConfig& config, float minTemp, float maxTemp, float increment);
+        Heating(const ComponentTimerConfig& config, float increment);
 
         float getRequestedTemp() const;
         bool setRequestedTemp(float requestedTemp);

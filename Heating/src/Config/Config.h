@@ -4,11 +4,14 @@
 #define _CONFIG_h
 
 #include "Arduino.h"
+#include "../Enums/SystemComponent.h"
+#include "../Enums/TimerPeriod.h"
+#include "../Enums/State.h"
 
 #include <SD.h>
 class Config {
 private:
-#define MAX_PROPERTY_LENGTH 10
+#define MAX_PROPERTY_LENGTH 12
 #define MAX_VALUE_LENGTH 6
 	const unsigned char SD_CHIP_SELECT_PIN;
 	const char *FILE_NAME;
@@ -19,9 +22,13 @@ private:
 public:
 	Config(const char* fileName, const unsigned char sdChipSelect); // Constructor takes name of file
 	Config(const char* fileName, const unsigned char sdChipSelect, const char separator); // Constructor takes name of file and separator
+	bool available() const;
+protected:
 	bool writeProperty(const char* property, const char* value);
 	const char* readProperty(const char* property);
-	bool available() const;
+	int readInt(const char* propertyName, unsigned char expectedMaxLength);
+
+	
 };
 
 #endif

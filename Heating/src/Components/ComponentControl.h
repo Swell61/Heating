@@ -5,7 +5,6 @@
 #include "Boiler.h"
 #include "Heating.h"
 #include "Water.h"
-#include "../Time/Timer.h"
 #include "../Time/ComponentTimer.h"
 #include "../Enums/State.h"
 #include "../TempSensor.h"
@@ -26,7 +25,7 @@ class ComponentControl {
         bool setWaterWithoutHeating();
 
     public:
-        ComponentControl(unsigned char boilerPin, unsigned char pumpPin);
+        ComponentControl(unsigned char boilerPin, unsigned char pumpPin, const Config& config);
 
         bool update(float currentTemp, Clock& timer);
 

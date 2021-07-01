@@ -4,6 +4,8 @@
 #include "../Boost/Boost.h"
 #include "../Enums/Mode.h"
 #include "../Time/ComponentTimer.h"
+#include "../Enums/SystemComponent.h"
+#include "../Config/ComponentTimerConfig.h"
 
 class Component {
     private:
@@ -15,8 +17,9 @@ class Component {
         virtual bool required(Clock& clock);
 
     public:
-        Component(Mode initialMode);
-        Component();
+        Component(const ComponentTimerConfig& config, Mode initialMode, SystemComponent component);
+        Component(const ComponentTimerConfig& config, Mode initialMode);
+        Component(const ComponentTimerConfig& config);
 
         Boost& getBoost();
         ComponentTimer& getTimer();

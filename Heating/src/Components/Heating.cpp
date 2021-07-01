@@ -1,10 +1,10 @@
 #include "Heating.h"
 
-Heating::Heating(Mode initialMode, float minTemp, float maxTemp, float increment) : Component(initialMode), MIN_TEMP(minTemp), MAX_TEMP(maxTemp), INCREMENT(increment) { }
+Heating::Heating(const ComponentTimerConfig& config, Mode initialMode, float minTemp, float maxTemp, float increment) : Component(config, initialMode), MIN_TEMP(minTemp), MAX_TEMP(maxTemp), INCREMENT(increment) { }
 
-Heating::Heating(float minTemp, float maxTemp, float increment) : Heating(Mode::ON, minTemp, maxTemp, increment) { }
+Heating::Heating(const ComponentTimerConfig& config, float minTemp, float maxTemp, float increment) : Heating(config, Mode::ON, minTemp, maxTemp, increment) { }
 
-Heating::Heating(float increment) : Heating(10.0f, 27.0f, increment) { }
+Heating::Heating(const ComponentTimerConfig& config, float increment) : Heating(config,  10.0f, 27.0f, increment) { }
 
 bool Heating::required(Clock& clock, float currentTemp) {
     return Component::required(clock) && currentTemp < requestedTemp;

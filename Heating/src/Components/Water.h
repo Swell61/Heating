@@ -3,13 +3,14 @@
 
 #include "../Enums/State.h"
 #include "Component.h"
+#include "../Config/ComponentTimerConfig.h"
 
 class Water : public Component {
     public:
-        Water(Mode initialMode);
-        Water();
+        Water(const ComponentTimerConfig& config, Mode initialMode);
+        Water(const ComponentTimerConfig& config);
 
-        bool required(Clock& clock) const;
+        bool required(Clock& clock);
 };
 
 #endif

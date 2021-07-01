@@ -6,6 +6,8 @@
 #include "Clock.h"
 #include "../Enums/TimerPeriod.h"
 #include "../Enums/ValueAdjustment.h"
+#include "../Config/ComponentTimerConfig.h"
+#include "../Config/OnOffTimerConfig.h"
 
 #define MINUTES_IN_A_DAY 1440
 // All values in minutes from midnight
@@ -21,11 +23,14 @@
 
 class ComponentTimer {
     private:
+        ComponentTimerConfig config;
         OnOffTimer morning;
         OnOffTimer afternoon;
 
+
     public:
-        ComponentTimer();
+        //ComponentTimer();
+        ComponentTimer(ComponentTimerConfig config);
 
         bool adjustTimer(TimerPeriod period, State state, ValueAdjustment adjustment);
 

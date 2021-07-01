@@ -1,8 +1,8 @@
 #include "Component.h"
 
-Component::Component(Mode initialMode) : mode(initialMode), boost(Boost(30)) { }
+Component::Component(const ComponentTimerConfig& config, Mode initialMode) : mode(initialMode), boost(Boost(30)), timer(ComponentTimer(config)) { }
 
-Component::Component() : Component(Mode::OFF) {}
+Component::Component(const ComponentTimerConfig& config) : Component(config, Mode::OFF) { }
 
 Boost& Component::getBoost() {
     return boost;

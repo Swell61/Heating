@@ -9,9 +9,7 @@
 #include <SPI.h>
 #include "UIPEthernet.h"
 #include <SD.h>
-#include "Config.h"
 #include <avr/wdt.h>
-#include "Time/Timer.h"
 #include "Enums/SystemFunction.h"
 #include "Time/ComponentTimer.h"
 

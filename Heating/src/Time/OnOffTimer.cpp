@@ -1,10 +1,13 @@
 #include "OnOffTimer.h"
 
-OnOffTimer::OnOffTimer(unsigned short int minTime, unsigned short int maxTime, unsigned short int onTime, unsigned short int offTime) : 
-    OnOffTimer(minTime, maxTime, DEFAULT_INCREMENT, onTime, offTime) { }
+// OnOffTimer::OnOffTimer(unsigned short int minTime, unsigned short int maxTime, unsigned short int onTime, unsigned short int offTime) : 
+//     OnOffTimer(minTime, maxTime, DEFAULT_INCREMENT, onTime, offTime) { }
 
-OnOffTimer::OnOffTimer(unsigned short int minTime, unsigned short int maxTime, unsigned char increment, unsigned short int onTime, 
-    unsigned short int offTime) : MIN_TIME(minTime), MAX_TIME(maxTime), INCREMENT(increment), on(onTime), off(offTime) { }
+// OnOffTimer::OnOffTimer(unsigned short int minTime, unsigned short int maxTime, unsigned char increment, unsigned short int onTime, 
+//     unsigned short int offTime) : MIN_TIME(minTime), MAX_TIME(maxTime), INCREMENT(increment), on(onTime), off(offTime) { }
+
+OnOffTimer::OnOffTimer(unsigned short int minTime, unsigned short int maxTime, OnOffTimerConfig config) : MIN_TIME(minTime), MAX_TIME(maxTime), INCREMENT(config.readIncrement()), 
+    on(config.readTimer(State::ON)), off(config.readTimer(State::OFF)), config(config) { Serial.println(INCREMENT); }
 
 bool OnOffTimer::checkTimesValid(unsigned short int on, unsigned short int off) {
     return on < off && on >= MIN_TIME && off <= MAX_TIME;
@@ -26,6 +29,10 @@ bool OnOffTimer::adjustOn(ValueAdjustment adjustment) {
     switch (adjustment) {
         case ValueAdjustment::UP: {
             if (checkTimesValid(on + INCREMENT, off)) {
+                Serial.print("Increment: ");
+                Serial.print(INCREMENT);
+                Serial.print(", on: ");
+                Serial.println(on);
                 on += INCREMENT;
                 return true;
             }

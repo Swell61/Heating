@@ -8,6 +8,7 @@
 #include "../Components/Component.h"
 #include "../Display.h"
 #include "../Time/Clock.h"
+#include "../Enums/SystemFunction.h"
 
 class Controller;
 class Request {

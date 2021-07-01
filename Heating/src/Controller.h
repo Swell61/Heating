@@ -2,12 +2,12 @@
 #define _CONTROLLER_h
 
 #include "WebInterface.h"
-#include "Time/Timer.h"
 #include <UIPEthernet.h>
 #include "Components/ComponentControl.h"
 #include "TempSensor.h"
 #include "Request/Request.h"
 #include "Display.h"
+#include "Config/Config.h"
 
 /**
  * Main controller class for the system

@@ -1,7 +1,7 @@
 #include "Controller.h"
 
 Controller::Controller(unsigned char boilerPin, unsigned char pumpPin, unsigned char oneWirePin) : config(Config("config.txt", 5)), 
-    componentController(ComponentControl(boilerPin, pumpPin)), localTempSensor(TempSensor(A4, 0x28, 0xFF, 0x60, 0x9A, 0xA1, 0x17, 0x5, 0x43))
+    componentController(ComponentControl(boilerPin, pumpPin, config)), localTempSensor(TempSensor(A4, 0x28, 0xFF, 0x60, 0x9A, 0xA1, 0x17, 0x5, 0x43))
     , websocketConnection(WebInterface(config.available())) 
    {
         Ethernet.begin(mac, ip);
