@@ -146,3 +146,13 @@ int Config::readInt(const char* propertyName, unsigned char expectedMaxLength) {
 	}
 	return 0;
 }
+
+bool Config::writeInt(const char* propertyName, int property) {
+	char buffer[11];
+	itoa(property, buffer, 10);
+	Serial.print("Writing: ");
+	Serial.print(propertyName);
+	Serial.print(", value: ");
+	Serial.println(property);
+	return writeProperty(propertyName, buffer);
+}

@@ -29,44 +29,57 @@ bool OnOffTimer::adjustOn(ValueAdjustment adjustment) {
     switch (adjustment) {
         case ValueAdjustment::UP: {
             if (checkTimesValid(on + INCREMENT, off)) {
-                Serial.print("Increment: ");
-                Serial.print(INCREMENT);
-                Serial.print(", on: ");
-                Serial.println(on);
                 on += INCREMENT;
-                return true;
             }
-            return false;
+            else {
+                return false;
+            }
+            break;
         }
         case ValueAdjustment::DOWN: {
             if (checkTimesValid(on - INCREMENT, off)) {
                 on -= INCREMENT;
-                return true;
             }
+            else {
+                return false;
+            }
+        }
+        default: {
             return false;
         }
     }
-    return false;
+    config.writeTimer(State::ON, on);
+    return true;
 }
 
 bool OnOffTimer::adjustOff(ValueAdjustment adjustment) {
     switch (adjustment) {
         case ValueAdjustment::UP: {
             if (checkTimesValid(on, off + INCREMENT)) {
+                Serial.println("Valid");
                 off += INCREMENT;
-                return true;
             }
-            return false;
+            else {
+                return false;
+            }
+            break;
         }
         case ValueAdjustment::DOWN: {
             if (checkTimesValid(on, off - INCREMENT)) {
                 off -= INCREMENT;
-                return true;
             }
+            else {
+                return false;
+            }
+            break;
+        }
+        default: {
             return false;
         }
     }
-    return false;
+    Serial.println(off);
+    config.writeTimer(State::OFF, off);
+    return true;
 }
 
 unsigned short int OnOffTimer::getOnTime() const {

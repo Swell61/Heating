@@ -27,7 +27,7 @@ protected:
 	bool writeProperty(const char* property, const char* value);
 	const char* readProperty(const char* property);
 	int readInt(const char* propertyName, unsigned char expectedMaxLength);
-
+	bool writeInt(const char* propertyName, int property);
 	
 };
 
