@@ -3,7 +3,6 @@
 Boost::Boost(unsigned short int boostLengthMinutes) : BOOST_LENGTH_MINUTES(boostLengthMinutes) { }
 
 bool Boost::turnOn(Clock& clock) {
-    Serial.println("Boost on");
     boostStartTime = clock.getTimeInMinutes();
     boostState = State::ON;
     return true;

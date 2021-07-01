@@ -53,7 +53,6 @@ unsigned long Clock::ntpUnixTime(UIPUDP &udp)
 	const long ntpFirstFourBytes = 0xEC0600E3; // NTP request header
 
 	if (!udpInited) {
-		Serial.println("UDP not inited");
 		return 0;
 	}
 	// Clear received data from possible stray received packets
@@ -63,7 +62,6 @@ unsigned long Clock::ntpUnixTime(UIPUDP &udp)
 	if (!(udp.beginPacket(timeServer, 123) // 123 is the NTP port
 		&& udp.write((byte *)&ntpFirstFourBytes, 48) == 48
 		&& udp.endPacket())) {
-			Serial.println("Sending req fail");
 		return 0;				// sending request failed
 
 		}
@@ -77,7 +75,6 @@ unsigned long Clock::ntpUnixTime(UIPUDP &udp)
 		delay(pollIntv);
 	}
 	if (pktLen != 48) {
-		Serial.println("No correct packet received");
 		return 0;				// no correct packet received
 	}
 

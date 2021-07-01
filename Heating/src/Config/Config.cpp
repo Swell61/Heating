@@ -128,7 +128,6 @@ File Config::openFile() {
 }
 
 int Config::readInt(const char* propertyName, unsigned char expectedMaxLength) {
-	Serial.println("Reading int");
 	const char* data = readProperty(propertyName);
 	Serial.println(data);
 	unsigned char len;
@@ -142,7 +141,6 @@ int Config::readInt(const char* propertyName, unsigned char expectedMaxLength) {
 			Serial.println(data);
 			return atoi(data);
 		}
-		Serial.println("Not num");
 	}
 	return 0;
 }
@@ -150,9 +148,5 @@ int Config::readInt(const char* propertyName, unsigned char expectedMaxLength) {
 bool Config::writeInt(const char* propertyName, int property) {
 	char buffer[11];
 	itoa(property, buffer, 10);
-	Serial.print("Writing: ");
-	Serial.print(propertyName);
-	Serial.print(", value: ");
-	Serial.println(property);
 	return writeProperty(propertyName, buffer);
 }

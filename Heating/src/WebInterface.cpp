@@ -16,7 +16,6 @@ void WebInterface::processRemoteOutput(Controller& controller) {
 
 void WebInterface::sendMainData(Controller& controller) {
 // Send a string containing the status of the main display
-	Serial.println("Sending output");
 	char buffer[8];
 	itoa(controller.getClock().getTimeInMinutes(), buffer, 10);
 	char output[33] = "0:";
@@ -111,7 +110,6 @@ unsigned char WebInterface::processRemoteInput() { // Process a client
 }
 
 unsigned char WebInterface::webServerStack_ProcessMsgIn() {
-	Serial.println("Processing message in");
 	bool inMsgPassed = false;
 	// Process for connected client
 	for (int i = 0; i < MAX_CLIENT_NUM; i++) {

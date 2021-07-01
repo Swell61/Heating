@@ -5,10 +5,7 @@ Controller::Controller(unsigned char boilerPin, unsigned char pumpPin, unsigned 
     , websocketConnection(WebInterface(config.available())) 
    {
         Ethernet.begin(mac, ip);
-	    Serial.println("Ethernet");
-
         for (unsigned char ntpTryCount = 0; ntpTryCount < 3; ++ntpTryCount) {
-            Serial.println("NTP");
             if (clock.synchroniseWithNtp(udpInterface)) {
                 break;
             }
