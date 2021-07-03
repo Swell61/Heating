@@ -38,9 +38,7 @@ void Controller::loop() {
         updateOccurred |= request.execute(currentRequest, *this);
     }
 
-    if (systemCheckIntervalMet()) {
-        updateOccurred |= componentController.update(localTempSensor.getTemp(), clock);
-    }
+    updateOccurred |= periodicUpdate();
 
     if (updateOccurred) {
         websocketConnection.processRemoteOutput(*this);
