@@ -31,6 +31,7 @@ class Controller {
         bool networkStatusIntervalMet();
         bool intervalMet(unsigned long& lastCheck, unsigned short int intervalLength);
         bool periodicUpdate();
+        void setupWatchdog();
 
         SystemFunction getRequest();
 

@@ -12,6 +12,15 @@ Controller::Controller(unsigned char boilerPin, unsigned char pumpPin, unsigned 
         }
 
         websocketConnection.begin();
+        setupWatchdog();
+}
+
+void Controller::setupWatchdog() {
+	cli();
+    wdt_reset();
+	wdt_enable(WDTO_4S);
+	wdt_reset();
+    sei();
 }
 
 bool Controller::periodicUpdate() {
@@ -32,6 +41,7 @@ bool Controller::periodicUpdate() {
 }
 
 void Controller::loop() {
+    wdt_reset();
     SystemFunction currentRequest = getRequest();
     bool updateOccurred = false;
     if (currentRequest != SystemFunction::NONE) {
