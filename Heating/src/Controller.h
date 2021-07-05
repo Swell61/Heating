@@ -24,7 +24,7 @@ class Controller {
         ComponentControl componentController;
         TempSensor localTempSensor;
         Request request;
-        //Display display;
+        Display display;
         unsigned long lastSystemUpdateCheck = 0;
         unsigned long lastNetworkStatusCheck = 0;
         bool systemCheckIntervalMet();

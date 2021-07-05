@@ -1,13 +1,29 @@
 #include "Heating.h"
 
-Heating::Heating(const ComponentTimerConfig& config, Mode initialMode, float minTemp, float maxTemp, float increment) : Component(config, initialMode), MIN_TEMP(minTemp), MAX_TEMP(maxTemp), INCREMENT(increment) { }
+Heating::Heating(const ComponentTimerConfig& config, Mode initialMode, float minTemp, float maxTemp, float increment, float minTempDeviation) : Component(config, initialMode), MIN_TEMP(minTemp), MAX_TEMP(maxTemp), INCREMENT(increment), MIN_TEMP_DEVIATION(minTempDeviation) { }
+
+Heating::Heating(const ComponentTimerConfig& config, Mode initialMode, float minTemp, float maxTemp, float increment) : Heating(config, initialMode, minTemp, maxTemp, increment, 0.75) { }
 
 Heating::Heating(const ComponentTimerConfig& config, float minTemp, float maxTemp, float increment) : Heating(config, Mode::ON, minTemp, maxTemp, increment) { }
 
 Heating::Heating(const ComponentTimerConfig& config, float increment) : Heating(config,  10.0f, 27.0f, increment) { }
 
 bool Heating::required(Clock& clock, float currentTemp) {
-    return Component::required(clock) && currentTemp < requestedTemp;
+    return Component::required(clock) && tempDiffTooLarge(currentTemp);
+}
+
+bool Heating::tempDiffTooLarge(float currentTemp) {
+    if (currentTemp >= requestedTemp) {
+        heatingTempReached = true;
+        return false;
+    }    
+    else if (currentTemp <= requestedTemp - MIN_TEMP_DEVIATION) { // This stops heating from flip flopping between on and off when at the requested temperature
+        heatingTempReached = false;
+        return true;
+    }
+    else {
+        return !heatingTempReached;
+    }
 }
 
 bool Heating::adjustRequestedTemp(ValueAdjustment adjustment) {
