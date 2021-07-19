@@ -90,6 +90,11 @@ bool Controller::intervalMet(unsigned long& lastCheck, unsigned short int interv
 }
 
 SystemFunction Controller::getRequest() {
+    SystemFunction request = display.getTouchInput();
+    if (request != SystemFunction::NONE) {
+        return request;
+    }
+    
     unsigned char command = websocketConnection.processRemoteInput();
     return Request::v1CommandToFunction(command);
 }

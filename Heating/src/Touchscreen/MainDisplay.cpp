@@ -201,31 +201,36 @@ void MainDisplay::printWaterMode(Water& water, MCUFRIEND_kbv& display) {
     }
 }
 
-SystemFunction MainDisplay::getTouchInput(TouchScreen& touchScreen) {
-	TSPoint tp = touchScreen.getPoint();
-	if (tp.z > MIN_PRESSURE && tp.z < MAX_PRESSURE) {
-		if (tp.x >= 560 && tp.x <= 700 && tp.y >= 500 && tp.y <= 700) { // Heating boost button
+SystemFunction MainDisplay::getTouchInput(TSPoint& point) {
+
+	if (point.z > MIN_PRESSURE && point.z < MAX_PRESSURE) {
+		Serial.print("x: ");
+		Serial.print(point.x);
+		Serial.print(", y: ");
+		Serial.println(point.y);
+		if (point.x >= 560 && point.x <= 700 && point.y >= 500 && point.y <= 700) { // Heating boost button
 			return SystemFunction::HEATING_BOOST;
 		}
-		else if (tp.x >= 330 && tp.x <= 480 && tp.y >= 500 && tp.y <= 700) { // Water boost button
+		else if (point.x >= 330 && point.x <= 480 && point.y >= 500 && point.y <= 700) { // Water boost button
 			return SystemFunction::WATER_BOOST;
 		}
-		else if (tp.x >= 600 && tp.x <= 693 && tp.y >= 700 && tp.y <= 900) { // Up 1 degree
+		else if (point.x >= 600 && point.x <= 693 && point.y >= 700 && point.y <= 900) { // Up 1 degree
 			return SystemFunction::UP;
 		}
-		else if (tp.x >= 325 && tp.x <= 400 && tp.y >= 700 && tp.y <= 900) { // Down 1 degree
+		else if (point.x >= 325 && point.x <= 400 && point.y >= 700 && point.y <= 900) { // Down 1 degree
 			return SystemFunction::DOWN;
 		}
-		else if (tp.x >= 190 && tp.x <= 290 && tp.y >= 680 && tp.y <= 920) { // Timer display button
+		else if (point.x >= 230 && point.x <= 300 && point.y >= 750 && point.y <= 950) { // Timer display button
+			Serial.println("Pressed timer");
 			return SystemFunction::TIMER_DISPLAY;
 		}
-		else if (tp.x >= 570 && tp.x <= 700 && tp.y >= 320 && tp.y <= 500) { // Mode change
+		else if (point.x >= 570 && point.x <= 700 && point.y >= 320 && point.y <= 500) { // Mode change
 			return SystemFunction::HEATING_MODE;
 		}
-		else if (tp.x >= 330 && tp.x <= 470 && tp.y >= 320 && tp.y <= 500) {	// Mode change
+		else if (point.x >= 330 && point.x <= 470 && point.y >= 320 && point.y <= 500) {	// Mode change
 			return SystemFunction::HOT_WATER_MODE;
 		}
-		else if (tp.x >= 190 && tp.x <= 250 && tp.y >= 200 && tp.y <= 350) { // Edit time button
+		else if (point.x >= 190 && point.x <= 250 && point.y >= 200 && point.y <= 350) { // Edit time button
 			return SystemFunction::CURRENT_TIME_DISPLAY;
 		}
 	}

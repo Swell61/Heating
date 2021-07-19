@@ -3,7 +3,7 @@
 // 
 
 #include "Display.h"
-const int XP = 6, XM = A2, YP = A1, YM = 7; //ID=0x9341
+const static unsigned char XP = 6, XM = A2, YP = A1, YM = 7; //ID=0x9341
 Display::Display() : touchScreen(TouchScreen(XP, YP, XM, YM, 300)), currentScreen(&mainDisplay) { // Constructor. Initialises the touchscreen and the TFT
 	display.begin(0x9327); // Initialise the TFT with it's address
 	display.setRotation(3); // Set the rotation to landscape no2
@@ -14,19 +14,20 @@ Display::Display() : touchScreen(TouchScreen(XP, YP, XM, YM, 300)), currentScree
 
 
 SystemFunction Display::getTouchInput() { // Function for checking the touchscreen
-	return currentScreen->getTouchInput(touchScreen);
+	TSPoint point = touchScreen.getPoint();
+	pinMode(XM, OUTPUT); // Reset pin to output
+	pinMode(YP, OUTPUT); // reset pin to output
+
+	return currentScreen->getTouchInput(point);
 }
 
 bool Display::update(CoreComponents& components, SystemFunction systemFunction) {
-	Serial.println("Screen update");
 	switch (systemFunction) {
 		case SystemFunction::MAIN_DISPLAY: {
-			Serial.println("Showing main screen");
 			currentScreen = &mainDisplay;
 			return currentScreen->display(components, display);
 		}
 		case SystemFunction::TIMER_DISPLAY: {
-			Serial.println("Showing timer screen");
 			currentScreen = &timerDisplay;
 			return currentScreen->display(components, display);
 		}

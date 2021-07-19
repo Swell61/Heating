@@ -24,6 +24,7 @@ private:
 	TouchScreen touchScreen; // The touschreen
 	uint16_t xpos, ypos;  // Screen touch coordinates
 	void printTime(int hours, int mins);
+	unsigned long lastTouchInput = 0;
 
 	Screen* currentScreen;
 

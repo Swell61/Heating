@@ -23,7 +23,7 @@ bool Request::execute(SystemFunction function, Controller& controller) {
         case SystemFunction::MAIN_DISPLAY:
         case SystemFunction::TIMER_DISPLAY:
         case SystemFunction::CURRENT_TIME_DISPLAY:
-            return false; // Dsiplay needs adding
+            return true;
         
         case SystemFunction::SCHEDULE_HEATING_MORNING_ON_DOWN:
             return controller.getComponentControl().getHeating().getTimer().getMorningTimer().adjustTimer(State::ON, ValueAdjustment::DOWN);

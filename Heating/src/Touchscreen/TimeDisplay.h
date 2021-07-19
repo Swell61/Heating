@@ -14,7 +14,7 @@ class TimeDisplay : public Screen {
     public:
         bool display(CoreComponents& components, MCUFRIEND_kbv& display) override;
         bool update(CoreComponents& components, MCUFRIEND_kbv& display, SystemFunction function) override;
-        SystemFunction getTouchInput(TouchScreen& touchScreen) override;
+        SystemFunction getTouchInput(TSPoint& point) override;
 };
 
 #endif _TIMEDISPLAY_h

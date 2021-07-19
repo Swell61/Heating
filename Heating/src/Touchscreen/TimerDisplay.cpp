@@ -46,6 +46,7 @@ void TimerDisplay::printHeatingTimer(Heating& heating, MCUFRIEND_kbv& display) {
 	unsigned char minutes;
 
 	display.setTextSize(2);
+	display.setTextColor(0xFFFFF, 0x00000);
 
 	// Print morning on for heating
 	display.setCursor(145, 50);
@@ -78,6 +79,7 @@ void TimerDisplay::printWaterTimer(Water& water, MCUFRIEND_kbv& display) {
 	unsigned char minutes;
 
 	display.setTextSize(2);
+	display.setTextColor(0xFFFFF, 0x00000);
 
 	// Print morning on for water
 	display.setCursor(300, 50);
@@ -107,6 +109,7 @@ void TimerDisplay::printWaterTimer(Water& water, MCUFRIEND_kbv& display) {
 void TimerDisplay::printLabels(MCUFRIEND_kbv& display) {
 	// Print the labels for each time
 	display.setTextSize(1);
+	display.setTextColor(0xFFFFF, 0x00000);
 	display.setCursor(0, 50);
 	display.println(F("Morning on:"));
 	display.setCursor(0, 100);
@@ -119,6 +122,7 @@ void TimerDisplay::printLabels(MCUFRIEND_kbv& display) {
 
 void TimerDisplay::printButtons(MCUFRIEND_kbv& display) {
 	display.setTextSize(2);
+	display.setTextColor(0xFFFFF, 0x00000);
 	// Print the plus and minus buttons for heating
 	for (unsigned char y = 50; y <= 200; y += 50) {
 		display.setCursor(120, y);
@@ -142,60 +146,59 @@ void TimerDisplay::printButtons(MCUFRIEND_kbv& display) {
 }
 
 
-SystemFunction TimerDisplay::getTouchInput(TouchScreen& touchScreen) {
-	TSPoint tp = touchScreen.getPoint();
+SystemFunction TimerDisplay::getTouchInput(TSPoint& point) {
 
-	if (tp.z > MIN_PRESSURE && tp.z < MAX_PRESSURE) {
-		if (tp.x >= 820 && tp.x <= 890 && tp.y >= 200 && tp.y <= 320) { // Back button
+	if (point.z > MIN_PRESSURE && point.z < MAX_PRESSURE) {
+		if (point.x >= 820 && point.x <= 890 && point.y >= 200 && point.y <= 320) { // Back button
 			return SystemFunction::MAIN_DISPLAY;
 		}
-		else if (tp.x >= 660 && tp.x <= 775 && tp.y >= 360 && tp.y <= 400) {
+		else if (point.x >= 660 && point.x <= 775 && point.y >= 360 && point.y <= 400) {
 			return SystemFunction::SCHEDULE_HEATING_MORNING_ON_DOWN;
 		}
-		else if (tp.x >= 660 && tp.x <= 775 && tp.y >= 540 && tp.y <= 620) {
+		else if (point.x >= 660 && point.x <= 775 && point.y >= 540 && point.y <= 620) {
 			return SystemFunction::SCHEDULE_HEATING_MORNING_ON_UP;
 		}
-		else if (tp.x >= 530 && tp.x <= 610 && tp.y >= 360 && tp.y <= 400) {
+		else if (point.x >= 530 && point.x <= 610 && point.y >= 360 && point.y <= 400) {
 			return SystemFunction::SCHEDULE_HEATING_MORNING_OFF_DOWN; // Decrease heating morning off by 5 minutes
 		}
-		else if (tp.x >= 530 && tp.x <= 610 && tp.y >= 540 && tp.y <= 620) {
+		else if (point.x >= 530 && point.x <= 610 && point.y >= 540 && point.y <= 620) {
 			return SystemFunction::SCHEDULE_HEATING_MORNING_OFF_UP; // Increase heating morning off by 5 minutes
 		}
-		else if (tp.x >= 375 && tp.x <= 470 && tp.y >= 360 && tp.y <= 400) {
+		else if (point.x >= 375 && point.x <= 470 && point.y >= 360 && point.y <= 400) {
 			return SystemFunction::SCHEDULE_HEATING_AFTERNOON_ON_DOWN; // Decrease heating afternoon on by 5 minutes
 		}
-		else if (tp.x >= 375 && tp.x <= 470 && tp.y >= 540 && tp.y <= 620) {
+		else if (point.x >= 375 && point.x <= 470 && point.y >= 540 && point.y <= 620) {
 			return SystemFunction::SCHEDULE_HEATING_AFTERNOON_ON_UP; // Increase heating afternoon on by 5 minutes
 		}
-		else if (tp.x >= 215 && tp.x <= 310 && tp.y >= 360 && tp.y <= 400) {
+		else if (point.x >= 215 && point.x <= 310 && point.y >= 360 && point.y <= 400) {
 			return SystemFunction::SCHEDULE_HEATING_AFTERNOON_OFF_DOWN; // Decrease heating afternoon off by 5 minutes
 		}
-		else if (tp.x >= 215 && tp.x <= 310 && tp.y >= 540 && tp.y <= 620) {
+		else if (point.x >= 215 && point.x <= 310 && point.y >= 540 && point.y <= 620) {
 			return SystemFunction::SCHEDULE_HEATING_AFTERNOON_OFF_UP; // Increase heating afternoon off by 5 minutes
 		}
 
-		else if (tp.x >= 685 && tp.x <= 778 && tp.y >= 650 && tp.y <= 730) {
+		else if (point.x >= 685 && point.x <= 778 && point.y >= 650 && point.y <= 730) {
 			return SystemFunction::SCHEDULE_HOT_WATER_MORNING_ON_DOWN; // Decrease water morning on by 5 minutes
 		}
-		else if (tp.x >= 685 && tp.x <= 778 && tp.y >= 850 && tp.y <= 910) {
+		else if (point.x >= 685 && point.x <= 778 && point.y >= 850 && point.y <= 910) {
 			return SystemFunction::SCHEDULE_HOT_WATER_MORNING_ON_UP; // Increase water morning on by 5 minutes
 		}
-		else if (tp.x >= 515 && tp.x <= 620 && tp.y >= 650 && tp.y <= 730) {
+		else if (point.x >= 515 && point.x <= 620 && point.y >= 650 && point.y <= 730) {
 			return SystemFunction::SCHEDULE_HOT_WATER_MORNING_OFF_DOWN; // Decrease water morning off by 5 minutes
 		}
-		else if (tp.x >= 515 && tp.x <= 620 && tp.y >= 850 && tp.y <= 910) {
+		else if (point.x >= 515 && point.x <= 620 && point.y >= 850 && point.y <= 910) {
 			return SystemFunction::SCHEDULE_HOT_WATER_MORNING_OFF_UP; // Increase water morning off by 5 minutes
 		}
-		else if (tp.x >= 375 && tp.x <= 470 && tp.y >= 650 && tp.y <= 730) {
+		else if (point.x >= 375 && point.x <= 470 && point.y >= 650 && point.y <= 730) {
 			return SystemFunction::SCHEDULE_HOT_WATER_AFTERNOON_ON_DOWN; // Decrease water afternoon on by 5 minutes
 		}
-		else if (tp.x >= 375 && tp.x <= 470 && tp.y >= 850 && tp.y <= 910) {
+		else if (point.x >= 375 && point.x <= 470 && point.y >= 850 && point.y <= 910) {
 			return SystemFunction::SCHEDULE_HOT_WATER_AFTERNOON_ON_UP; // Increase water afternoon on by 5 minutes
 		}
-		else if (tp.x >= 215 && tp.x <= 310 && tp.y >= 650 && tp.y <= 730) {
+		else if (point.x >= 215 && point.x <= 310 && point.y >= 650 && point.y <= 730) {
 			return SystemFunction::SCHEDULE_HOT_WATER_AFTERNOON_OFF_DOWN; // Decrease water afternoon off by 5 minutes
 		}
-		else if (tp.x >= 215 && tp.x <= 310 && tp.y >= 850 && tp.y <= 910) {
+		else if (point.x >= 215 && point.x <= 310 && point.y >= 850 && point.y <= 910) {
 			return SystemFunction::SCHEDULE_HOT_WATER_AFTERNOON_OFF_UP; // Increase water afternoon off by 5 minutes
 		}
 	}
