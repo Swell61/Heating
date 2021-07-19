@@ -19,8 +19,8 @@ class Controller {
 	    byte mac[6] = { 0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02 }; // MAC address of network interface
 
         Config config; // MUST BE INITIALISED BEFORE websocketConnection
-        WebInterface websocketConnection;
         EthernetUDP udpInterface;
+        WebInterface websocketConnection;
         
         CoreComponents coreComponents;
 

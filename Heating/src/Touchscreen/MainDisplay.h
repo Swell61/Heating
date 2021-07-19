@@ -24,6 +24,8 @@ class MainDisplay : public Screen {
         void printTemperature(TempSensor& tempSensor, MCUFRIEND_kbv& display);
 
         void printLabels(MCUFRIEND_kbv& display);
+
+        void printTime(Clock& clock, MCUFRIEND_kbv& display) override;
     public:
         bool display(CoreComponents& components, MCUFRIEND_kbv& display) override;
         bool update(CoreComponents& components, MCUFRIEND_kbv& display, SystemFunction function) override;

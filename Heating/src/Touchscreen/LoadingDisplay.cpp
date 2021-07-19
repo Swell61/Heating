@@ -15,10 +15,10 @@ bool LoadingDisplay::display(Config& config, unsigned char ntpMaxRetries, MCUFRI
 }
 
 bool LoadingDisplay::update(unsigned char ntpTry, MCUFRIEND_kbv& display) {
-	display.setCursor(2, 35);
-	display.print(ntpTry);
+
+	display.setCursor(12, 48);
+	display.println(ntpTry);
 	if (ntpTry > 1) { // If it has taken more than one try...
-		display.setCursor(3, 0);
 		display.println(F("Check Ethernet cable and internet conectivity")); // ...ask the user to check possible faults
 	}
 }

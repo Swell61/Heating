@@ -7,7 +7,7 @@
 //     unsigned short int offTime) : MIN_TIME(minTime), MAX_TIME(maxTime), INCREMENT(increment), on(onTime), off(offTime) { }
 
 OnOffTimer::OnOffTimer(unsigned short int minTime, unsigned short int maxTime, OnOffTimerConfig config) : MIN_TIME(minTime), MAX_TIME(maxTime), INCREMENT(config.readIncrement()), 
-    on(config.readTimer(State::ON)), off(config.readTimer(State::OFF)), config(config) { Serial.println(INCREMENT); }
+    on(config.readTimer(State::ON)), off(config.readTimer(State::OFF)), config(config) { }
 
 bool OnOffTimer::checkTimesValid(unsigned short int on, unsigned short int off) {
     return on < off && on >= MIN_TIME && off <= MAX_TIME;
@@ -56,7 +56,6 @@ bool OnOffTimer::adjustOff(ValueAdjustment adjustment) {
     switch (adjustment) {
         case ValueAdjustment::UP: {
             if (checkTimesValid(on, off + INCREMENT)) {
-                Serial.println("Valid");
                 off += INCREMENT;
             }
             else {
@@ -77,7 +76,6 @@ bool OnOffTimer::adjustOff(ValueAdjustment adjustment) {
             return false;
         }
     }
-    Serial.println(off);
     config.writeTimer(State::OFF, off);
     return true;
 }

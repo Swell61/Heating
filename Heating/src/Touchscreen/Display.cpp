@@ -5,7 +5,7 @@
 #include "Display.h"
 const int XP = 6, XM = A2, YP = A1, YM = 7; //ID=0x9341
 Display::Display() : touchScreen(TouchScreen(XP, YP, XM, YM, 300)), currentScreen(mainDisplay) { // Constructor. Initialises the touchscreen and the TFT
-	display.begin(0x65); // Initialise the TFT with it's address
+	display.begin(0x9327); // Initialise the TFT with it's address
 	display.setRotation(3); // Set the rotation to landscape no2
 	display.fillScreen(0x00000); // Fill the screen with black
 };
@@ -18,8 +18,10 @@ SystemFunction Display::getTouchInput() { // Function for checking the touchscre
 }
 
 bool Display::update(CoreComponents& components, SystemFunction systemFunction) {
+	Serial.println("Screen update");
 	switch (systemFunction) {
 		case SystemFunction::MAIN_DISPLAY: {
+			Serial.println("Showing main screen");
 			currentScreen = mainDisplay;
 			return currentScreen.display(components, display);
 		}

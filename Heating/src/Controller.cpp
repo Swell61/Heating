@@ -2,19 +2,20 @@
 
 Controller::Controller(unsigned char boilerPin, unsigned char pumpPin, unsigned char oneWirePin) : config(Config("config.txt", 5)), coreComponents(boilerPin, pumpPin, oneWirePin, config), websocketConnection(WebInterface(config.available())) 
    {
+    Ethernet.init(12);
     Ethernet.begin(mac, ip);
     LoadingDisplay loadingScreen;
     unsigned char NTP_RETRIES = 3;
     loadingScreen.display(config, NTP_RETRIES, display.getDisplay());
     for (unsigned char ntpTryCount = 0; ntpTryCount < NTP_RETRIES; ++ntpTryCount) {
+        loadingScreen.update(ntpTryCount + 1, display.getDisplay());
         if (coreComponents.getClock().synchroniseWithNtp(udpInterface)) {
             break;
         }
-        loadingScreen.update(ntpTryCount + 1, display.getDisplay());
-        wdt_reset();
+        //wdt_reset();
     }
     websocketConnection.begin();
-
+    Serial.println("Done");
     display.update(coreComponents, SystemFunction::MAIN_DISPLAY);
 }
 

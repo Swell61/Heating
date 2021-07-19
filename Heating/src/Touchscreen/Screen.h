@@ -11,7 +11,7 @@ class Screen {
     protected:
         const static unsigned short int MIN_PRESSURE = 200;
         const static unsigned short int MAX_PRESSURE = 1000;
-        void printTime(Clock& clock, MCUFRIEND_kbv& display);
+        virtual void printTime(Clock& clock, MCUFRIEND_kbv& display);
         void printTime(unsigned char hours, unsigned char minutes, MCUFRIEND_kbv& display);
 
     public:

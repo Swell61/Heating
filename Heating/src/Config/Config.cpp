@@ -74,7 +74,6 @@ void Config::writeValue(File &file, const char* value) {
 const char* Config::readProperty(const char* property) {
 	currentValue[0] = '\0'; // Reset the current value, ready for new search
 	if (!SD.exists(FILE_NAME)) {
-		Serial.println("Not available");
 		return currentValue;
 	}
 	File file = SD.open(FILE_NAME);
@@ -129,7 +128,6 @@ File Config::openFile() {
 
 int Config::readInt(const char* propertyName, unsigned char expectedMaxLength) {
 	const char* data = readProperty(propertyName);
-	Serial.println(data);
 	unsigned char len;
 	if ((len = strnlen(data, expectedMaxLength)) > 0) {
 		bool isNum = true;
@@ -138,7 +136,6 @@ int Config::readInt(const char* propertyName, unsigned char expectedMaxLength) {
 		}
 
 		if (isNum) {
-			Serial.println(data);
 			return atoi(data);
 		}
 	}
