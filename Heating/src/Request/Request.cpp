@@ -84,7 +84,9 @@ bool Request::execute(SystemFunction function, Controller& controller) {
         case SystemFunction::DECREASE_MINUTES:
             return controller.getClock().adjustTime(TimeComponent::MINUTES_ONES, ValueAdjustment::DOWN);
 
-        case SystemFunction::NEW_CLIENT: {
+        case SystemFunction::NEW_CLIENT:
+        case SystemFunction::DISPLAY_REFRESH: 
+        {
             return true;
         }
     };

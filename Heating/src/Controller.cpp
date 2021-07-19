@@ -28,6 +28,8 @@ bool Controller::periodicUpdate() {
         updateOccurred |= coreComponents.update();
     }
 
+    updateOccurred |= oneMinIntervalMet();
+
     if (networkStatusIntervalMet()) {
         if (Ethernet.linkStatus() == LinkOFF || Ethernet.linkStatus() == Unknown) { // If ethernet becomes disconnected
 			Ethernet.begin(mac, ip);
@@ -79,6 +81,10 @@ bool Controller::networkStatusIntervalMet() {
     return intervalMet(lastNetworkStatusCheck, TEN_SECONDS_IN_MILLISECONDS);
 }
 
+bool Controller::oneMinIntervalMet() {
+    return intervalMet(lastOneMinCheck, ONE_MINUTE_IN_MILLISECONDS);
+}
+
 bool Controller::intervalMet(unsigned long& lastCheck, unsigned short int intervalLength) {
     unsigned long currentMillis = millis();
     if (currentMillis - lastCheck > intervalLength) {
@@ -95,5 +101,15 @@ SystemFunction Controller::getRequest() {
     }
     
     unsigned char command = websocketConnection.processRemoteInput();
-    return Request::v1CommandToFunction(command);
+    request = Request::v1CommandToFunction(command);
+
+    if (request != SystemFunction::NONE) {
+        return request;
+    }
+
+    if (oneMinIntervalMet()) {
+        return SystemFunction::DISPLAY_REFRESH;
+    }
+
+    return SystemFunction::NONE;
 }

@@ -39,6 +39,7 @@ enum class SystemFunction : unsigned char {
 	INCREASE_MINUTES = 34,
 	DECREASE_MINUTES = 35,
     NEW_CLIENT = 36,
+	DISPLAY_REFRESH = 37,
     END,
 
 };

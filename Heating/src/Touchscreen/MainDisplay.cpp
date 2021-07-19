@@ -86,7 +86,6 @@ void MainDisplay::printWaterBoostButton(Water& water, Clock& clock, MCUFRIEND_kb
 bool MainDisplay::update(CoreComponents& components, MCUFRIEND_kbv& display, SystemFunction function) { // Main display update
 
 	// Code in this method does the same as main display, overwriting what was originally there with the new status
-
 	printRequestedTemp(components.getComponentControl().getHeating(), display);
 
 	display.setTextSize(2);

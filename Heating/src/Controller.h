@@ -28,8 +28,10 @@ class Controller {
         Display display;
         unsigned long lastSystemUpdateCheck = 0;
         unsigned long lastNetworkStatusCheck = 0;
+        unsigned long lastOneMinCheck = 0;
         bool systemCheckIntervalMet();
         bool networkStatusIntervalMet();
+        bool oneMinIntervalMet();
         bool intervalMet(unsigned long& lastCheck, unsigned short int intervalLength);
         bool periodicUpdate();
         void setupWatchdog();
@@ -39,6 +41,7 @@ class Controller {
 
         static const unsigned short int ONE_SECOND_IN_MILLISECONDS = 1000;
         static const unsigned short int TEN_SECONDS_IN_MILLISECONDS = 10000;
+        static const unsigned short int ONE_MINUTE_IN_MILLISECONDS = 60000;
 
     public:
         Controller(unsigned char boilerPin, unsigned char pumpPin, unsigned char oneWirePin);
