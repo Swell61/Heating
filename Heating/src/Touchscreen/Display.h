@@ -25,7 +25,7 @@ private:
 	uint16_t xpos, ypos;  // Screen touch coordinates
 	void printTime(int hours, int mins);
 
-	Screen& currentScreen;
+	Screen* currentScreen;
 
 	MainDisplay mainDisplay;
 	TimerDisplay timerDisplay;

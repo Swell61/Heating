@@ -5,11 +5,9 @@ bool TimerDisplay::display(CoreComponents& components, MCUFRIEND_kbv& display) {
 	printLabels(display);
 	printButtons(display);
 
-	display.setTextSize(3);
 	printHeatingStatus(components.getComponentControl().getHeating(), components.getClock(), display);
 	printWaterStatus(components.getComponentControl().getWater(), components.getClock(), display);
 
-	display.setTextSize(2);
 	printHeatingTimer(components.getComponentControl().getHeating(), display);
 
     printWaterTimer(components.getComponentControl().getWater(), display);
@@ -19,17 +17,16 @@ bool TimerDisplay::display(CoreComponents& components, MCUFRIEND_kbv& display) {
 
 bool TimerDisplay::update(CoreComponents& components, MCUFRIEND_kbv& display, SystemFunction function) {
     // The code in this function does what timerDisplay does, but it overwrites with the new status
-	display.setTextSize(3);
 	printHeatingStatus(components.getComponentControl().getHeating(), components.getClock(), display);
 	printWaterStatus(components.getComponentControl().getWater(), components.getClock(), display);
 
-	display.setTextSize(2);
 	printHeatingTimer(components.getComponentControl().getHeating(), display);
 
     printWaterTimer(components.getComponentControl().getWater(), display);
 }
 
 void TimerDisplay::printHeatingStatus(Heating& heating, Clock& clock, MCUFRIEND_kbv& display) {
+	display.setTextSize(2);
 	display.setTextColor(0xFFFFF); // Set text colour to white
 	display.fillRect(145, 5, 56, 25, heating.getTimer().timerStatus(clock) ? 0x7CFC0 : 0xFF000); // Create rectangle for heating timer status. If heating timer is on, fill green, otherwise fill red
 	display.setCursor(150, 10); // Set the cursor to write text to the display
@@ -37,6 +34,7 @@ void TimerDisplay::printHeatingStatus(Heating& heating, Clock& clock, MCUFRIEND_
 }
 
 void TimerDisplay::printWaterStatus(Water& water, Clock& clock, MCUFRIEND_kbv& display) {
+	display.setTextSize(2);
 	display.setTextColor(0xFFFFF); // Set text colour to white
 	display.fillRect(295, 5, 68, 25, water.getTimer().timerStatus(clock) ? 0x7CFC0 : 0xFF000); // Create rectangle for hot water timer status. If hot water timer is on, fill green, otherwise fill red
 	display.setCursor(300, 10); // Set the cursor to write text to the display
@@ -46,6 +44,8 @@ void TimerDisplay::printWaterStatus(Water& water, Clock& clock, MCUFRIEND_kbv& d
 void TimerDisplay::printHeatingTimer(Heating& heating, MCUFRIEND_kbv& display) {
 	unsigned char hours;
 	unsigned char minutes;
+
+	display.setTextSize(2);
 
 	// Print morning on for heating
 	display.setCursor(145, 50);
@@ -76,6 +76,9 @@ void TimerDisplay::printHeatingTimer(Heating& heating, MCUFRIEND_kbv& display) {
 void TimerDisplay::printWaterTimer(Water& water, MCUFRIEND_kbv& display) {
 	unsigned char hours;
 	unsigned char minutes;
+
+	display.setTextSize(2);
+
 	// Print morning on for water
 	display.setCursor(300, 50);
 	hours = (water.getTimer().getMorningTimer().getOnTime() / 60);
@@ -115,13 +118,13 @@ void TimerDisplay::printLabels(MCUFRIEND_kbv& display) {
 }
 
 void TimerDisplay::printButtons(MCUFRIEND_kbv& display) {
+	display.setTextSize(2);
 	// Print the plus and minus buttons for heating
 	for (unsigned char y = 50; y <= 200; y += 50) {
 		display.setCursor(120, y);
 		display.print(F("-"));
 		display.setCursor(215, y);
 		display.print(F("+"));
-		y = y + 50;
 	}
 
 	// Print the plus and minus buttons for hot water
@@ -130,12 +133,11 @@ void TimerDisplay::printButtons(MCUFRIEND_kbv& display) {
 		display.print("-");
 		display.setCursor(370, y);
 		display.print(F("+"));
-		y = y + 50;
 	}
 
 	display.fillRect(0, 0, 80, 20, 0xFFFFF); // Fill a rectangle for the back button
 	display.setTextColor(0x00000); // Set text colour to black
-	display.setCursor(5, 0); // Set the cursor to write text to the display
+	display.setCursor(10, 3); // Set the cursor to write text to the display
 	display.println(F("BACK")); // Print the button label
 }
 

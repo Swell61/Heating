@@ -16,7 +16,7 @@ Controller::Controller(unsigned char boilerPin, unsigned char pumpPin, unsigned 
     }
     websocketConnection.begin();
     Serial.println("Done");
-    display.update(coreComponents, SystemFunction::MAIN_DISPLAY);
+    display.update(coreComponents, SystemFunction::TIMER_DISPLAY);
 }
 
 void Controller::setupWatchdog() {
