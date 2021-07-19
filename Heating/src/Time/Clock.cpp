@@ -33,7 +33,7 @@ bool Clock::setSystemTime(unsigned long time) { // Function for setting the RTC 
 }
 
 
-bool Clock::synchroniseWithNtp(UIPUDP& udp) {
+bool Clock::synchroniseWithNtp(EthernetUDP& udp) {
     unsigned long currentNtpTime = ntpUnixTime(udp);
 	Serial.println(currentNtpTime);
     if (currentNtpTime != 0) {
@@ -42,7 +42,7 @@ bool Clock::synchroniseWithNtp(UIPUDP& udp) {
     return false;
 }
 
-unsigned long Clock::ntpUnixTime(UIPUDP &udp)
+unsigned long Clock::ntpUnixTime(EthernetUDP &udp)
 {
 	static int udpInited = udp.begin(123); // open socket on arbitrary port
 

@@ -2,12 +2,13 @@
 #define _CONTROLLER_h
 
 #include "WebInterface.h"
-#include <UIPEthernet.h>
-#include "Components/ComponentControl.h"
-#include "TempSensor.h"
+#include <EthernetENC.h>
+#include <EthernetUdp.h>
 #include "Request/Request.h"
-#include "Display.h"
 #include "Config/Config.h"
+#include "Touchscreen/Display.h"
+#include "Touchscreen/LoadingDisplay.h"
+#include "CoreComponents.h"
 
 /**
  * Main controller class for the system
@@ -17,12 +18,12 @@ class Controller {
         IPAddress ip{192, 168, 1, 201}; // IP address of Arduino
 	    byte mac[6] = { 0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02 }; // MAC address of network interface
 
-        WebInterface websocketConnection;
         Config config; // MUST BE INITIALISED BEFORE websocketConnection
+        WebInterface websocketConnection;
         EthernetUDP udpInterface;
-        Clock clock;
-        ComponentControl componentController;
-        TempSensor localTempSensor;
+        
+        CoreComponents coreComponents;
+
         Request request;
         Display display;
         unsigned long lastSystemUpdateCheck = 0;
@@ -43,6 +44,7 @@ class Controller {
 
         void loop();
 
+        CoreComponents& getCoreComponents();
         ComponentControl& getComponentControl();
         Clock& getClock();
         TempSensor& getTempSensor();

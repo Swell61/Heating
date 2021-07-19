@@ -4,6 +4,7 @@
 #include "../Enums/State.h"
 #include "Component.h"
 #include "../Config/ComponentTimerConfig.h"
+#include "../TempSensor.h"
 
 class Heating : public Component {
     private:
@@ -26,7 +27,7 @@ class Heating : public Component {
         bool setRequestedTemp(float requestedTemp);
         bool adjustRequestedTemp(ValueAdjustment adjustment);
 
-        bool required(Clock& clock, float currentTemp); 
+        bool required(Clock& clock, TempSensor& tempSensor); 
 };
 
 #endif

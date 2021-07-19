@@ -8,8 +8,8 @@ Heating::Heating(const ComponentTimerConfig& config, float minTemp, float maxTem
 
 Heating::Heating(const ComponentTimerConfig& config, float increment) : Heating(config,  10.0f, 27.0f, increment) { }
 
-bool Heating::required(Clock& clock, float currentTemp) {
-    return Component::required(clock) && tempDiffTooLarge(currentTemp);
+bool Heating::required(Clock& clock, TempSensor& tempSensor) {
+    return Component::required(clock) && tempDiffTooLarge(tempSensor.getTemp());
 }
 
 bool Heating::tempDiffTooLarge(float currentTemp) {

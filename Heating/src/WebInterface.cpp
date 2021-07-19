@@ -35,7 +35,7 @@ void WebInterface::sendMainData(Controller& controller) {
 	strcat(output, buffer);
 	strcat(output, ":");
 
-	strcat(output, controller.getComponentControl().getHeating().required(controller.getClock(), controller.getTempSensor().getTemp()) ? "1" : "0");
+	strcat(output, controller.getComponentControl().getHeating().required(controller.getClock(), controller.getTempSensor()) ? "1" : "0");
 	strcat(output, ":");
 
 	strcat(output, controller.getComponentControl().getWater().required(controller.getClock()) ? "1" : "0");

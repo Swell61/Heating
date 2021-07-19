@@ -6,8 +6,10 @@
 
 // the setup function runs once when you press reset or power the board
 #include "src/Controller.h"
+#include <Arduino.h>
 Controller* ashanti;
 void setup() {
+	wdt_enable(WDTO_4S);
     ashanti = new Controller(2,3,A4);
 }
 void loop() {

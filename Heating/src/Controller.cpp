@@ -1,33 +1,31 @@
 #include "Controller.h"
 
-Controller::Controller(unsigned char boilerPin, unsigned char pumpPin, unsigned char oneWirePin) : config(Config("config.txt", 5)), 
-    componentController(ComponentControl(boilerPin, pumpPin, config)), localTempSensor(TempSensor(A4, 0x28, 0xFF, 0x60, 0x9A, 0xA1, 0x17, 0x5, 0x43))
-    , websocketConnection(WebInterface(config.available())) 
+Controller::Controller(unsigned char boilerPin, unsigned char pumpPin, unsigned char oneWirePin) : config(Config("config.txt", 5)), coreComponents(boilerPin, pumpPin, oneWirePin, config), websocketConnection(WebInterface(config.available())) 
    {
-        Ethernet.begin(mac, ip);
-        for (unsigned char ntpTryCount = 0; ntpTryCount < 3; ++ntpTryCount) {
-            if (clock.synchroniseWithNtp(udpInterface)) {
-                break;
-            }
+    Ethernet.begin(mac, ip);
+    LoadingDisplay loadingScreen;
+    unsigned char NTP_RETRIES = 3;
+    loadingScreen.display(config, NTP_RETRIES, display.getDisplay());
+    for (unsigned char ntpTryCount = 0; ntpTryCount < NTP_RETRIES; ++ntpTryCount) {
+        if (coreComponents.getClock().synchroniseWithNtp(udpInterface)) {
+            break;
         }
+        loadingScreen.update(ntpTryCount + 1, display.getDisplay());
+        wdt_reset();
+    }
+    websocketConnection.begin();
 
-        websocketConnection.begin();
-        setupWatchdog();
+    display.update(coreComponents, SystemFunction::MAIN_DISPLAY);
 }
 
 void Controller::setupWatchdog() {
-	cli();
-    wdt_reset();
-	wdt_enable(WDTO_4S);
-	wdt_reset();
-    sei();
 }
 
 bool Controller::periodicUpdate() {
     bool updateOccurred = false;
     
     if (systemCheckIntervalMet()) {
-        updateOccurred |= componentController.update(localTempSensor.getTemp(), clock);
+        updateOccurred |= coreComponents.update();
     }
 
     if (networkStatusIntervalMet()) {
@@ -57,15 +55,15 @@ void Controller::loop() {
 }
 
 ComponentControl& Controller::getComponentControl() {
-    return componentController;
+    return coreComponents.getComponentControl();
 }
 
 Clock& Controller::getClock() {
-    return clock;
+    return coreComponents.getClock();
 }
 
 TempSensor& Controller::getTempSensor() {
-    return localTempSensor;
+    return coreComponents.getTempSensor();
 }
 
 bool Controller::systemCheckIntervalMet() {
