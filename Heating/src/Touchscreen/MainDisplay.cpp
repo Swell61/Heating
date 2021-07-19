@@ -38,7 +38,7 @@ void MainDisplay::printTime(Clock& clock, MCUFRIEND_kbv& display) {
 }
 
 void MainDisplay::printLabels(MCUFRIEND_kbv& display) {
-
+	display.setTextSize(2);
 	display.fillRect(290, 205, 100, 30, 0xFFFFF); // Create a rectangle for the button to adjust the timer and fill in white
 	display.setTextColor(0x00000); // Set text colour to black
 	display.setCursor(310, 213); // Set the cursor to write text to the display
@@ -221,7 +221,6 @@ SystemFunction MainDisplay::getTouchInput(TSPoint& point) {
 			return SystemFunction::DOWN;
 		}
 		else if (point.x >= 230 && point.x <= 300 && point.y >= 750 && point.y <= 950) { // Timer display button
-			Serial.println("Pressed timer");
 			return SystemFunction::TIMER_DISPLAY;
 		}
 		else if (point.x >= 570 && point.x <= 700 && point.y >= 320 && point.y <= 500) { // Mode change
