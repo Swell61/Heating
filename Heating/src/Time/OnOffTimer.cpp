@@ -43,6 +43,7 @@ bool OnOffTimer::adjustOn(ValueAdjustment adjustment) {
             else {
                 return false;
             }
+            break;
         }
         default: {
             return false;
