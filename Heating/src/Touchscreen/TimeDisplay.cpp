@@ -48,10 +48,6 @@ bool TimeDisplay::update(CoreComponents& components, MCUFRIEND_kbv& display, Sys
 
 SystemFunction TimeDisplay::getTouchInput(TSPoint& point) {
 	if (point.z > MIN_PRESSURE && point.z < MAX_PRESSURE) {
-		Serial.print("x: ");
-		Serial.print(point.x);
-		Serial.print(", y: ");
-		Serial.println(point.y);
 		if (point.x >= 820 && point.x <= 890 && point.y >= 200 && point.y <= 320) { // Back button
 			return SystemFunction::MAIN_DISPLAY;
 		}

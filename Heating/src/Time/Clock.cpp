@@ -35,7 +35,6 @@ bool Clock::setSystemTime(unsigned long time) { // Function for setting the RTC 
 
 bool Clock::synchroniseWithNtp(EthernetUDP& udp) {
     unsigned long currentNtpTime = ntpUnixTime(udp);
-	Serial.println(currentNtpTime);
     if (currentNtpTime != 0) {
         return setSystemTime(currentNtpTime);
     }

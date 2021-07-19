@@ -12,10 +12,9 @@ Controller::Controller(unsigned char boilerPin, unsigned char pumpPin, unsigned 
         if (coreComponents.getClock().synchroniseWithNtp(udpInterface)) {
             break;
         }
-        //wdt_reset();
+        wdt_reset();
     }
     websocketConnection.begin();
-    Serial.println("Done");
     display.update(coreComponents, SystemFunction::MAIN_DISPLAY);
 }
 

@@ -9,9 +9,7 @@
 #include <Arduino.h>
 Controller* ashanti;
 void setup() {
-    Serial.begin(115200);
-    Serial.println("init");
-	//wdt_enable(WDTO_4S);
+	wdt_enable(WDTO_4S);
     ashanti = new Controller(2,3,A4);
 }
 void loop() {
