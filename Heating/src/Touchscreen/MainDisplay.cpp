@@ -8,7 +8,7 @@ bool MainDisplay::display(CoreComponents& components, MCUFRIEND_kbv& display) { 
 	printLabels(display);
 
 	display.setTextSize(2);
-	display.setTextColor(0xFFFFF); // Set the text colour to white
+	display.setTextColor(0xFFFFF, 0x00000); // Set the text colour to white
 
 	printHeatingBoostButton(components.getComponentControl().getHeating(), components.getClock(), display);
 	printWaterBoostButton(components.getComponentControl().getWater(), components.getClock(), display);
@@ -32,7 +32,7 @@ bool MainDisplay::display(CoreComponents& components, MCUFRIEND_kbv& display) { 
 
 void MainDisplay::printTime(Clock& clock, MCUFRIEND_kbv& display) {
 	display.setCursor(0, 215);
-	display.setTextColor(0xFFFFF);
+	display.setTextColor(0xFFFFF, 0x00000);
 	display.setTextSize(3);
 	Screen::printTime(clock, display);
 }
@@ -44,7 +44,7 @@ void MainDisplay::printLabels(MCUFRIEND_kbv& display) {
 	display.setCursor(310, 213); // Set the cursor to write text to the display
 	display.println(F("TIMER")); // Write the button label
 
-	display.setTextColor(0xFFFFF);
+	display.setTextColor(0xFFFFF, 0x00000);
 	display.setTextSize(2);
 	display.setCursor(0, 80); // Set the cursor to write text to the display
 	display.println(F("HEATING:")); // Print label
@@ -90,7 +90,7 @@ bool MainDisplay::update(CoreComponents& components, MCUFRIEND_kbv& display, Sys
 	printRequestedTemp(components.getComponentControl().getHeating(), display);
 
 	display.setTextSize(2);
-	display.setTextColor(0xFFFFF);
+	display.setTextColor(0xFFFFF, 0x00000);
 
 	printHeatingBoostButton(components.getComponentControl().getHeating(), components.getClock(), display);
 	printWaterBoostButton(components.getComponentControl().getWater(), components.getClock(), display);
@@ -111,14 +111,14 @@ bool MainDisplay::update(CoreComponents& components, MCUFRIEND_kbv& display, Sys
 
 void MainDisplay::printHeatingRequired(Heating& heating, TempSensor& tempSensor, Clock& clock, MCUFRIEND_kbv& display) {
 	display.setCursor(215, 20); // Set the cursor to write text to the display
-	display.setTextColor(0xFFFFF);
+	display.setTextColor(0xFFFFF, 0x00000);
 	display.setTextSize(2);
 	display.print((heating.required(clock, tempSensor) ? "ON " : "OFF")); // If heating is on, print on. Otherwise, print off
 }
 
 void MainDisplay::printWaterRequired(Water& water, Clock& clock, MCUFRIEND_kbv& display) {
 	display.setCursor(360, 20); // Set the cursor to write text to the display
-	display.setTextColor(0xFFFFF);
+	display.setTextColor(0xFFFFF, 0x00000);
 	display.setTextSize(2);
 	display.print((water.required(clock) ? "ON " : "OFF")); // If hot water is on, print on. Otherwise, print off
 }
@@ -126,20 +126,20 @@ void MainDisplay::printWaterRequired(Water& water, Clock& clock, MCUFRIEND_kbv& 
 void MainDisplay::printRequestedTemp(Heating& heating, MCUFRIEND_kbv& display) {
 	display.setTextSize(3); // Increase the text size to 3
 	display.setCursor(295, 115); // Set the cursor to write text to the display
-	display.setTextColor(0xFFFFF);
+	display.setTextColor(0xFFFFF, 0x00000);
 	display.println(heating.getRequestedTemp()); // Print the requested temperature
 }
 
 void MainDisplay::printHeatingStatus(Heating& heating, TempSensor& tempSensor, Clock& clock, MCUFRIEND_kbv& display) {
 	display.setCursor(215, 20); // Set the cursor to write text to the display
-	display.setTextColor(0xFFFFF);
+	display.setTextColor(0xFFFFF, 0x00000);
 	display.setTextSize(2);
 	display.print(heating.required(clock, tempSensor) ? "ON " : "OFF"); // If heating is on, print on. Otherwise, print off
 }
 
 void MainDisplay::printWaterStatus(Water& water, Clock& clock, MCUFRIEND_kbv& display) {
 	display.setCursor(360, 20); // Set the cursor to write text to the display
-	display.setTextColor(0xFFFFF);
+	display.setTextColor(0xFFFFF, 0x00000);
 	display.setTextSize(2);
 	display.print(water.required(clock) ? "ON " : "OFF"); // If hot water is on, print on. Otherwise, print off
 }
@@ -184,16 +184,19 @@ void MainDisplay::printWaterMode(Water& water, MCUFRIEND_kbv& display) {
             display.fillRect(100, 145, 80, 35, 0xFF000); // Create a rectangle for the hot water mode button and fill in red
             display.setCursor(120, 155); // Set the cursor to write text to the display
             display.println(F("OFF"));
+			break;
 	    }
 	    case Mode::TIMER: {
             display.fillRect(100, 145, 80, 35, 0xff951c); // Create a rectangle for the hot water mode button and fill in blue
             display.setCursor(110, 155); // Set the cursor to write text to the display
             display.println(F("TIMER"));
+			break;
 	    }
 	    case Mode::ON: {
             display.fillRect(100, 145, 80, 35, 0x7CFC0); // Create a rectangle for the hot water mode button and fill in green
             display.setCursor(125, 155); // Set the cursor to write text to the display
-            display.println(F("ON")); // Write the buttons description  
+            display.println(F("ON")); // Write the buttons description 
+			break;
 	    }
     }
 }

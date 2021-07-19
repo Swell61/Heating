@@ -16,7 +16,7 @@ Controller::Controller(unsigned char boilerPin, unsigned char pumpPin, unsigned 
     }
     websocketConnection.begin();
     Serial.println("Done");
-    display.update(coreComponents, SystemFunction::TIMER_DISPLAY);
+    display.update(coreComponents, SystemFunction::MAIN_DISPLAY);
 }
 
 void Controller::setupWatchdog() {
@@ -50,9 +50,14 @@ void Controller::loop() {
     updateOccurred |= periodicUpdate();
 
     if (updateOccurred) {
-        websocketConnection.processRemoteOutput(*this);
+        sendUpdatesToClients(currentRequest);    
     }
 
+}
+
+void Controller::sendUpdatesToClients(SystemFunction updateType) {
+    websocketConnection.processRemoteOutput(*this);
+    display.update(coreComponents, updateType);
 }
 
 ComponentControl& Controller::getComponentControl() {

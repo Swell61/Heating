@@ -33,6 +33,7 @@ class Controller {
         bool intervalMet(unsigned long& lastCheck, unsigned short int intervalLength);
         bool periodicUpdate();
         void setupWatchdog();
+        void sendUpdatesToClients(SystemFunction updateType);
 
         SystemFunction getRequest();
 
