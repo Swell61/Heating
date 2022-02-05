@@ -15,7 +15,7 @@
  **/
 class Controller {
     private:
-        IPAddress ip{192, 168, 1, 201}; // IP address of Arduino
+        IPAddress ip{192, 168, 11, 201}; // IP address of Arduino
 	    byte mac[6] = { 0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x02 }; // MAC address of network interface
 
         Config config; // MUST BE INITIALISED BEFORE websocketConnection
