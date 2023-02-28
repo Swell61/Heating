@@ -2,8 +2,7 @@
 #define _CONTROLLER_h
 
 #include "WebInterface.h"
-#include <EthernetENC.h>
-#include <EthernetUdp.h>
+#include <UIPEthernet.h>
 #include "Request/Request.h"
 #include "Config/Config.h"
 #include "Touchscreen/Display.h"

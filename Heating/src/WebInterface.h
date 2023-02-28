@@ -7,7 +7,7 @@
 
 #include <WebSocketServer.h>
 #include <SPI.h>
-#include "EthernetENC.h"
+#include <UIPEthernet.h>
 #include <SD.h>
 #include <avr/wdt.h>
 #include "Enums/SystemFunction.h"

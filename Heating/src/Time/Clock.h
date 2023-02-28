@@ -2,13 +2,14 @@
 #define _CLOCK_h
 
 #include <DS3232RTC.h> 
-#include <EthernetENC.h>
+#include <UIPEthernet.h>
 #include "../Enums/TimeComponent.h"
 #include "../Enums/ValueAdjustment.h"
 
 class Clock {
     private:
         int midnight = 0;
+        DS3232RTC RTC;
 	    bool adjustTime(bool (Clock::*updateFunction)(unsigned char), int currentValue, ValueAdjustment adjustmentDirection, int adjustmentValue);
         bool setSystemHour(unsigned char newHour);
         bool setSystemMinute(unsigned char newMinute);
