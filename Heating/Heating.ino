@@ -10,7 +10,6 @@
 Controller* ashanti;
 void setup() {
     Serial.begin(115200);
-	wdt_enable(WDTO_4S);
     ashanti = new Controller(2,3,A4);
 }
 void loop() {

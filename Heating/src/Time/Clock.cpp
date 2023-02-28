@@ -1,6 +1,7 @@
 #include "Clock.h"
 
 Clock::Clock() {
+	RTC.begin();
     setSyncProvider(RTC.get);
 }
 
